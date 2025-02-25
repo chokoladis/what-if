@@ -26,6 +26,7 @@
                             <h4 class="card-title">{{ $question->title }}</h4>
 
                             @if ($question->right_comment_id)
+{{--                                todo alert-success--}}
                                 <div class="answer card-text">
                                     <div class="user">
                                         <img src="{{ __('empty') }}" alt="">
@@ -34,12 +35,6 @@
                                     <b class="text-success">{{ mb_strlen($question?->answer->text) > 60 ? mb_substr($question->answer->text, 0, 60) : $question?->answer->text }}</b>
                                     <p class="card-text"><small class="text-body-secondary">{{ $question->answer->created_at->diffForHumans() }}</small></p>
                                 </div>
-                            @endif
-                            @if ($currentComment = $question->getCurrentUserComment())
-                                <div class="current-user-comment alert alert-success" role="alert">
-                                    <h5 class="alert-heading">{{ $currentComment->comment->user->name }}</h5>
-                                    <p class="mb-0">{{ $currentComment->comment->text }}</p>
-                                </div>  
                             @endif
                             @if ($popularComment = $question->getPopularComment())
                                 <div class="popular-answer alert alert-warning" role="alert">

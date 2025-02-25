@@ -58,7 +58,7 @@ class QuestionController extends Controller
 
     public function detail($question){
 
-        $arStatuses = $questionUserStatus = null;
+        $arStatuses = $questionUserStatus = $arComments = null;
 
         [$question, $error] = Question::getElement($question);
 
@@ -69,9 +69,19 @@ class QuestionController extends Controller
 //            service and cache
             $arStatuses = QuestionUserStatus::getByQuestionId($question['id']);
             $questionUserStatus = QuestionUserStatus::getByQuestionIdForUser($question['id']);
+
+//            mb use algoritm
+            foreach ($question->question_comment as $questionComment){
+                $comment = $questionComment->comment;
+                $reply = $comment->reply;
+                if ($reply->isNotEmpty()){
+                    $arComments[$comment->id]['comment'] = $comment;
+                    $arComments[$comment->id]['items'] = $reply;
+                }
+            }
         }
 
-        return view('questions.detail', compact('question', 'arStatuses', 'questionUserStatus', 'error'));
+        return view('questions.detail', compact('question', 'arStatuses', 'questionUserStatus', 'arComments', 'error'));
     }
 
     public static function findByUrl(string $url){

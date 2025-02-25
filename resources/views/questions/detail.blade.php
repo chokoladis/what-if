@@ -88,25 +88,52 @@
                         <b>{{ mb_strlen($question?->answer->text) > 60 ? mb_substr($question->answer->text, 0, 60) : $question?->answer->text }}</b>
                     </div>
                 @endif
-                @if($question->question_comment)
-                    @foreach ($question->question_comment as $item)
-                        <div class="comment {{ empty($item->comment) ? 'deleted' : '' }}">
+                @if($arComments)
+                    @foreach ($arComments as $arComment)
+                        @php
+                            $comment = $arComment['comment'];
+                            $replies = $arComment['items'];
+                        @endphp
+                        <div class="comment">
 
-                            <x-comment.rating :comment="$item->comment"></x-comment.rating>
+                            <x-comment.rating :comment="$comment"></x-comment.rating>
 
                             <div class="main">
                                 <div class="user">
                                     <div class="icon">
-                                        <img src="{{ $item->comment->user_comment->user->photo ? Storage::url('users/'.$item->comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
+                                        <img src="{{ $comment->user_comment->user->photo ? Storage::url('users/'.$comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
                                     </div>
-                                    <b>{{ $item->comment->user_comment->user->name }}</b>
+                                    <b>{{ $comment->user_comment->user->name }}</b>
                                 </div>
-                                <p><i class="comment_id text-info">{{ '#'.$item->comment->id }}</i>{{ empty($item->comment) ? 'Удаленный комментарий' : $item->comment->text }}</p>
+                                <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
                                 <div class="under">
-                                    <div class="btn btn-mini btn-link reply" data-comment="{{ $item->comment->id }}">{{ __('system.reply') }}</div>
+                                    <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
                                 </div>
                             </div>
                         </div>
+                        @foreach($replies as $reply)
+                            @php
+                                $comment = $reply->replyComment;
+//                                вывести кому ответ
+                            @endphp
+                            <div class="comment comment-reply">
+
+                                <x-comment.rating :comment="$comment"></x-comment.rating>
+
+                                <div class="main">
+                                    <div class="user">
+                                        <div class="icon">
+                                            <img src="{{ $comment->user_comment->user->photo ? Storage::url('users/'.$comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
+                                        </div>
+                                        <b>{{ $comment->user_comment->user->name }}</b>
+                                    </div>
+                                    <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
+                                    <div class="under">
+                                        <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     @endforeach
                 @endif
             </div>

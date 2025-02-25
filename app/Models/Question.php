@@ -51,9 +51,8 @@ class Question extends Model
 
         $res = QuestionComments::query()
             ->where('question_id', $this->id)
-            ->with(['comment' => function($q) {
-                $q->where('user_id', auth()->id());
-            }, 'comment'])
+            ->join('comments', 'comments.id', '=', 'comment_id')
+            ->where('comments.user_id', auth()->id())
             ->first();
         
         return $res;

@@ -29,6 +29,10 @@ class Comment extends Model
         return $this->HasOne(UserComments::class);
     }
 
+    public function reply() : HasMany {
+        return $this->HasMany(CommentsReply::class, 'comment_reply_id', 'id');
+    }
+
     public function getRating() {
         return $this->newQuery()
             ->where('comments.id', $this->id)
