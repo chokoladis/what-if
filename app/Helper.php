@@ -1,10 +1,22 @@
 <?php
 
 if (!function_exists('responseJson')) {
-    function responseJson(bool $success = true, array|string $response = null, $error = null, $status = '200')
+    function responseJson(bool $success = true, array $result = null, int $status = 200)
     {
+        $data = ['success' => $success,'result' => $result, 'status' => $status];
+
+        if (!$success) {
+
+            $data['error'] = $result;
+            unset($data['result']);
+
+            if ($data['status'] === 200){
+                $data['status'] = 400;
+            }
+        }
+
         return response()
-            ->json(['success' => $success,'result' => $response, 'error' => $error])
+            ->json($data)
             ->setEncodingOptions(JSON_UNESCAPED_UNICODE)
             ->setStatusCode($status);
     }

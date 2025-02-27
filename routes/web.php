@@ -26,6 +26,7 @@ Route::group(['namespace' => 'App\Http\Controllers' ], function(){
             Route::name('questions.')->group(function(){
                 Route::get('/add', 'add')->name('add');
                 Route::post('/', 'store')->name('store');
+                Route::post('/right_comment', 'setRightComment')->name('setRightComment');
             });
         });
 

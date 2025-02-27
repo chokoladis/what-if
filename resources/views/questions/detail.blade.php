@@ -59,6 +59,10 @@
                 </div>
             </div>
             <div class="info">
+                <div class="author">
+                    <span uk-icon="microphone"></span>
+                    <i>{{ $question->user->name }}</i>
+                </div>
                 <div class="date">
                     <div class="create">
                         <span uk-icon="calendar"></span>
@@ -108,13 +112,15 @@
                                 <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
                                 <div class="under">
                                     <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                    @if($question->user == auth()->user())
+                                        <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                         @foreach($replies as $reply)
                             @php
                                 $comment = $reply->replyComment;
-//                                вывести кому ответ
                             @endphp
                             <div class="comment comment-reply">
 
@@ -130,6 +136,9 @@
                                     <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
                                     <div class="under">
                                         <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                        @if($question->user == auth()->user())
+                                            <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

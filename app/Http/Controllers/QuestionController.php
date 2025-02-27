@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Events\ViewEvent;
+use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionUserStatus;
 use App\Services\FileService;
+use App\Services\QuestionService;
 
 class QuestionController extends Controller
 {
+    private QuestionService $questionService;
+
+    function __construct()
+    {
+        $this->questionService = new QuestionService();
+    }
 
     public function index(){
         $questions = Question::getActive();
@@ -90,5 +98,26 @@ class QuestionController extends Controller
 
         $question = Question::query()->where('code', $questionCode)->first();
         return $question;
+    }
+
+    public function setRightComment(RightCommentStoreRequest $request)
+    {
+        $data = $request->validated();
+
+        if ($data['question_id'] < 0 || $data['comment_id'] < 0) {
+            return responseJson(false, [
+                new \Error('Вопрос или комментарий не прошли валидацию', 'question_or_comment_no_valid')
+            ]);
+        }
+
+        if ($this->questionService->isCommentContains($data) !== null){
+           if ($this->questionService->setRightComment($data)){
+               return responseJson(true);
+           }
+        }
+
+        return responseJson(false, [
+            new \Error('Ошибка при задании верного комментария', 'error_in_set_right_comment')
+        ]);
     }
 }

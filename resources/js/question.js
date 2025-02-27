@@ -82,4 +82,30 @@ $(function(){
         }
     }
 
+    $('.question-page .comment .right_answer').on('click', function () {
+        let comment_id = $(this).data('comment');
+        let sendData = new FormData();
+
+        sendData.append("comment_id",Number(comment_id));
+
+        chooseRightAnswer(sendData);
+    });
+
+    async function chooseRightAnswer(sendData){
+        try {
+            let settings = {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
+                },
+                body: sendData,
+            };
+
+            let query = await fetch('/questions/right_comment', settings);
+            // let json = await query.json();
+            console.log(query);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 });
