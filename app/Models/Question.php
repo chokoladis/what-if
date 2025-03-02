@@ -131,7 +131,12 @@ class Question extends Model
         return $this->hasMany(QuestionUserStatus::class, 'id', 'question_id');
     }
 
-    // 
+    public function right_comment() : hasOne
+    {
+        return  $this->HasOne(Comment::class, 'id', 'right_comment_id');
+    }
+
+
     public static function boot() {
 
         parent::boot();

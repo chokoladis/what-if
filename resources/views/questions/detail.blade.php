@@ -11,7 +11,7 @@
 @endpush
 
 @section('content')
-    <div class="question-page container">
+    <div class="question-page container" data-question_id="{{ $question->id }}">
         @if($error)
             <div class="title error">
                 <div class="description">
@@ -82,34 +82,32 @@
                 </div>
             </div>
             <div class="comments">
-                @if ($question->right_comment_id)
-                    <div class="answer">
-                        <div class="user">
-                            <img src="{{ $question->right_comment->user->photo ? Storage::url('users/'.$question->right_comment->user->photo->path) : $SITE_NOPHOTO }}"
-                                 alt="...">
-                            <p>{{ $question->answer->user->name }}</p>
-                        </div>
-                        <b>{{ mb_strlen($question?->answer->text) > 60 ? mb_substr($question->answer->text, 0, 60) : $question?->answer->text }}</b>
-                    </div>
-                @endif
                 @if($arComments)
                     @foreach ($arComments as $arComment)
                         @php
                             $comment = $arComment['comment'];
                             $replies = $arComment['items'];
+
+                            $isRight = $question->right_comment_id === $comment->id;
+
+                            $text = mb_strlen($comment->text) > 60 ? mb_substr($comment->text, 0, 60) : $comment->text;
                         @endphp
-                        <div class="comment">
+                        <div class="comment {{ $isRight ? 'is-answer' : '' }}">
 
                             <x-comment.rating :comment="$comment"></x-comment.rating>
 
                             <div class="main">
+                                <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
+                                    <i uk-icon="icon: check; ratio: 1.5"></i>
+                                    <small>{{ __('Автор вопроса выбрал ответ, как верный') }}</small>
+                                </div>
                                 <div class="user">
                                     <div class="icon">
                                         <img src="{{ $comment->user_comment->user->photo ? Storage::url('users/'.$comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
                                     </div>
                                     <b>{{ $comment->user_comment->user->name }}</b>
                                 </div>
-                                <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
+                                <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                 <div class="under">
                                     <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
                                     @if($question->user == auth()->user())
@@ -121,19 +119,27 @@
                         @foreach($replies as $reply)
                             @php
                                 $comment = $reply->replyComment;
+
+                                $isRight = $question->right_comment_id === $comment->id;
+
+                                $text = mb_strlen($comment->text) > 60 ? mb_substr($comment->text, 0, 60) : $comment->text;
                             @endphp
                             <div class="comment comment-reply">
 
                                 <x-comment.rating :comment="$comment"></x-comment.rating>
 
                                 <div class="main">
+                                    <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
+                                        <i uk-icon="icon: check; ratio: 1.5"></i>
+                                        <small>{{ __('Автор вопроса выбрал ответ, как верный') }}</small>
+                                    </div>
                                     <div class="user">
                                         <div class="icon">
                                             <img src="{{ $comment->user_comment->user->photo ? Storage::url('users/'.$comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
                                         </div>
                                         <b>{{ $comment->user_comment->user->name }}</b>
                                     </div>
-                                    <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
+                                    <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                     <div class="under">
                                         <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
                                         @if($question->user == auth()->user())

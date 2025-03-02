@@ -44,8 +44,7 @@ Class QuestionService
 
     public function setRightComment($data)
     {
-        return $this->model::query()
-            ->where('id', $data['question_id'])
+        return self::$model::query()->where('id', $data['question_id'])
             ->update(['right_comment_id' => $data['comment_id']]);
     }
 }

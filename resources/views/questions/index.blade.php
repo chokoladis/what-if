@@ -9,7 +9,7 @@
 @endpush
 
 @section('content')
-    <div class="index-page container">
+    <div class="questions-page container">
         @foreach ($questions as $question)
 
             @php
@@ -26,31 +26,42 @@
                             <h4 class="card-title">{{ $question->title }}</h4>
 
                             @if ($question->right_comment_id)
-{{--                                todo alert-success--}}
-                                <div class="answer card-text">
-                                    <div class="user">
-                                        <img src="{{ __('empty') }}" alt="">
-                                        <p>{{ $question?->answer?->user->name }}</p>
+                                <div class="right-answer card-text alert alert-success">
+                                    <i uk-icon="check"></i>
+                                    <div class="content">
+                                        <div class="user">
+                                            <img src="{{ $question->right_comment->user->file ? Storage::url('users/'.$question->right_comment->user->file->path) : $SITE_NOPHOTO }}" alt="">
+                                            <p>{{ $question->right_comment->user->name }}</p>
+                                        </div>
+                                        <b class="text-success">{{ mb_strlen($question->right_comment->text) > 60 ? mb_substr($question->right_comment->text, 0, 60) : $question->right_comment->text }}</b>
                                     </div>
-                                    <b class="text-success">{{ mb_strlen($question?->answer->text) > 60 ? mb_substr($question->answer->text, 0, 60) : $question?->answer->text }}</b>
-                                    <p class="card-text"><small class="text-body-secondary">{{ $question->answer->created_at->diffForHumans() }}</small></p>
                                 </div>
                             @endif
-                            @if ($popularComment = $question->getPopularComment())
+                            @if ($popularComment = $question->getPopularComment() && !$question->right_comment_id)
                                 <div class="popular-answer alert alert-warning" role="alert">
                                     <i uk-icon="bolt"></i>
                                     <div class="content">
-                                        <h5>{{ $popularComment->user->name }}</h5>
+                                        <div class="user">
+                                            <img src="{{ $popularComment->user->file ? Storage::url('users/'.$popularComment->user->file->path) : $SITE_NOPHOTO }}" alt="">
+                                            <p>{{ $popularComment->user->name }}</p>
+                                        </div>
                                         <p class="mb-0">{{ $popularComment->text }}</p>
                                     </div>
                                 </div>
                             @endif
-                            
-                            <p class="card-text"><small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small></p>
-                            @if ($question->created_at != $question->updated_at)
-                                <p class="card-text"><small class="text-body-secondary">{{ __('Изменен ') . $question->updated_at->diffForHumans() }}</small></p>
-                            @endif
-                            
+
+                            <div class="date">
+                                <p class="card-text">
+                                    <i uk-icon="question"></i>
+                                    <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
+                                </p>
+                                @if ($question->created_at != $question->updated_at)
+                                    <p class="card-text">
+                                        <i uk-icon="pencil"></i>
+                                        <small class="text-body-secondary">{{ $question->updated_at->diffForHumans() }}</small>
+                                    </p>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </a>

@@ -19,9 +19,10 @@ class CategoryController extends Controller
 
     public function detail($category){
 
+        $category = Category::getElement($category);
+
         Event(new ViewEvent($category));
 
-        $category = Category::getElement($category);
         $childs = self::getCurrCategoryChilds($category);
         $questions = QuestionService::getList(['active' => true, 'category_id' => $category->id]);
 

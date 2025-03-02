@@ -27,13 +27,13 @@
                         <p>{{ $slide->user->name }}</p>
                     </div>
                     <blockquote>{{ mb_strlen($slide->title) > 60 ? mb_substr($slide->title, 0, 60) : $slide->title }}</blockquote>
-                    @if ($slide?->right_comment_id)
+                    @if ($slide->right_comment_id)
                         <div class="answer">
                             <div class="user">
                                 <img src="{{ __('empty') }}" alt="">
-                                <p>{{ $slide?->answer?->user->name }}</p>
+                                <p>{{ $slide->right_comment->user->name }}</p>
                             </div>
-                            <b>{{ mb_strlen($qslide?->answer->text) > 60 ? mb_substr($slide->answer->text, 0, 60) : $slide?->answer->text }}</b>
+                            <b>{{ mb_strlen($slide->right_comment->text) > 60 ? mb_substr($slide->right_comment->text, 0, 60) : $slide->right_comment->text }}</b>
                         </div>
                     @endif
                 </div>

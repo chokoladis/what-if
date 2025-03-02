@@ -84,8 +84,10 @@ $(function(){
 
     $('.question-page .comment .right_answer').on('click', function () {
         let comment_id = $(this).data('comment');
+        let question_id = $(this).parents('.question-page').data('question_id');
         let sendData = new FormData();
 
+        sendData.append("question_id",Number(question_id));
         sendData.append("comment_id",Number(comment_id));
 
         chooseRightAnswer(sendData);
