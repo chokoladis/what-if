@@ -15,25 +15,23 @@
         <div class="slide">
             <a href="{{ route('questions.detail', $slide->code) }}">
                 <div class="bg">
-                    @php
-                        $path = $slide->file ? Storage::url('questions/'.$slide->file->path) : Storage::url('main/nophoto.jpg');
-                    @endphp
-                    <img src="{{ $path }}" alt="" class="img-fluid rounded-start">
+                    <img src="{{ getPhoto($slide->file, 'questions') }}" alt="" class="img-fluid rounded-start">
                 </div>
                 <div class="main">
-                    <div class="user">
-                        <img src="{{ $slide->user->profile_photo_path ? Storage::url($slide->user->profile_photo_path) : $SITE_NOPHOTO }}"
-                             alt="Фото пользователя не найдено">
-                        <p>{{ $slide->user->name }}</p>
+                    <div class="question">
+                        <img src="{{ getPhoto($slide->user->photo, 'users') }}" alt="Фото пользователя не найдено">
+                        <div class="content">
+                            <p class="user-name">{{ '@'.$slide->user->name }}</p>
+                            <blockquote class="text">{{ mb_strlen($slide->title) > 60 ? mb_substr($slide->title, 0, 60) : $slide->title }}</blockquote>
+                        </div>
                     </div>
-                    <blockquote>{{ mb_strlen($slide->title) > 60 ? mb_substr($slide->title, 0, 60) : $slide->title }}</blockquote>
                     @if ($slide->right_comment_id)
-                        <div class="answer">
-                            <div class="user">
-                                <img src="{{ __('empty') }}" alt="">
-                                <p>{{ $slide->right_comment->user->name }}</p>
+                        <div class="answer alert alert-success">
+                            <img src="{{ getPhoto($slide->right_comment->user->photo, 'users') }}" alt="">
+                            <div class="content">
+                                <p class="user-name">{{ '@'.$slide->right_comment->user->name }}</p>
+                                <b class="comment-text">{{ mb_strlen($slide->right_comment->text) > 60 ? mb_substr($slide->right_comment->text, 0, 60) : $slide->right_comment->text }}</b>
                             </div>
-                            <b>{{ mb_strlen($slide->right_comment->text) > 60 ? mb_substr($slide->right_comment->text, 0, 60) : $slide->right_comment->text }}</b>
                         </div>
                     @endif
                 </div>

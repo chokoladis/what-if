@@ -28,3 +28,16 @@ if (!function_exists('getNumbers')){
         return implode('', $matches[0]);
     }
 }
+
+if (!function_exists('getPhoto')){
+    function getPhoto(\App\Models\File|null $file, string $subdir){
+
+        global $SITE_NOPHOTO;
+
+        if ($file){
+            return $file->path ? \Illuminate\Support\Facades\Storage::url($subdir.'/'.$file->path) : $SITE_NOPHOTO;
+        }
+
+        return $SITE_NOPHOTO;
+    }
+}

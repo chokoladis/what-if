@@ -61,7 +61,7 @@
             <div class="info">
                 <div class="author">
                     <span uk-icon="microphone"></span>
-                    <i>{{ $question->user->name }}</i>
+                    <i>{{ '@'.$question->user->name }}</i>
                 </div>
                 <div class="date">
                     <div class="create">
@@ -71,7 +71,7 @@
 
                     @if($question->created_at != $question->updated_at)
                         <div class="update">
-                            <span uk-icon="pencil">{{ $question->updated_at }}</span>
+                            <span uk-icon="pencil"></span>
                             <i>{{ $question->updated_at }}</i>
                         </div>
                     @endif
@@ -103,9 +103,9 @@
                                 </div>
                                 <div class="user">
                                     <div class="icon">
-                                        <img src="{{ $comment->user_comment->user->photo ? Storage::url('users/'.$comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
+                                        <img src="{{ getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
                                     </div>
-                                    <b>{{ $comment->user_comment->user->name }}</b>
+                                    <b>{{ '@'.$comment->user_comment->user->name }}</b>
                                 </div>
                                 <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                 <div class="under">
@@ -135,9 +135,9 @@
                                     </div>
                                     <div class="user">
                                         <div class="icon">
-                                            <img src="{{ $comment->user_comment->user->photo ? Storage::url('users/'.$comment->user_comment->user->photo->path) : $SITE_NOPHOTO }}" alt="">
+                                            <img src="{{ getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
                                         </div>
-                                        <b>{{ $comment->user_comment->user->name }}</b>
+                                        <b>{{ '@'.$comment->user_comment->user->name }}</b>
                                     </div>
                                     <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                     <div class="under">

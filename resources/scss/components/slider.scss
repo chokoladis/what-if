@@ -15,10 +15,9 @@
     color: white;
     padding: 5px 10px ;
 
-    .user{
+    .question{
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
 
       img{
         width: 40px;
@@ -26,21 +25,48 @@
         object-fit: cover;
         margin-right: 10px;
       }
-      p{
-        text-overflow: ellipsis;
-        font-size: 13px;
-        color: #83b3fa;
-        margin: 0;
-        width: 220px;
-        overflow: hidden;
+      .content{
+
+        .user-name{
+          text-overflow: ellipsis;
+          font-size: 13px;
+          color: #83b3fa;
+          margin: 0;
+          width: 220px;
+          overflow: hidden;
+        }
+        .text{
+          margin: 0;
+          font-size: 16px;
+          text-transform: capitalize;
+        }
       }
+
     }
 
-    blockquote{
+    .answer{
+      display: flex;
+      align-items: center;
       margin: 0;
-      font-size: 16px;
-      text-transform: capitalize;
+      margin-top: 10px;
 
+      img{
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      .content{
+        .user-name{
+          margin: 0;
+          margin-bottom: 5px;
+          font-width: 600;
+          font-size: 12px;
+        }
+        .comment-text{
+          font-size: 14px;
+        }
+      }
     }
   }
 }
