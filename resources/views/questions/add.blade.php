@@ -75,6 +75,8 @@
                 @endif
             </div>
             
+            <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
+            
             <button type="submit" class="btn btn-primary mb-3">{{ __('system.add') }}</button>
         
         </form>

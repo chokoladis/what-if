@@ -8,6 +8,7 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionUserStatus;
+use App\Services\CaptchaService;
 use App\Services\FileService;
 use App\Services\QuestionService;
 
@@ -32,11 +33,20 @@ class QuestionController extends Controller
         return view('questions.add', compact('categories'));
     }
 
-    public function store(StoreRequest $request){
-
+    public function store(StoreRequest $request)
+    {
         $data = $request->validated();
         $data['user_id'] = auth()->id();//user()->id; // заглушка
         $data['active'] = $request->user()->can('isAdmin', auth()->user());
+
+        $captcha = new CaptchaService();
+        [$success, $error] = $captcha->verify($request->get('h-captcha-response'));
+
+        dd($success, $error);
+
+        if (!$success) {
+            return redirect()->back()->with('message', $error);
+        }
 
         try {
             if ($request->hasFile('img')){

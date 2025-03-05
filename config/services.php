@@ -35,6 +35,10 @@ return [
         'client_id' => null,
         'client_secret' => env('TELEGRAM_BOT_TOKEN'),
         'redirect' => env('TELEGRAM_AUTH_REDIRECT'),
+    ],
+    'h_captcha' => [
+        'secret' => env('H_CAPTCHA_SECRET'),
+        'sitekey' => env('H_CAPTCHA_SITEKEY'),
     ]
 
 ];

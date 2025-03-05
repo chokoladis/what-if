@@ -13,7 +13,7 @@
 <div class="main_slider">
     @foreach ($slides as $slide)
         <div class="slide">
-            <a href="{{ route('questions.detail', $slide->code) }}">
+            <a href="{{ route('questions.detail', $slide->code) }}" class="card">
                 <div class="bg">
                     <img src="{{ getPhoto($slide->file, 'questions') }}" alt="" class="img-fluid rounded-start">
                 </div>

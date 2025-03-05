@@ -15,6 +15,8 @@
 
     @vite(['resources/scss/app.scss'])
     @stack('style')
+
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body>
 <div id="app">
@@ -38,6 +40,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('categories.index') }}">{{ __('Категории') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-link" href="{{ route('questions.add') }}">{{ __('Задать вопрос') }}</a>
                     </li>
                 </ul>
 
