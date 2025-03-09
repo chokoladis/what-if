@@ -25,6 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'h-captcha-response' => 'string|nullable',
+            'category' => 'required|string',
             'title' => 'required|string',
             'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ]
         ];

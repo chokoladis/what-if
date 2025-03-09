@@ -4,6 +4,6 @@ vendor/*
 .env
 .idea
 *.xml
-*.DS_Store
+.DS_Store
 .vscode
 vendor

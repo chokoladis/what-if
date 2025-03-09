@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('path')->unique();
             $table->string('path_thumbnail')->nullable()->unique();
             $table->string('description')->nullable();
+            $table->string('relation', 40);
             
             $table->timestamps();
         });

@@ -42,9 +42,7 @@ class QuestionController extends Controller
         $captcha = new CaptchaService();
         [$success, $error] = $captcha->verify($request->get('h-captcha-response'));
 
-        dd($success, $error);
-
-        if (!$success) {
+        if (!$success) {    
             return redirect()->back()->with('message', $error);
         }
 
@@ -55,19 +53,25 @@ class QuestionController extends Controller
                     $res = FileService::save($img,'questions');
                     $data['file_id'] = $res['id'];
                 } else {
-                    // return JsonResponse(['error' => 'Не валидный файл']);
+                    return redirect()->back()->with('message', 'File not valid');
                 }
             }
+
+            $category = Category::getElement($data['category']);
+            $data['category_id'] = $category?->id ?? 0; 
+
+            unset($data['category']);
             unset($data['img']);
+            unset($data['h-captcha-response']);
             
             $question = Question::firstOrCreate([
                 'title' => $data['title']
             ],$data);
 
             if ($question->wasRecentlyCreated){
-                return redirect()->route('questions.index')->with('message', 'Вопрос сохранен и будет опубликован позже');
+                return redirect()->route('questions.index')->with('message', 'Вопрос будет опубликован после модерации'); //Question saved and will public late
             } else {
-                return redirect()->back()->with('message', 'Такой вопрос уже задавали.');
+                return redirect()->back()->with('message', 'Тако вопрос уже опубликован'); //Like question already public
             }
         } catch (\Throwable $th) {
             throw $th;

@@ -71,6 +71,7 @@ class FileService {
                 'name' => $name,
                 'expansion' => $ext,
                 'path' => $filePath, 
+                'relation' => $mainDir
             ];
 
             $img->move($folder, $img->hashName());
