@@ -22,7 +22,7 @@
             </div>
         @else
             <div class="title">
-                <div class="actions">
+                <div class="question-actions">
                     @php
                         $currentReaction = !empty($questionUserStatus) ? $questionUserStatus['status'] : '';
                     @endphp
@@ -116,13 +116,13 @@
                                 </div>
                             </div>
                         </div>
-                        @foreach($replies as $reply)
+                        @foreach($replies as $comment)
                             @php
-                                $comment = $reply->replyComment;
-
                                 $isRight = $question->right_comment_id === $comment->id;
 
-                                $text = mb_strlen($comment->text) > 60 ? mb_substr($comment->text, 0, 60) : $comment->text;
+                                $parent = $comment->parent->comment;
+                                
+                                $text = '@'.$parent->user->name.' '.$comment->text;
                             @endphp
                             <div class="comment comment-reply">
 
@@ -133,18 +133,22 @@
                                         <i uk-icon="icon: check; ratio: 1.5"></i>
                                         <small>{{ __('Автор вопроса выбрал ответ, как верный') }}</small>
                                     </div>
-                                    <div class="user">
-                                        <div class="icon">
-                                            <img src="{{ getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
-                                        </div>
-                                        <b>{{ '@'.$comment->user_comment->user->name }}</b>
-                                    </div>
                                     <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                     <div class="under">
-                                        <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
-                                        @if($question->user == auth()->user())
-                                            <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
-                                        @endif
+                                        <div class="comment_actions">
+                                            <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                            @if($question->user == auth()->user())
+                                                <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
+                                            @endif
+                                        </div>
+                                        <div class="additional_info">
+                                            <div class="user">
+                                                <b>{{ $comment->user_comment->user->name }}</b>
+                                            </div>
+                                            <div class="date">
+                                                {{  $comment->created_at->format('d M Y, H:i:s') }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -176,9 +180,9 @@
                             <p><i class="comment_id text-info"></i><b></b></p>
                         </div>
 
-                        <input type="hidden" name="comment_reply_id" value="">
-                        @if ($errors->has('comment_reply_id'))
-                            @foreach ($errors->get('comment_reply_id') as $item)
+                        <input type="hidden" name="comment_main_id" value="">
+                        @if ($errors->has('comment_main_id'))
+                            @foreach ($errors->get('comment_main_id') as $item)
                                 <p class="error">{{ $item  }}</p>
                             @endforeach
                         @endif

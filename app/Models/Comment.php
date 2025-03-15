@@ -29,8 +29,60 @@ class Comment extends Model
         return $this->HasOne(UserComments::class);
     }
 
-    public function reply() : HasMany {
-        return $this->HasMany(CommentsReply::class, 'comment_reply_id', 'id');
+    public function isReply() : bool {
+        return $this->HasOne(CommentsReply::class, 'comment_reply_id', 'id')->exists();
+    }
+
+    public function replies() : HasMany {
+        return $this->HasMany(CommentsReply::class, 'comment_main_id', 'id')->orderBy('created_at');
+    }
+
+    public function parent() : HasOne {
+        return $this->hasOne(CommentsReply::class, 'comment_reply_id', 'id');
+    }
+
+    // public function getReplies($replyComments, &$arComments = [])
+    // {
+    //     $result = [];
+    //     $arReplies = [];
+
+    //     dump($replyComments, $arComments);
+    //     foreach ($replyComments as $replyComment) {
+            
+    //         // dump($replyComment);
+    //         $comment = $replyComment->comment();
+    //         // dump($comment->get());
+    //         $comment = $comment->first();
+    //         $arComments[$comment->id] = $comment;
+    //         $arReplies[] = $comment->replies;
+    //     }
+
+    //     if (empty($arReplies)){
+    //         return $arComments;
+    //     }
+
+    //     return $this->getReplies($arReplies,$arComments);
+    // }
+
+    public function getReplies($replies, &$result = [])
+    {
+        if (empty($replies)){
+            return $result;
+        } elseif(is_array($replies)){
+            $replies = CommentsReply::whereIn('comment_main_id', $replies)->orderBy('created_at')->get();
+
+            if ($replies->isEmpty())
+                return $result;
+        }
+
+        $commentsIds = [];
+        foreach( $replies as $reply){
+            $commentsIds[] = $reply->comment_reply_id;
+            $result[] = $reply->reply;
+        }
+        // limit
+
+        return $this->getReplies( $commentsIds, $result);
     }
 
     public function getRating() {

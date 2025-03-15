@@ -95,10 +95,16 @@ class QuestionController extends Controller
 //            mb use algoritm
             foreach ($question->question_comment as $questionComment){
                 $comment = $questionComment->comment;
-                $reply = $comment->reply;
-                if ($reply->isNotEmpty()){
+
+                if ($comment->isReply()) {
+                    continue;
+                }
+
+                $replies = $comment->getReplies($comment->replies);
+
+                if (!empty($replies)){
                     $arComments[$comment->id]['comment'] = $comment;
-                    $arComments[$comment->id]['items'] = $reply;
+                    $arComments[$comment->id]['items'] = $replies;
                 }
             }
         }

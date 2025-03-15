@@ -13,7 +13,16 @@ class CommentsReply extends Model
 
     public $guarded = [];
 
-    public function replyComment() : HasOne { //получаем ответы на первый коммент
+    public function comment() : HasOne { //получаем ответы на первый коммент
         return $this->HasOne(Comment::class, 'id', 'comment_main_id');
     }
+
+    public function reply() : HasOne { //получаем ответы на первый коммент
+        return $this->HasOne(Comment::class, 'id', 'comment_reply_id');
+    }
+
+    // public function comment() : HasOne
+    // { //получаем ответы на первый коммент
+    //     return $this->HasOne(Comment::class, 'id', 'comment_main_id');
+    // }
 }

@@ -15,21 +15,26 @@ class CommentController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id();
 
-        $comment_reply_id = $data['comment_reply_id'];
-        unset($data['comment_reply_id']);
+        $comment_main_id = $data['comment_main_id'];
+        unset($data['comment_main_id']);
 
         $question = QuestionController::findByUrl(url()->previous());
         $comment = Comment::firstOrCreate(['text' => $data['text'], 'user_id' => $data['user_id']], $data);
 
         if ($comment->wasRecentlyCreated){
+
             QuestionComments::create([
                 'question_id' => $question->id,
                 'comment_id' => $comment->id,
             ]);
-            CommentsReply::create([
-                'comment_main_id' => $comment->id,
-                'comment_reply_id' => $comment_reply_id,
-            ]);
+
+            if ($comment_main_id){
+                CommentsReply::create([
+                    'comment_reply_id' => $comment->id,
+                    'comment_main_id' => $comment_main_id,
+                ]);
+            }
+            
 
             $message = 'success';
         } else {
