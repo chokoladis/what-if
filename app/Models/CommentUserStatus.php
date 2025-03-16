@@ -11,4 +11,13 @@ class CommentUserStatus extends Model
 
     public $guarded = [];
 
+    public static function getForCurrentUser($commentId)
+    {
+        // cache
+        return CommentUserStatus::query()
+            ->where('comment_id', $commentId)
+            ->where('user_id', auth()->id())
+            ->get('status')
+            ->first();
+    }
 }

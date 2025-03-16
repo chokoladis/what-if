@@ -98,21 +98,29 @@
 
                             <div class="main">
                                 <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
-                                    <i uk-icon="icon: check; ratio: 1.5"></i>
-                                    <small>{{ __('Автор вопроса выбрал ответ, как верный') }}</small>
+                                    <i uk-icon="icon: check; ratio: 1.2"></i>
+                                    <small>{{ __('Верный ответ') }}</small>
                                 </div>
-                                <div class="user">
-                                    <div class="icon">
-                                        <img src="{{ getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
-                                    </div>
-                                    <b>{{ '@'.$comment->user_comment->user->name }}</b>
-                                </div>
-                                <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
+                                <p>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                 <div class="under">
-                                    <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
-                                    @if($question->user == auth()->user())
-                                        <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
-                                    @endif
+                                    <div class="comment_actions">
+                                        <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                        @if($question->user == auth()->user() && !$isRight)
+                                            <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="additional_info">
+                                        <div class="user">
+                                            <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
+                                            <div class="icon">
+                                                <img src="{{ getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
+                                            </div>
+                                            <b>{{ $comment->user_comment->user->name }}</b>
+                                        </div>
+                                        <div class="date">
+                                            {{  $comment->created_at->format('d M Y, H:i:s') }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +141,7 @@
                                         <i uk-icon="icon: check; ratio: 1.5"></i>
                                         <small>{{ __('Автор вопроса выбрал ответ, как верный') }}</small>
                                     </div>
-                                    <p><i class="comment_id text-info">{{ '#'.$comment->id }}</i>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
+                                    <p>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                     <div class="under">
                                         <div class="comment_actions">
                                             <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
@@ -143,6 +151,7 @@
                                         </div>
                                         <div class="additional_info">
                                             <div class="user">
+                                                <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
                                                 <b>{{ $comment->user_comment->user->name }}</b>
                                             </div>
                                             <div class="date">
