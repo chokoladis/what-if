@@ -252,14 +252,14 @@
 
     .comments{
         width: 90%;
-        border-top: 2px solid rgb(212, 212,212);
+        // border-top: 2px solid rgba(240,240,240, 0.4);
         margin: 30px 0;
         margin-left: auto;
 
         .comment {
-            padding-top: 10px;
+            padding: 10px 0;
             display: flex;
-            border-bottom: 1px solid rgb(240, 240,240);
+            border-bottom: 1px solid rgba(240, 240, 240, 0.29);
             position: relative;
 
             .right_comment_description{
@@ -288,9 +288,11 @@
 
                 align-items: center;
                 position: absolute;
-                left: -50px;
-                top: 10px;
+                left: -35px;
+                margin: auto;
                 z-index: 10;
+                top: 0;
+                bottom: 0;
 
                 .icon {
                     display: flex;
@@ -311,19 +313,14 @@
                         border-radius: 30px;
                         overflow: hidden;
                         justify-content: center;
-                        //opacity: .4;
-                        //border: .1px solid;
                     }
                     &.plus{
                         background: #0f5132;
-                        //background: green;
                     }
                     &.minus{
                         background: #b02a37;
-                        //background: red;
                     }
                     &.active{
-                        //opacity: 1;
                         border: .1px solid;
                     }
 
@@ -333,7 +330,7 @@
                 }
 
                 .rating{
-                    margin: 6px 0;
+                    margin: 5px 0;
 
                     b{
                         text-transform: uppercase;
@@ -360,6 +357,18 @@
                     align-items: center;
                     
     
+                    .js-load-subcomments{
+                        font-size: 13px;
+                        display: flex;
+                        align-items: center;
+                        margin-right: 10px;
+                        color: white;
+
+                        .uk-icon{
+                            margin-right: 3px;
+                        }
+                    }
+
                     .additional_info{
                         display: flex;
                         margin-left: auto;
@@ -393,7 +402,8 @@
                 }
 
                 p{
-                    margin: 15px 0;
+                    margin-bottom: 10px;
+                    margin-top: 0;
                 }
             }
             b{
@@ -404,9 +414,15 @@
                 font-size: 14px;
             }
 
-            //&.is-answer{
+            &.is-answer{
+
+                
+                .main{
+                    border-left: 4px solid rgba(11, 209, 77, 0.875);
+                    padding-left: 10px;
+                }
             //    background: rgba(15, 236, 15, 0.43);
-            //}
+            }
         }
     }
 

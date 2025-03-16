@@ -11,7 +11,6 @@
 @endphp
 @if(auth()->id())
     <form action="{{ route('comments.status.set') }}" method="POST" class="action_rating" enctype="multipart/form-data">
-{{--        ajax --}}
 
         @csrf
 

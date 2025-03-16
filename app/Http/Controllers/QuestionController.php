@@ -100,12 +100,16 @@ class QuestionController extends Controller
                     continue;
                 }
 
-                $replies = $comment->getReplies($comment->replies);
+                $countChilds = $comment->getCountChilds($comment->replies);
 
-                if (!empty($replies)){
-                    $arComments[$comment->id]['comment'] = $comment;
-                    $arComments[$comment->id]['items'] = $replies;
-                }
+                $arComments[$comment->id]['comment'] = $comment;
+                $arComments[$comment->id]['count_childs'] = $countChilds;
+
+                // $replies = $comment->getReplies($comment->replies);
+                // if (!empty($replies)){    
+                //     $arComments[$comment->id]['items'] = $replies;
+                // }
+
             }
         }
 

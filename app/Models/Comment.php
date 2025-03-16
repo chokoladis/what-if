@@ -64,6 +64,28 @@ class Comment extends Model
     //     return $this->getReplies($arReplies,$arComments);
     // }
 
+    public function getCountChilds($replies, int &$count = 0): int
+    {
+        if (empty($replies)){
+            return $count;
+        } elseif(is_array($replies)){
+            $replies = CommentsReply::whereIn('comment_main_id', $replies)->orderBy('created_at')->get(['comment_reply_id','id']);
+
+            if ($replies->isEmpty())
+                return $count;
+        }
+
+        $commentsIds = [];
+        foreach( $replies as $reply){
+            $commentsIds[] = $reply->comment_reply_id;
+            $count++;
+        }
+
+        return $this->getCountChilds( $commentsIds, $count);
+    }
+
+    
+
     public function getReplies($replies, &$result = [])
     {
         if (empty($replies)){

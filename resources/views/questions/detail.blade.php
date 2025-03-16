@@ -86,13 +86,13 @@
                     @foreach ($arComments as $arComment)
                         @php
                             $comment = $arComment['comment'];
-                            $replies = $arComment['items'];
+                            $countChilds = $arComment['count_childs'];
 
                             $isRight = $question->right_comment_id === $comment->id;
 
                             $text = mb_strlen($comment->text) > 60 ? mb_substr($comment->text, 0, 60) : $comment->text;
                         @endphp
-                        <div class="comment {{ $isRight ? 'is-answer' : '' }}">
+                        <div class="comment {{ $isRight ? 'is-answer' : '' }}" data-comment-id="{{ $comment->id }}">
 
                             <x-comment.rating :comment="$comment"></x-comment.rating>
 
@@ -103,6 +103,12 @@
                                 </div>
                                 <p>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
                                 <div class="under">
+                                    @if ($countChilds)
+                                        <a class="js-load-subcomments">
+                                            <span class="uk-icon" uk-icon="icon:commenting; ratio:0.6"></span>
+                                            <i>{{ $countChilds }}</i>
+                                        </a>
+                                    @endif
                                     <div class="comment_actions">
                                         <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
                                         @if($question->user == auth()->user() && !$isRight)
@@ -124,44 +130,6 @@
                                 </div>
                             </div>
                         </div>
-                        @foreach($replies as $comment)
-                            @php
-                                $isRight = $question->right_comment_id === $comment->id;
-
-                                $parent = $comment->parent->comment;
-                                
-                                $text = '@'.$parent->user->name.' '.$comment->text;
-                            @endphp
-                            <div class="comment comment-reply">
-
-                                <x-comment.rating :comment="$comment"></x-comment.rating>
-
-                                <div class="main">
-                                    <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
-                                        <i uk-icon="icon: check; ratio: 1.5"></i>
-                                        <small>{{ __('Автор вопроса выбрал ответ, как верный') }}</small>
-                                    </div>
-                                    <p>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
-                                    <div class="under">
-                                        <div class="comment_actions">
-                                            <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
-                                            @if($question->user == auth()->user())
-                                                <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
-                                            @endif
-                                        </div>
-                                        <div class="additional_info">
-                                            <div class="user">
-                                                <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
-                                                <b>{{ $comment->user_comment->user->name }}</b>
-                                            </div>
-                                            <div class="date">
-                                                {{  $comment->created_at->format('d M Y, H:i:s') }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
                     @endforeach
                 @endif
             </div>
