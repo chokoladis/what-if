@@ -9,3 +9,6 @@ vendor/*
 .vscode
 vendor
 *.cache
+public/storage/users
+public/storage/categories
+public/storage/questions

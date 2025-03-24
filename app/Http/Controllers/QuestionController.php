@@ -3,17 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Events\ViewEvent;
+use App\Http\Requests\Question\LoadSubcommentsRequest;
 use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
+use App\Models\CommentsReply;
 use App\Models\Question;
+use App\Models\QuestionComments;
 use App\Models\QuestionUserStatus;
 use App\Services\CaptchaService;
 use App\Services\FileService;
 use App\Services\QuestionService;
+use App\View\Components\CommentReply;
+use Error;
+use Illuminate\Support\Facades\Request;
 
 class QuestionController extends Controller
 {
+    const COMMENTS_LIMIT = 10;
+
     private QuestionService $questionService;
 
     function __construct()
@@ -143,5 +151,33 @@ class QuestionController extends Controller
         return responseJson(false, [
             new \Error('Ошибка при задании верного комментария', 'error_in_set_right_comment')
         ]);
+    }
+
+    public function loadSubcomments(LoadSubcommentsRequest $request)
+    {
+        $data = $request->validated();
+        $questionId = $data['question-id'];
+        $mainCommentId = $data['comment-id'];
+        $offset = $data['offset'] ?? 0;
+        
+        $isCorrect = QuestionComments::query()
+            ->where('question_id', $questionId)
+            ->where('comment_id', $mainCommentId)
+            ->exists();
+
+        if($isCorrect){
+
+            $question = Question::query()->where('id', $questionId)->first();
+            // cache
+            $replies = CommentsReply::query()
+                ->where('comment_main_id', $questionId)
+                ->skip($offset)
+                ->take(self::COMMENTS_LIMIT)
+                ->get();
+
+            return view('components.comment.subcomments', compact('replies', 'question'));
+        } else {
+            return false;
+        }
     }
 }

@@ -23,6 +23,7 @@ class CommentController extends Controller
 
         if ($comment->wasRecentlyCreated){
 
+            // мб не добавлять везде для подкомментариев
             QuestionComments::create([
                 'question_id' => $question->id,
                 'comment_id' => $comment->id,

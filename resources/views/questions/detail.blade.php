@@ -11,7 +11,7 @@
 @endpush
 
 @section('content')
-    <div class="question-page container" data-question_id="{{ $question->id }}">
+    <div class="question-page container" data-question-id="{{ $question->id }}">
         @if($error)
             <div class="title error">
                 <div class="description">
@@ -89,8 +89,6 @@
                             $countChilds = $arComment['count_childs'];
 
                             $isRight = $question->right_comment_id === $comment->id;
-
-                            $text = mb_strlen($comment->text) > 60 ? mb_substr($comment->text, 0, 60) : $comment->text;
                         @endphp
                         <div class="comment {{ $isRight ? 'is-answer' : '' }}" data-comment-id="{{ $comment->id }}">
 
@@ -101,13 +99,13 @@
                                     <i uk-icon="icon: check; ratio: 1.2"></i>
                                     <small>{{ __('Верный ответ') }}</small>
                                 </div>
-                                <p>{{ empty($comment) ? 'Удаленный комментарий' : $text }}</p>
+                                <p>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
                                 <div class="under">
                                     @if ($countChilds)
-                                        <a class="js-load-subcomments">
+                                        <div class="js-load-subcomments">
                                             <span class="uk-icon" uk-icon="icon:commenting; ratio:0.6"></span>
                                             <i>{{ $countChilds }}</i>
-                                        </a>
+                                        </div>
                                     @endif
                                     <div class="comment_actions">
                                         <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
@@ -129,6 +127,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="subcomments-container" class="d-none"></div>
                         </div>
                     @endforeach
                 @endif

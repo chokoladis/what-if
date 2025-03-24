@@ -110,4 +110,45 @@ $(function(){
             console.error(error);
         }
     }
+
+
+    $('.question-page .js-load-subcomments').on('click', function(){
+        let parent = $(this).parents('.question-page');
+        let parent_comment = $(this).parents('.comment');
+
+        let sendData = new FormData();
+
+        sendData.append('question-id', parent.data('question-id'));
+        sendData.append('comment-id', parent_comment.data('comment-id'));
+
+        loadSubcomments(sendData);
+        // todo
+        // $.ajax({
+            
+        // })
+    });
+
+    async function loadSubcomments(sendData){
+        try {
+            let settings = {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
+                },
+                body: sendData,
+            };
+
+            let query = await fetch('/questions/detail/load-subcomments', settings).then(function(data){
+                console.log(data.text());
+            });
+            // let json = await query.json();
+            // subcomments-container
+            console.log(query.text());
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // /questions/detail/load-subcomments
 });
