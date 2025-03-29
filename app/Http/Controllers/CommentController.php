@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Comment\StoreRequest;
+use App\Http\Requests\Question\LoadSubcommentsRequest;
 use App\Models\Comment;
 use App\Models\CommentsReply;
+use App\Models\Question;
 use App\Models\QuestionComments;
-use Illuminate\Support\Facades\Request;
 
 class CommentController extends Controller
 {
@@ -43,5 +44,33 @@ class CommentController extends Controller
         }
 
         return redirect()->back()->with('message', $message);
+    }
+
+    public function loadSubcomments(LoadSubcommentsRequest $request)
+    {
+        $data = $request->validated();
+        $questionId = $data['question-id'];
+        $mainCommentId = $data['comment-id'];
+        $offset = $data['offset'] ?? 0;
+
+        $isCorrect = QuestionComments::query()
+            ->where('question_id', $questionId)
+            ->where('comment_id', $mainCommentId)
+            ->exists();
+
+        if($isCorrect){
+
+            $question = Question::query()->where('id', $questionId)->first();
+            // cache
+            $replies = CommentsReply::query()
+                ->where('comment_main_id', $questionId)
+                ->skip($offset)
+                ->take(Comment::DEFAULT_LIMIT)
+                ->get();
+
+            return view('components.comment.subcomments', compact('replies', 'question'));
+        } else {
+            return false;
+        }
     }
 }

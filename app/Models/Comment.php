@@ -14,6 +14,8 @@ class Comment extends Model
     use HasFactory;
     use SoftDeletes;
 
+    const DEFAULT_LIMIT = 10;
+
     public $guarded = [];
 
     public function getTable()
@@ -40,29 +42,6 @@ class Comment extends Model
     public function parent() : HasOne {
         return $this->hasOne(CommentsReply::class, 'comment_reply_id', 'id');
     }
-
-    // public function getReplies($replyComments, &$arComments = [])
-    // {
-    //     $result = [];
-    //     $arReplies = [];
-
-    //     dump($replyComments, $arComments);
-    //     foreach ($replyComments as $replyComment) {
-            
-    //         // dump($replyComment);
-    //         $comment = $replyComment->comment();
-    //         // dump($comment->get());
-    //         $comment = $comment->first();
-    //         $arComments[$comment->id] = $comment;
-    //         $arReplies[] = $comment->replies;
-    //     }
-
-    //     if (empty($arReplies)){
-    //         return $arComments;
-    //     }
-
-    //     return $this->getReplies($arReplies,$arComments);
-    // }
 
     public function getCountChilds($replies, int &$count = 0): int
     {
