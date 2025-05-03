@@ -19,6 +19,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/categories', 'CategoryController@index')->name('categories.index');
     Route::get('/categories/detail/{category}/', 'CategoryController@detail')->name('categories.detail');
     Route::get('/questions/detail/{question}/', 'QuestionController@detail')->name('questions.detail');
+    Route::post('/comments/load-subcomments', 'CommentController@loadSubcomments')->name('comments.load.subcomments');
 
     Route::middleware(['auth'])->group(function () {
 
@@ -34,8 +35,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::name('comments.')->group(function () {
                 Route::group(['controller' => 'CommentController'], function () {
                     Route::post('/', 'store')->name('store');
-                    Route::post('/load-subcomments', 'loadSubcomments')->name('load.subcomments');
-
                 });
                 Route::group(['controller' => 'CommentUserStatusController'], function () {
                     Route::post('/status', 'setStatus')->name('status.set');

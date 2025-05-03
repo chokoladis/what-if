@@ -107,12 +107,14 @@
                                             <i>{{ $countChilds }}</i>
                                         </div>
                                     @endif
-                                    <div class="comment_actions">
-                                        <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
-                                        @if($question->user == auth()->user() && !$isRight)
-                                            <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
-                                        @endif
-                                    </div>
+                                    @if (auth()->user())
+                                        <div class="comment_actions">
+                                            <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                            @if($question->user == auth()->user() && !$isRight)
+                                                <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
+                                            @endif
+                                        </div>
+                                    @endif
                                     <div class="additional_info">
                                         <div class="user">
                                             <i class="comment_id text-info">{{ '#'.$comment->id }}</i>

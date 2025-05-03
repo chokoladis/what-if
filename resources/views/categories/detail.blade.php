@@ -45,7 +45,7 @@
             </nav>
         </div>
 
-        @if (!empty($childs))
+        @if (!$childs->isEmpty())
 
             <div class="daughters mt-4">
                 <h4>Подразделы</h4>
@@ -55,7 +55,7 @@
 
         @endif
 
-        @if (!empty($questions))
+        @if (!$questions->isEmpty())
             <div class="questions_block">
                 <h4>{{ __('Вопросы') }}</h4>
                 <div class="list-group">

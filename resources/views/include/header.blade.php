@@ -95,6 +95,21 @@
                             </div>
                         </div>
                     </li>
+                    <li class="nav-item dropdown js-change-lang">
+                        <a id="langDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            {{ __('ru') ?? 'en' }}
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+                            <a class="dropdown-item" data-lang="ru">
+                                {{ __('ru') }}
+                            </a>
+                            <a class="dropdown-item" data-lang="en">
+                                {{ __('en') }}
+                            </a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
