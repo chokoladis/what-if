@@ -79,5 +79,15 @@ $(function(){
     //     sendAjax(action, method, sendData);
     // });
 
+    $('.js-change-lang .dropdown-item').on('click', function(){
+        let sendData = new FormData();
+        sendData.append('lang', $(this).data('lang'));
+
+        let res = sendAjax('/setting/lang', 'POST',  sendData);
+        console.log(res);
+    //     check result and return errors or upd page
+    });
+    
+
 });
 

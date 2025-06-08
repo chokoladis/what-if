@@ -7,9 +7,5 @@ return [
     'edit' => 'Редактировать',
     'change' => 'Изменить',
     'update' => 'Обновить',
-    'questions' => [
-        'right_answer' => 'Верный ответ'
-    ],
-    'developed' => 'разработано ',
+    'callback' => 'Обратная связь',
 ];
-?>

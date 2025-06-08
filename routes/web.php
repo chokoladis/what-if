@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Auth::routes();
 
@@ -20,6 +20,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/categories/detail/{category}/', 'CategoryController@detail')->name('categories.detail');
     Route::get('/questions/detail/{question}/', 'QuestionController@detail')->name('questions.detail');
     Route::post('/comments/load-subcomments', 'CommentController@loadSubcomments')->name('comments.load.subcomments');
+    Route::post('/setting/lang', 'SettingController@setLang')->name('setting.set.lang');
 
     Route::middleware(['auth'])->group(function () {
 

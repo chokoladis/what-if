@@ -1,8 +1,10 @@
 <!doctype html>
 @php
     $theme = $_COOKIE['theme_mode'] ?? 'dark';
+    $lang = \Illuminate\Support\Facades\Session::get('lang') ?? app()->getLocale();
+    \Illuminate\Support\Facades\App::setLocale($lang);
 @endphp
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="{{ $theme }}">
+<html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,13 +38,13 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('questions.index') }}">{{ __('Вопросы') }}</a>
+                        <a class="nav-link" href="{{ route('questions.index') }}">{{ __('menu.main.questions') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('categories.index') }}">{{ __('Категории') }}</a>
+                        <a class="nav-link" href="{{ route('categories.index') }}">{{ __('menu.main.categories') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-link" href="{{ route('questions.add') }}">{{ __('Задать вопрос') }}</a>
+                        <a class="btn btn-link" href="{{ route('questions.add') }}">{{ __('menu.main.ask') }}</a>
                     </li>
                 </ul>
 
@@ -50,13 +52,13 @@
                     @guest
                         @if (Route::has('login'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Вход') }}</a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('menu.main.login') }}</a>
                             </li>
                         @endif
 
                         @if (Route::has('register'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">{{ __('Регистрация') }}</a>
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('menu.main.register') }}</a>
                             </li>
                         @endif
                     @else
@@ -78,7 +80,7 @@
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
+                                    {{ __('menu.main.logout') }}
                                 </a>
 
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -99,6 +101,7 @@
                         <a id="langDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             {{ __('ru') ?? 'en' }}
+{{-- todo  flags --}}
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">

@@ -7,7 +7,7 @@
                     <div class="container">
                         <div class="row">
                             <button type="button" class="btn btn-primary col-2" data-bs-toggle="modal" data-bs-target="#modal-feedback">
-                                {{ __('Обратная связь') }}
+                                {{ __('btn.callback') }}
                             </button>
                         </div>
                         <div class="row mt-5">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="container">
-                    <div class="copyright text-center">{{ __('develop by ') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2025 years') }}</div>
+                    <div class="copyright text-center">{{ __('system.developed') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2025') }}</div>
                 </div>
             </footer>
         </div>

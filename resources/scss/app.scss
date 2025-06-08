@@ -54,7 +54,11 @@ nav.header{
         .js-change-lang{
             margin: auto 0;
             margin-left: 5px;
-            display: flex;            
+            display: flex;
+
+            .dropdown-menu{
+                min-width: 0;
+            }
 
             > a {
                 
