@@ -1,24 +1,25 @@
 <?php
 
 if (!function_exists('responseJson')) {
-    function responseJson(bool $success = true, array $result = null, int $status = 200)
+//    todo middleware ?
+    function responseJson(bool $success = true, mixed $result = null, int $status = null)
     {
-        $data = ['success' => $success,'result' => $result, 'status' => $status];
+        $data = ['success' => $success,'result' => $result];
 
         if (!$success) {
 
             $data['error'] = $result;
             unset($data['result']);
 
-            if ($data['status'] === 200){
-                $data['status'] = 400;
+            if (!$status) {
+                $status = \App\Services\ResponseService::RESPONSE_BAD_REQUEST;
             }
         }
 
-        return response()
-            ->json($data)
-            ->setEncodingOptions(JSON_UNESCAPED_UNICODE)
-            ->setStatusCode($status);
+        return response(
+            $data,
+            $status ?? \App\Services\ResponseService::RESPONSE_OK,
+        );
     }
 }
 

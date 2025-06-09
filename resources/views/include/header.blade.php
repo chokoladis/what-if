@@ -1,8 +1,10 @@
 <!doctype html>
 @php
     $theme = $_COOKIE['theme_mode'] ?? 'dark';
-    $lang = \Illuminate\Support\Facades\Session::get('lang') ?? app()->getLocale();
+    $lang = \Illuminate\Support\Facades\Cookie::get('lang') ?? app()->getLocale();
     \Illuminate\Support\Facades\App::setLocale($lang);
+
+    $flagSrc = \Illuminate\Support\Facades\Storage::url('main/flag-'.$lang.'.svg');
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>
@@ -99,17 +101,16 @@
                     </li>
                     <li class="nav-item dropdown js-change-lang">
                         <a id="langDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ __('ru') ?? 'en' }}
-{{-- todo  flags --}}
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="{{ $flagSrc }}" alt="">
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
                             <a class="dropdown-item" data-lang="ru">
-                                {{ __('ru') }}
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url('main/flag-ru.svg') }}" alt="{{ __('flag-ru') }}" title="{{ __('ru') }}">
                             </a>
                             <a class="dropdown-item" data-lang="en">
-                                {{ __('en') }}
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url('main/flag-en.svg') }}" alt="{{ __('flag-en') }}" title="{{ __('en') }}">
                             </a>
                         </div>
                     </li>

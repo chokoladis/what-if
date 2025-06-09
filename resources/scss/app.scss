@@ -38,6 +38,10 @@ $pink : rgb(206, 56, 244);
         color: white;
     }
 }
+img{
+    width: 100%;
+    height: 100%;
+}
 
 
 
@@ -55,22 +59,29 @@ nav.header{
             margin: auto 0;
             margin-left: 5px;
             display: flex;
+            width: 50px;
 
             .dropdown-menu{
                 min-width: 0;
+                padding-bottom: 0;
             }
 
             > a {
                 
                 border-radius: 30px;
                 border: 1px solid;
-                width: 30px;
+                width: 100%;
                 height: 30px;
                 display: flex;
                 align-items: center;
+                padding: 0;
 
                 &::after{
                     display: none;
+                }
+
+                .dropdown-item{
+                    padding: 13px;
                 }
             }
         }

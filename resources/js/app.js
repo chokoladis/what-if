@@ -28,41 +28,27 @@ async function setThemeMode(){
 
 async function sendAjax(route, method, data){
 
-    // try {
-        let settings = {
-            method: method,
-            headers: {
-                'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
-            },
-            body: data,
-        };
+    let settings = {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
+        },
+        body: data,
+    };
 
-        let query = await fetch(route, settings);
+    let query = await fetch(route, settings);
 
-        console.log(query.status);
-        
-        if (query.status == 201){
-            let json = await query.json();
+    let result = await query.json();
 
-            console.log(json);
-        }
-        
-
-    // } catch (error) {
-        // console.log(query);
-        // console.log(error);
-        // console.error(error);
-    // }
+    return [query.status, result];
 }
 
 $(function(){
     $('.js-change-theme').on('click', function(){
 
         setThemeMode();
-        
 
-        // $(this).
-        // $('html').attr('')
+    //     todo
     });
 
     // $('#modal-feedback [type="submit"]').on('click', function(){
@@ -83,9 +69,15 @@ $(function(){
         let sendData = new FormData();
         sendData.append('lang', $(this).data('lang'));
 
-        let res = sendAjax('/setting/lang', 'POST',  sendData);
-        console.log(res);
-    //     check result and return errors or upd page
+        let data = sendAjax('/setting/lang', 'POST',  sendData);
+
+        data.then(function(result) {
+            let status = result[0];
+            let json = result[1];
+            if (status === 200){
+                location.reload();
+            }
+        });
     });
     
 
