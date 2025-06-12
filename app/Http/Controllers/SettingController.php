@@ -21,4 +21,11 @@ class SettingController extends Controller
 
         return $success ? responseJson() : responseJson(false, $error);
     }
+
+    public function setTheme(Request $request)
+    {
+        [$newTheme, $error] = $this->settingService->setTheme();
+
+        return $newTheme ? responseJson(result: $newTheme) : responseJson(false, $error);
+    }
 }

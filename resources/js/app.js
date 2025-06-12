@@ -4,37 +4,17 @@ import '../../node_modules/jquery-mask-plugin/src/jquery.mask.js';
  
 $('.js-phone-mask').mask('+9 999 9999 999');
 
-async function setThemeMode(){
-
-    try {
-        let settings = {
-            method: 'POST',
-            headers: {
-            //     Accept: 'application/json',
-            //     'Content-Type': 'application/json',
-                // 'X-CRFS-CONTENT' : $('[csrf-token]').attr('content'),
-                'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
-                // body: body,
-            }
-        };
-
-        let query = await fetch('/ajax/setThemeMode', settings);
-        // let json = await query.json();
-        console.log(query);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function sendAjax(route, method, data){
+async function sendAjax(route, method, data = null){
 
     let settings = {
         method: method,
         headers: {
             'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
         },
-        body: data,
     };
+    if (data){
+        settings.data = data;
+    }
 
     let query = await fetch(route, settings);
 
@@ -44,12 +24,6 @@ async function sendAjax(route, method, data){
 }
 
 $(function(){
-    $('.js-change-theme').on('click', function(){
-
-        setThemeMode();
-
-    //     todo
-    });
 
     // $('#modal-feedback [type="submit"]').on('click', function(){
     //     let form = $('#modal-feedback form');
@@ -79,7 +53,20 @@ $(function(){
             }
         });
     });
-    
+
+    $('.js-change-theme').on('click', function(){
+
+        let data = sendAjax('/setting/theme', 'POST');
+
+        data.then(function(result) {
+            let status = result[0];
+            let json = result[1];
+            if (status === 200 && json.result){
+                $('html').attr('data-bs-theme', json.result)
+            }
+        });
+    });
+
+
 
 });
-

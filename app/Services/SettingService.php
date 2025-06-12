@@ -3,26 +3,42 @@
 namespace App\Services;
 
 use Error;
-use http\Cookie;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cookie;
 
 class SettingService {
     
-    const SUPPORT_LANG = ['ru', 'en'];
+    const LANG = ['ru', 'en'];
+    const THEME = ['dark', 'light'];
 
-    public function setLang(string $lang):mixed
+    public function setLang(string $lang): array
     {
-        if (in_array($lang, self::SUPPORT_LANG)){
-
-            $newLang = $lang ?? config('app.locale');
-            App::setLocale($newLang);
-            \Illuminate\Support\Facades\Cookie::queue('lang', $newLang, 36000000);
+        if (in_array($lang, self::LANG)){
+            App::setLocale($lang);
+            Cookie::queue('lang', $lang, 36000000);
 
             return [true, null];
         } else {
-            return [false, new Error(__('This lang not supporting'))];
+            return [false, new Error(__('entities.setting.lang_not_support'))];
+        }
+    }
+
+    public function setTheme(): array
+    {
+        try {
+            $theme = Cookie::get('theme', 'dark');
+            $themes = self::THEME;
+
+            $key = array_search($theme, $themes);
+            unset($themes[$key]);
+
+            $newTheme = current($themes);
+            Cookie::queue('theme', $newTheme, 36000000);
+
+            return [$newTheme, null];
+
+        } catch (\Exception $e) {
+            return [false, new Error($e->getMessage())];
         }
     }
 }

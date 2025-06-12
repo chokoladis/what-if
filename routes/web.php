@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ServicesAuthController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -8,10 +10,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/api/google_auth.php', [App\Http\Controllers\ServicesAuthController::class, 'googleAuth'])->name('google_auth');
-Route::get('/api/yandex_auth.php', [App\Http\Controllers\ServicesAuthController::class, 'yandexAuth'])->name('yandex_auth');
-Route::get('/api/telegram_auth.php', [App\Http\Controllers\ServicesAuthController::class, 'telegramAuth'])->name('telegram_auth');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/api/google_auth.php', [ServicesAuthController::class, 'googleAuth'])->name('google_auth');
+Route::get('/api/yandex_auth.php', [ServicesAuthController::class, 'yandexAuth'])->name('yandex_auth');
+Route::get('/api/telegram_auth.php', [ServicesAuthController::class, 'telegramAuth'])->name('telegram_auth');
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
@@ -21,6 +23,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/questions/detail/{question}/', 'QuestionController@detail')->name('questions.detail');
     Route::post('/comments/load-subcomments', 'CommentController@loadSubcomments')->name('comments.load.subcomments');
     Route::post('/setting/lang', 'SettingController@setLang')->name('setting.set.lang');
+    Route::post('/setting/theme', 'SettingController@setTheme')->name('setting.set.theme');
 
     Route::middleware(['auth'])->group(function () {
 
@@ -70,4 +73,4 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');
 });
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [HomeController::class, 'index'])->name('home');

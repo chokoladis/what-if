@@ -1,10 +1,10 @@
 <!doctype html>
 @php
-    $theme = $_COOKIE['theme_mode'] ?? 'dark';
     $lang = \Illuminate\Support\Facades\Cookie::get('lang') ?? app()->getLocale();
     \Illuminate\Support\Facades\App::setLocale($lang);
 
     $flagSrc = \Illuminate\Support\Facades\Storage::url('main/flag-'.$lang.'.svg');
+    $theme = \Illuminate\Support\Facades\Cookie::get('theme', 'dark');
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>

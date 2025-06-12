@@ -93,7 +93,14 @@ nav.header{
         align-items: center;
         height: 30px;
         overflow: hidden;
-        
+        cursor: pointer;
+        transform:scale(0.9);
+
+        &:hover{
+            transform:scale(1.05);
+        //    filter - drop-shadow //todo
+        }
+
         .img{
             position: relative;
             top: -34px;
@@ -110,17 +117,21 @@ nav.header{
             }
         }
 
-        &[data-theme="dark"]{
-            .img{
-                position: relative;
-                top: 0px;
-            }    
-        }
-
         *{
             transition: .5s;
         }
         
+    }
+}
+
+html[data-bs-theme="dark"]{
+    nav.header{
+        .js-change-theme{
+            .img{
+                position: relative;
+                top: 0px;
+            }
+        }
     }
 }
 
