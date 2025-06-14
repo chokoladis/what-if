@@ -39,6 +39,9 @@ return [
     'h_captcha' => [
         'secret' => env('H_CAPTCHA_SECRET'),
         'sitekey' => env('H_CAPTCHA_SITEKEY'),
-    ]
+    ],
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
 
 ];

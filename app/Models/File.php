@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use App\Services\FileService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Log;
 
 class File extends Model
 {
@@ -32,6 +30,12 @@ class File extends Model
 
             // $item->path_thumbnail = FileService::createThumbWebp($item->path);
             
+        });
+
+        static::deleting(function($file) {
+            $fullpath = $_SERVER['DOCUMENT_ROOT'].'/storage/'.$file->relation.'/'.$file->path;
+            if (file_exists($fullpath))
+                unlink($fullpath);
         });
    
     }

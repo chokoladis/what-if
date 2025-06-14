@@ -20,7 +20,6 @@ class FileService {
         $imgManager = new ImageManager(new Driver());
 
         $realPath = public_path().Storage::url($filePath);
-        dump($realPath);
         $image = $imgManager->read($realPath);
 
         $size = filesize($filePath); // bites

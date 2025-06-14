@@ -55,6 +55,7 @@ return [
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),
+            'days' => env('LOG_DAYS', 60),
             'ignore_exceptions' => false,
         ],
 
@@ -62,6 +63,7 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_DAYS', 30),
             'replace_placeholders' => true,
         ],
 

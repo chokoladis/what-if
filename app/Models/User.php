@@ -60,6 +60,24 @@ class User extends Authenticatable
         return $this->hasOne(File::class, 'id', 'photo_id');
     }
 
-//    todo
-//    upd check avatar old
+    public static function boot() {
+
+        parent::boot();
+
+        /**
+         * Write code on Method
+         *
+         * @return response()
+         */
+        static::updated(function($user) {
+
+            if ($user->getOriginal('photo_id') !== $user->photo_id){
+                File::find($user->getOriginal('photo_id'))->delete();
+            }
+
+            // $item->path_thumbnail = FileService::createThumbWebp($item->path);
+
+        });
+
+    }
 }

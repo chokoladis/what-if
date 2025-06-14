@@ -6,33 +6,13 @@ use App\Http\Requests\User\SetPhotoRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\User;
 use App\Services\FileService;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cookie;
+use App\Services\OpenAI\UserService;
 
 class UserController extends Controller
 {
-    public function setThemeMode(){
-
-        $theme = isset($_COOKIE['theme_mode']) ? $_COOKIE['theme_mode'] : 'dark';
-        $theme = $theme === 'dark' ? 'light' : $theme;
-        
-        dump(Cookie::get('theme_mode'));
-
-        dump($theme);
-
-        Cookie::forget('theme_mode');
-
-        try {
-            
-            Cookie::forget('theme_mode');
-
-            $response = new Response(1);
-            $response->withCookie(cookie('theme_mode', $theme, 360000, '/'));
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-        
-        return $response;
+    function __construct()
+    {
+        $this->middleware('throttle:4,1')->only('update', 'setPhoto');
     }
 
     public function index(){
@@ -50,9 +30,6 @@ class UserController extends Controller
 
     public function setPhoto(SetPhotoRequest $request)
     {
-        //        отправить нейронке на модерацию
-        //        todo
-        //        captcha
         $file = $request->file('photo');
 
         if ($file->getError()){
@@ -60,6 +37,9 @@ class UserController extends Controller
         }
 
         $photo = FileService::save($file, 'users');
+
+//        todo on stack
+//        $isLegal = (new UserService)->isContentFileLegal($photo);
 
         $user = User::find(auth()->id());
         $user->photo_id = $photo->id;
