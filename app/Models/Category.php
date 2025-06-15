@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Services\FileService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use PDO;
 
@@ -137,8 +139,27 @@ class Category extends Model
          *
          * @return response()
          */
-        static::creating(function($item) {
-            $item->code = Str::slug(Str::lower($item->title),'-');
+        static::creating(function($category) {
+
+//            todo
+//            Log::debug('create categori');
+//
+//            if (!is_numeric($category->file_id)){
+//                $file = FileService::save($category->file_id, 'categories');
+//                $category->file_id = $file->id;
+//            }
+            $category->code = Str::slug(Str::lower($category->title),'-');
+        });
+
+        static::updating(function($category) {
+
+//            todo
+//            Log::debug('upd categori - '.$category->file_id);
+//
+//            if (!is_numeric($category->file_id)){
+//                $file = FileService::save($category->file_id, 'categories');
+//                $category->file_id = $file->id;
+//            }
         });
 
         static::deleted(function($item){

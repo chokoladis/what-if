@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\SetPhotoRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\User;
+use App\Services\AI\Gemini\UserService;
 use App\Services\FileService;
-use App\Services\OpenAI\UserService;
 
 class UserController extends Controller
 {
@@ -40,6 +40,8 @@ class UserController extends Controller
 
 //        todo on stack
 //        $isLegal = (new UserService)->isContentFileLegal($photo);
+        $isLegal = (new UserService())->isContentFileLegal($photo);
+        dd($isLegal);
 
         $user = User::find(auth()->id());
         $user->photo_id = $photo->id;

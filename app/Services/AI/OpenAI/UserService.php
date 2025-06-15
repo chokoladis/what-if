@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\OpenAI;
+namespace App\Services\AI\OpenAI;
 
 use App\Models\File;
 
@@ -11,7 +11,7 @@ class UserService extends BaseService
         $fullPath = $_SERVER['DOCUMENT_ROOT'].'/storage/'.$file->relation.'/'.$file->path;
 
         if (!file_exists($fullPath)){
-            return [false, new \Error(__('entities.openai.file_not_found'), 'file_not_found')];
+            return [false, new \Error(__('entities.integrations.file_not_found'), 'file_not_found')];
         }
 
         $mimeType = mime_content_type($fullPath);

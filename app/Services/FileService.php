@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
@@ -63,8 +64,8 @@ class FileService {
             }
             
             $ext = $img->extension();
-            $name = $img->hashName();
-            $filePath = $subDir.'/'.$img->hashName();
+            $name = strlen($img->hashName()) > 45 ? substr($img->hashName(), 0, 45).'.'.$ext : $img->hashName();
+            $filePath = $subDir.'/'.$name;
     
             $data = [
                 'name' => $name,
@@ -73,7 +74,7 @@ class FileService {
                 'relation' => $mainDir
             ];
 
-            $img->move($folder, $img->hashName());
+            $img->move($folder, $name);
 
             $file = File::create($data);
             
