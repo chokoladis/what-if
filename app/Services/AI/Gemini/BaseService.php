@@ -31,7 +31,6 @@ class BaseService extends BaseAI
         ]);
         curl_setopt($curl, CURLOPT_HEADER, false);
 
-        Log::debug('prepera data', [$data]);
         $jsonData = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -43,19 +42,10 @@ class BaseService extends BaseAI
         $error = curl_error($curl);
         curl_close($curl);
 
-        //            only for testing
-
         Log::debug('gemini res - ' . $response);
-//        Log::debug('$error - ' . $error);
 
         if (is_string($response)) {
-            $jsonResult = json_decode($response, true);
-
-            if (!empty($jsonResult['error'])) {
-                return [false, new \Error($jsonResult['error']['message'])];
-            } else {
-                return [true, null];
-            }
+            return $this->getResponse($response);
         } else {
             return [false, $error];
         }
@@ -64,5 +54,28 @@ class BaseService extends BaseAI
     protected function request($data)
     {
         return $this->sendCurl($data);
+    }
+
+    protected function getResponse(string $response)
+    {
+        $responseContent = json_decode($response, true);
+
+        $content = current($responseContent['candidates'])['content'];
+        $firstPart = current($content['parts']);
+        $jsonResult = $firstPart['text'];
+
+        if (stripos($jsonResult, ';') === false) {
+            return [false, $jsonResult];
+        } else {
+            [$isLegal, $error] = explode(';', $jsonResult);
+
+            $isLegal = filter_var($isLegal, FILTER_VALIDATE_BOOLEAN);
+
+            if (!$isLegal) {
+                return [false, new \Error($error)];
+            } else {
+                return [true, null];
+            }
+        }
     }
 }

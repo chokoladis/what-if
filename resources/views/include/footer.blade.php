@@ -97,6 +97,19 @@
                 });
             </script>
         @endif
+        @if (\Session::has('error'))
+            <div id="system-alert-error" class="alert alert-danger" role="alert">
+                {!! \Session::get('error') !!}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <script>
+                (function (){
+                    setTimeout(function() {
+                        $('#system-alert-error').alert('close');
+                    },5000);
+                });
+            </script>
+            @endif
 
         @vite(['resources/js/app.js'])
         @stack('script')

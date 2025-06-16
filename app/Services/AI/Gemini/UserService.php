@@ -18,19 +18,19 @@ class UserService extends BaseService
         $mimeType = mime_content_type($fullPath);
         $base64data = base64_encode(file_get_contents($fullPath));
 
-        $fileContent = 'data:'.$mimeType.';base64,'.$base64data;
-
-        $requestData = [ 'contents' =>
-            [
-                'parts' => [
+        $requestData = [ 'contents' => [
+            'parts' => [
+                [
                     'inline_data' => [
                         'mime_type' => $mimeType,
-                        'data' => $fileContent
+                        'data' => $base64data
                     ]
                 ],
-                'text' => 'Законное ли прикрепленное изображение. Ответ в виде json со значениями success(bool), result(string). Если законно, верни success - true, result - пустота, иначе success - false, result - *дай пояснение для вывода ошибки*'
-            ]
-        ];
+                [
+                    'text' => 'Is the attached image legitimate. Return response next format - (bool); (string:*max 70 chars*|null). Example - true; , or false;is picture 18+.'
+                ]
+            ],
+        ]];
 
         return $this->request($requestData);
     }

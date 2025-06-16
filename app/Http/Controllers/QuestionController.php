@@ -44,7 +44,7 @@ class QuestionController extends Controller
         [$success, $error] = $captcha->verify($request->get('h-captcha-response'));
 
         if (!$success) {    
-            return redirect()->back()->with('message', $error);
+            return redirect()->back()->with('error', $error);
         }
 
         try {
@@ -54,7 +54,8 @@ class QuestionController extends Controller
                     $res = FileService::save($img,'questions');
                     $data['file_id'] = $res['id'];
                 } else {
-                    return redirect()->back()->with('message', 'File not valid');
+//                    todo trans
+                    return redirect()->back()->with('error', 'File not valid');
                 }
             }
 

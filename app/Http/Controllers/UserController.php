@@ -33,20 +33,22 @@ class UserController extends Controller
         $file = $request->file('photo');
 
         if ($file->getError()){
-            return $file->getErrorMessage();
+            return redirect()->route('profile.index')->with('error', $file->getErrorMessage());
         }
 
         $photo = FileService::save($file, 'users');
 
 //        todo on stack
-//        $isLegal = (new UserService)->isContentFileLegal($photo);
-        $isLegal = (new UserService())->isContentFileLegal($photo);
-        dd($isLegal);
+         [$isLegal, $error] = (new UserService())->isContentFileLegal($photo);
+
+        if (!$isLegal){
+            return redirect()->route('profile.index')->with('error', $error);
+        }
 
         $user = User::find(auth()->id());
         $user->photo_id = $photo->id;
         $user->save();
 
-        return redirect()->route('profile.index');
+        return redirect()->route('profile.index')->with('message', 'Фото успешно обновлено');
     }
 }
