@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Errors\CommonError;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 
 class SettingController extends Controller
 {
@@ -17,7 +17,11 @@ class SettingController extends Controller
 
     public function setLang(Request $request)
     {
-        [$success, $error] = $this->settingService->setLang($request->get('lang'));
+        $lang = $request->get('lang');
+        if (!$lang)
+            return responseJson(false, new CommonError(__('services.options.lang_not_set'), 'lang_not_set'));
+
+        [$success, $error] = $this->settingService->setLang($lang);
 
         return $success ? responseJson() : responseJson(false, $error);
     }

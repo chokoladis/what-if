@@ -1,12 +1,7 @@
 <?php
 
 return [
-    'add' => 'Add',
-    'remove' => 'Delete',
-    'reply' => 'Reply',
-    'edit' => 'Edit',
-    'change' => 'Change',
-    'update' => 'Update',
+    'file_not_found' => 'file not found',
     'questions' => [
         'right_answer' => 'Right answer'
     ],

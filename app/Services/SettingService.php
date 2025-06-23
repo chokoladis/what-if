@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Error;
+use App\Models\Errors\CommonError;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 
@@ -19,7 +19,7 @@ class SettingService {
 
             return [true, null];
         } else {
-            return [false, new Error(__('entities.setting.lang_not_support'))];
+            return [false, new CommonError(__('services.options.lang_not_support'), 'lang_not_support')];
         }
     }
 
@@ -38,7 +38,7 @@ class SettingService {
             return [$newTheme, null];
 
         } catch (\Exception $e) {
-            return [false, new Error($e->getMessage())];
+            return [false, new CommonError($e->getMessage())];
         }
     }
 }

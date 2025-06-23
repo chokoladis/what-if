@@ -1,12 +1,7 @@
 <?php
 
 return [
-    'add' => 'Добавить',
-    'remove' => 'Удалить',
-    'reply' => 'Ответить',
-    'edit' => 'Редактировать',
-    'change' => 'Изменить',
-    'update' => 'Обновить',
+    'file_not_found' => 'Файл не найден',
     'questions' => [
         'right_answer' => 'Верный ответ'
     ],

@@ -137,7 +137,11 @@ html[data-bs-theme="dark"]{
             }
         }
     }
+    footer .main {
+        background: rgb(2, 21, 34);
+    }
 }
+
 
 footer{
     padding-bottom: 20px;
@@ -147,8 +151,7 @@ footer{
     // box-shadow: 0px -6px 6px rgba(0,0,0, 0.075);
     .main{
         padding: 50px 0;
-        //background: rgba(2,28,45,1);
-        background: rgb(2, 21, 34);
+        background: rgba(6, 140, 223, 0.35);
         margin-bottom: 20px;
         position: relative;
         overflow: hidden;
