@@ -39,17 +39,48 @@ $(function(){
     //     sendAjax(action, method, sendData);
     // });
 
+    // $.ajax({
+    //     url: '/setting/lang',
+    //     type: 'POST',
+    //     data: {
+    //         "_token": $('[name="csrf-token"]').attr('content'),
+    //         lang: $(this).data('lang')
+    //     },
+    //     success: function (data){
+    //         console.log(data);
+    //     }
+    // });
+
+
     $('.js-change-lang .dropdown-item').on('click', function(){
-        let sendData = new FormData();
-        sendData.append('lang', $(this).data('lang'));
+        // let sendData = new FormData();
+        // sendData.append('lang', $(this).data('lang'));
+        //
+        // let data = sendAjax('/setting/lang', 'POST',  sendData);
+        //
+        // data.then(function(result) {
+        //     let status = result[0];
+        //     let json = result[1];
+        //     if (status === 200){
+        //         location.reload();
+        //     }
+        // });
 
-        let data = sendAjax('/setting/lang', 'POST',  sendData);
+        $.ajax({
+            url: '/setting/lang',
+            type: 'POST',
+            data: {
+                "_token": $('[name="csrf-token"]').attr('content'),
+                lang: $(this).data('lang')
+            },
+            success: function (json){
+                // console.log(data);
 
-        data.then(function(result) {
-            let status = result[0];
-            let json = result[1];
-            if (status === 200){
-                location.reload();
+                if (json.success){
+                    location.reload();
+                } else {
+                    // $('')
+                }
             }
         });
     });

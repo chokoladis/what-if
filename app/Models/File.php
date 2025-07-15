@@ -17,6 +17,11 @@ class File extends Model
     // }
 
 
+    public function getFullUrlAttribute(): string
+    {
+        return asset('storage/'.$this->relation.'/' . $this->path);
+    }
+
     public static function boot() {
 
         parent::boot();

@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\File;
 use App\Models\FileCategory;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class FileService {
 
@@ -52,20 +52,25 @@ class FileService {
         return $mainPath;
     }
 
-    public static function save(UploadedFile $img, string $mainDir = 'main'){
-        
-        $root = public_path() . '/storage/' . $mainDir;
-        $subDir = substr($img->hashName(), 0, 3 );
+    public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main'){
+
+        $root = public_path("storage/{$mainDir}");
+        $subDir = substr($img->hashName(), 0, 3);
+        $folder = "{$root}/{$subDir}";
+
+//        $root = public_path('/storage/' . $mainDir);
+//        $subDir = substr($img->hashName(), 0, 3 );
         
         try {
-            $folder = $root.'/'.$subDir.'/';
             if (!is_dir($folder)){
-                mkdir($folder, 0755, TRUE);
+                mkdir($folder, recursive: TRUE);
             }
             
             $ext = $img->extension();
             $name = strlen($img->hashName()) > 45 ? substr($img->hashName(), 0, 45).'.'.$ext : $img->hashName();
-            $filePath = $subDir.'/'.$name;
+            $filePath = "{$subDir}/{$name}";
+
+            $destination = "{$folder}/{$name}";
     
             $data = [
                 'name' => $name,
@@ -74,7 +79,8 @@ class FileService {
                 'relation' => $mainDir
             ];
 
-            $img->move($folder, $name);
+            \Illuminate\Support\Facades\File::copy($img->getRealPath(), $destination);
+//            $img->move($folder, $name);
 
             $file = File::create($data);
             
