@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Errors\CommonError;
+use App\Models\Setting;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 
@@ -40,5 +41,16 @@ class SettingService {
         } catch (\Exception $e) {
             return [false, new CommonError($e->getMessage())];
         }
+    }
+
+    public function isCaptchaSetOn()
+    {
+        $result = Setting::query()->where('name', 'captcha_set_on')->first();
+
+        if (!empty($result)) {
+            return (bool)$result->value;
+        }
+
+        return false;
     }
 }

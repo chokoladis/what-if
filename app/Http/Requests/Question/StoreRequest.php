@@ -24,16 +24,16 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'h-captcha-response' => 'string|nullable',
-            'category' => 'required|string',
-            'title' => 'required|string',
+            'category' => 'string',
+            'title' => 'required|string|min:3',
             'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ]
         ];
     }
 
     public function messages(){
         return [
-            'img.size' => 'Размер изображения более 3мб'
+            'img.size' => 'Размер изображения более 3мб',
+            'title.min' => 'Заголовок должен иметь не менее 3 символов'
         ];
     }
 }

@@ -1,6 +1,5 @@
 /node_modules
 vendor/*
-/tests
 .env
 .idea
 *.xml
