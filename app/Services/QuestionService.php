@@ -47,7 +47,8 @@ Class QuestionService
 
     public function setRightComment($data)
     {
-        return self::$model::query()->where('id', $data['question_id'])
+        return self::$model::query()
+            ->where('id', $data['question_id'])
             ->update(['right_comment_id' => $data['comment_id']]);
     }
 
@@ -60,7 +61,7 @@ Class QuestionService
             return [$question, null];
         }
 
-        [$data, $error] = $this->prepareStoraData($request);
+        [$data, $error] = $this->prepareStoreData($request);
 
         if (!$data){
             return [false, $error];
@@ -69,7 +70,7 @@ Class QuestionService
         return [ Question::create($data), null ];
     }
 
-    private function prepareStoraData(StoreRequest $request)
+    private function prepareStoreData(StoreRequest $request)
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();//user()->id; // заглушка
@@ -89,8 +90,9 @@ Class QuestionService
             }
 
             if (isset($data['category'])){
-                $category = Category::getElement($data['category']);
-                $data['category_id'] = $category?->id ?? 0;
+                if ($category = Category::getElement($data['category'])){
+                    $data['category_id'] = $category->id;
+                }
                 unset($data['category']);
             }
         } catch (\Throwable $th) {

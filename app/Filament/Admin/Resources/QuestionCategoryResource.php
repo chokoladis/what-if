@@ -95,18 +95,18 @@ class QuestionCategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('parent_id'),
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('code'),
+                Tables\Columns\TextColumn::make('id')->sortable(),
+                Tables\Columns\TextColumn::make('parent_id')->sortable(),
+                Tables\Columns\TextColumn::make('title')->sortable(),
+                Tables\Columns\TextColumn::make('code')->sortable(),
                 Tables\Columns\ImageColumn::make('file.full_url')
                     ->label('Файл')
                     ->url(fn ($record) => optional($record->file)->full_url),
-                Tables\Columns\TextColumn::make('sort'),
-                Tables\Columns\TextColumn::make('active'),
-                Tables\Columns\TextColumn::make('level'),
-                Tables\Columns\TextColumn::make('created_at'),
-                Tables\Columns\TextColumn::make('updated_at'),
+                Tables\Columns\TextColumn::make('sort')->sortable(),
+                Tables\Columns\TextColumn::make('active')->sortable(),
+                Tables\Columns\TextColumn::make('level')->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')->sortable(),
             ])
             ->filters([
                 //

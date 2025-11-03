@@ -51,7 +51,7 @@ class ServicesAuthController extends Controller
             throw new Exception("Ошибка параметров");
         }
 
-        return redirect()->route('home');
+        return redirect()->back()->with('message', __('user.login_success'));
     }
 
     public function getGoogleUserToken(string $code){
@@ -146,7 +146,7 @@ class ServicesAuthController extends Controller
             throw new Exception("Ошибка параметров");
         }
 
-        return redirect()->route('home');
+        return redirect()->back()->with('message', __('user.login_success'));
     }
 
     public function getYandexUserToken(string $code){

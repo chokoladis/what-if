@@ -2,16 +2,11 @@
 
 namespace App\Models;
 
-use App\Services\FileService;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use PDO;
 
 class Category extends Model
 {
@@ -111,7 +106,7 @@ class Category extends Model
             ->get()->first();
     }
 
-    public static function getElement($code){
+    public static function getElement(?string $code){
         // use cache 
         return Category::where('code', $code)->first();
     }
