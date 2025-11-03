@@ -5,6 +5,9 @@ return [
     'questions' => [
         'right_answer' => 'Верный ответ'
     ],
+
+    'permission_denied' => 'У вас не достаточно прав доступа',
+
     'developed' => 'разработано ',
 ];
 ?>

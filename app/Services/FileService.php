@@ -15,6 +15,7 @@ class FileService {
     const MAX_FILE_SIZE = 3150000; //bites
     const MAX_FILE_SIZE_KB = self::MAX_FILE_SIZE/1024;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE/1048576;
+    const ALLOW_IMG_EXT = ['jpg', 'png', 'jpeg', 'gif'];
 
     public static function createThumbWebp(string $filePath){
 

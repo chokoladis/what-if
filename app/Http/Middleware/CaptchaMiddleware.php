@@ -2,12 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\Integration\InvalidCaptchaException;
 use App\Services\CaptchaService;
 use App\Services\SettingService;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class CaptchaMiddleware
 {
@@ -27,14 +25,13 @@ class CaptchaMiddleware
 
             if (!$success) {
                 if ($request->expectsJson()) {
-                    return response()->json([
+                    return response([
                         'success' => false,
                         'message' => 'Captcha invalid',
                     ], 403);
                 }
 
                 return redirect()->back()->with('error', 'Captcha invalid')->withInput();
-//                throw new InvalidCaptchaException;
             }
         }
 

@@ -72,8 +72,8 @@ Class QuestionService
     private function prepareStoraData(StoreRequest $request)
     {
         $data = $request->validated();
-        $data['user_id'] = 1; //auth()->id();//user()->id; // заглушка
-        $data['active'] = true; //$request->user()->can('isAdmin', auth()->user());
+        $data['user_id'] = auth()->id();//user()->id; // заглушка
+        $data['active'] = $request->user()->can('isAdmin', auth()->user());
 
         try {
             if ($request->has('img') && $img = $request->file('img')) {
@@ -88,7 +88,7 @@ Class QuestionService
                 }
             }
 
-            if (!empty($data['category'])){
+            if (isset($data['category'])){
                 $category = Category::getElement($data['category']);
                 $data['category_id'] = $category?->id ?? 0;
                 unset($data['category']);

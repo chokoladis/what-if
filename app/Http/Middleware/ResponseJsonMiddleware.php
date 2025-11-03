@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class ResponseJsonMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,16 +15,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->role !== 'admin') {
-            if ($request->expectsJson()) {
-                return response([
-                    'success' => false,
-                    'message' => __('system.permission_denied'),
-                ], 403);
-            }
-
-            return redirect()->back()->with('error', __('system.permission_denied'));
-        }
+        $request->headers->set('Accept', 'application/json');
 
         return $next($request);
     }

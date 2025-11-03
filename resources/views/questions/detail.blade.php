@@ -138,12 +138,12 @@
             @if (auth()->user())
                 <form action="{{ route('comments.store') }}" method="post" enctype="multipart/form-data">
 
-                    <h4>Оставить комментарий</h4>
+                    <h4>{{ __('comment.left_comment') }}</h4>
 
                     @csrf
 
                     <div class="mt-4 mb-2">
-                        <input type="text" name="text" class="form-control" placeholder="Не правильно ебаные волки, широкую на широкую!">
+                        <input type="text" name="text" class="form-control" placeholder="{{ __('comment.placeholder') }}">
                         @if ($errors->has('text'))
                             @foreach ($errors->get('text') as $item)
                                 <p class="error">{{ $item  }}</p>
@@ -166,12 +166,14 @@
                         @endif
                     </div>
 
-                    <button type="submit" class="btn btn-primary mb-3">{{ __('system.reply') }}</button>
+                    <button type="submit" class="btn btn-primary mb-3">{{ __('btn.reply') }}</button>
                 </form>
             @endif
         @endif
-        <div class="category">
-            <a href="{{route('categories.detail', $question->category->code)}}" class="btn btn-outline-primary">Все категории {{$question->category->title}}</a>
-        </div>
+        @if($question->category)
+            <div class="category">
+                <a href="{{route('categories.detail', $question->category->code)}}" class="btn btn-outline-primary">Все категории {{$question->category->title}}</a>
+            </div>
+        @endif
     </div>
 @endsection

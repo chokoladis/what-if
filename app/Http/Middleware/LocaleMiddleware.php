@@ -2,11 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\SettingService;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class LocaleMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,15 +17,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->role !== 'admin') {
-            if ($request->expectsJson()) {
-                return response([
-                    'success' => false,
-                    'message' => __('system.permission_denied'),
-                ], 403);
-            }
+        $lang = $request->cookie('lang', 'en');
 
-            return redirect()->back()->with('error', __('system.permission_denied'));
+        if (in_array($lang, SettingService::LANG)) {
+            App::setLocale($lang);
         }
 
         return $next($request);

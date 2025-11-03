@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'captcha' => CaptchaMiddleware::class,
+            'locale' => \App\Http\Middleware\LocaleMiddleware::class,
         ]);
     })
     ->withEvents([

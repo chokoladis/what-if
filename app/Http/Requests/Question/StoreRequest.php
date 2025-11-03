@@ -24,16 +24,18 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => 'string',
-            'title' => 'required|string|min:3',
-            'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ]
+            'category' => ['nullable', 'string'],
+            'title' => ['required', 'string', 'min:3'],
+            'img' => [ 'nullable', 'mimes:'.implode(',', FileService::ALLOW_IMG_EXT), 'size:'.FileService::MAX_FILE_SIZE ]
         ];
     }
 
     public function messages(){
         return [
-            'img.size' => 'Размер изображения более 3мб',
-            'title.min' => 'Заголовок должен иметь не менее 3 символов'
+            'title.required' => 'Заголовок обязателен для заполнения',
+            'title.min' => 'Заголовок должен иметь не менее 3 символов',
+            'img.mimes'    => 'Файл должен иметь разрешенное расширение: '.implode(',', FileService::ALLOW_IMG_EXT),
+            'img.size' => 'Размер изображение не должно быть больше '.FileService::MAX_FILE_SIZE_MB.' MB',
         ];
     }
 }

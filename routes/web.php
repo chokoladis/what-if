@@ -4,18 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServicesAuthController;
 
+//$responseJsonMiddleware = \App\Http\Middleware\ResponseJsonMiddleware::class;
+
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->middleware(['locale'])->name('home');
 Route::get('/api/google_auth.php', [ServicesAuthController::class, 'googleAuth'])->name('google_auth');
 Route::get('/api/yandex_auth.php', [ServicesAuthController::class, 'yandexAuth'])->name('yandex_auth');
 Route::get('/api/telegram_auth.php', [ServicesAuthController::class, 'telegramAuth'])->name('telegram_auth');
 
-Route::group(['namespace' => 'App\Http\Controllers'], function () {
+Route::group(['namespace' => 'App\Http\Controllers', 'middleware' => 'App\Http\Middleware\LocaleMiddleware'], function () {
 
     Route::get('/questions', 'QuestionController@index')->name('questions.index');
     Route::get('/categories', 'CategoryController@index')->name('categories.index');
@@ -71,6 +73,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::post('/feedback', 'FeedbackController@store')->name('feedback.store');
 
     Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');
-});
+})->middleware(['locale']);
 
 // Route::get('/home', [HomeController::class, 'index'])->name('home');
