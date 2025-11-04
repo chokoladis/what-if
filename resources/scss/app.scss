@@ -128,6 +128,24 @@ nav.header{
     }
 }
 
+html[data-bs-theme="light"]{
+
+    body {
+        main {
+            color: black;
+        }
+
+        .uk-icon {
+
+            fill: rgba(10,30, 200, 0.55);
+
+            svg *, *{
+                stroke: rgba(10,30, 200, 0.55) !important;
+            }
+        }
+    }
+}
+
 html[data-bs-theme="dark"]{
     nav.header{
         .js-change-theme{
@@ -136,6 +154,16 @@ html[data-bs-theme="dark"]{
                 top: 0px;
             }
         }
+    }
+    body .uk-icon {
+        fill: rgba(240, 240, 0, 0.55);
+
+        svg *, *{
+            stroke: rgba(240, 240, 0, 0.55) !important;
+        }
+    }
+    main {
+        color: rgba(255, 255, 255, 0.7);
     }
     footer .main {
         background: rgb(2, 21, 34);
@@ -218,7 +246,10 @@ footer{
 }
 
 .modal{
-    z-index: 1000;
+    .show {
+        z-index: 2000;
+    }
+
     .modal-header{
         background: linear-gradient(187deg, rgba(219, 122, 26, 0.837) 0% 10%, rgba(44, 159, 24, 0.782) 60%);
         color: white;

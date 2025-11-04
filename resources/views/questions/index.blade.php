@@ -19,7 +19,7 @@
             <div class="item card mb-3 {{ $mainClass }} ">
                 <a href="{{ route('questions.detail', $question->code) }}" class="row g-0">
                     <div class="img-col col-sm-4 col-md-3">
-                        <img src="{{ Storage::url('questions/'.$question->file?->path) }}" alt="" class="img-fluid rounded-start">
+                        <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions/') }}" alt="" class="img-fluid rounded-start">
                     </div>
                     <div class="col-sm-8 col-md-9">
                         <div class="card-body">
@@ -30,7 +30,7 @@
                                     <i uk-icon="check"></i>
                                     <div class="content">
                                         <div class="user">
-                                            <img src="{{ $question->right_comment->user->file ? Storage::url('users/'.$question->right_comment->user->file->path) : $SITE_NOPHOTO }}" alt="">
+                                            <img src="{{ \App\Services\FileService::getPhoto($question->right_comment->user->file,'users') }}" alt="">
                                             <p>{{ $question->right_comment->user->name }}</p>
                                         </div>
                                         <b class="text-success">{{ mb_strlen($question->right_comment->text) > 60 ? mb_substr($question->right_comment->text, 0, 60) : $question->right_comment->text }}</b>
@@ -42,7 +42,7 @@
                                     <i uk-icon="bolt"></i>
                                     <div class="content">
                                         <div class="user">
-                                            <img src="{{ $popularComment->user->file ? Storage::url('users/'.$popularComment->user->file->path) : $SITE_NOPHOTO }}" alt="">
+                                            <img src="{{ \App\Services\FileService::getPhoto($popularComment->user->file, 'users') }}" alt="">
                                             <p>{{ $popularComment->user->name }}</p>
                                         </div>
                                         <p class="mb-0">{{ $popularComment->text }}</p>
@@ -69,7 +69,7 @@
         @endforeach
 
         @if ($questions->isEmpty())
-            <p>Вопросов пока никто не задавал -_-</p>
+            <p>{{ __('questions.not_found') }}</p>
         @endif
     </div>
 @endsection

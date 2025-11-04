@@ -37,7 +37,9 @@ class CategoryController extends Controller
         return view('categories.add', compact('categories'));
     }
 
-    public function store(StoreRequest $request){
+    public function store(StoreRequest $request)
+    {
+        abort(403); //        off
 
         $data = $request->validated();
 

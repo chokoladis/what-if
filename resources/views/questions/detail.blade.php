@@ -55,7 +55,7 @@
                          alt="...">
                     {{--во весь экран --}}
                     <div class="shadow"></div>
-                    <h1>{{ $question->title }}</h1>
+                    <h1 class="h1">{{ $title }}</h1>
                 </div>
             </div>
             <div class="info">
@@ -81,6 +81,9 @@
                     <i>{{ $question->statistics->views }}</i>
                 </div>
             </div>
+            @if($isNeedShowFullTitle)
+                <h3 class="h3 mt-4">{{ $question->title }}</h3>
+            @endif
             <div class="comments">
                 @if($arComments)
                     @foreach ($arComments as $arComment)
@@ -119,7 +122,7 @@
                                         <div class="user">
                                             <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
                                             <div class="icon">
-                                                <img src="{{ getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
+                                                <img src="{{ \App\Services\FileService::getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
                                             </div>
                                             <b>{{ $comment->user_comment->user->name }}</b>
                                         </div>

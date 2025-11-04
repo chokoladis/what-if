@@ -20,10 +20,10 @@
                 left: -20px;
                 top: 10px;
                 position: relative;
-
-                * {
-                    stroke: white;
-                }
+                //
+                //* {
+                //    stroke: white;
+                //}
             }
 
             .user{
@@ -54,9 +54,9 @@
                 i{
                     margin-right: 10px;
 
-                    *{
-                        stroke: white;
-                    }
+                    //*{
+                    //    stroke: white;
+                    //}
                 }
 
                 &:nth-child(2){
@@ -198,7 +198,6 @@
                 background: linear-gradient(rgba(0,0,0,0), rgba(0, 0, 0, 0.8));
             }
             h1{
-                color: white;
                 z-index: 10;
                 position: absolute;
                 left: 10px;
@@ -225,7 +224,7 @@
             }
         }
         * {
-            color: rgba(255,255,255,0.7);
+            //color: rgba(255,255,255,0.7);
         }
         i{
             font-size:14px;
@@ -249,6 +248,10 @@
             display: flex;
         }
     }
+
+    //h3{
+    //    color: white;
+    //}
 
     .comments{
         width: 90%;
@@ -362,7 +365,7 @@
                         display: flex;
                         align-items: center;
                         margin-right: 10px;
-                        color: white;
+                        //color: white;
                         cursor: pointer;
 
                         .uk-icon{

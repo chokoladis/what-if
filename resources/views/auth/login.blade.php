@@ -12,7 +12,7 @@
                         @csrf
 
                         <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('user.auth.email') }}</label>
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
+                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('user.auth.password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
@@ -45,7 +45,7 @@
                                     <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
                                     <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
+                                        {{ __('user.auth.remember') }}
                                     </label>
                                 </div>
                             </div>
@@ -54,12 +54,13 @@
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
+{{--                                    todo --}}
+                                    {{ __('btn.login') }}
                                 </button>
 
                                 @if (Route::has('password.request'))
                                     <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
+                                        {{ __('user.forgot_password') }}
                                     </a>
                                 @endif
                             </div>
@@ -82,16 +83,10 @@
                             );
                             
                             $yUrl = 'https://oauth.yandex.ru/authorize?' . urldecode(http_build_query($yData));
-
-                            // $tgData = [
-                            //     'bot_name' => 'whaitif_bot',
-                            //     'bot_token' => config('auth.socials.telegram.bot_token'),
-                            //     'redirect' => config('auth.socials.telegram.redirect_uri')
-                            // ];
                         @endphp
 
                         <div class="row services_auth">
-                            <p class="col-md-4">{{ __('Войти с помощью:')}}</p>
+                            <p class="col-md-4">{{ __('user.auth_throw_service')}}</p>
                             <div class="col-md-6 services">
                                 <a href="{{ $gUrl }}">
                                     <img src="/storage/main/google_icon_min.png" alt="google">

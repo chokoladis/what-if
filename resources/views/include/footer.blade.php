@@ -1,5 +1,13 @@
             @php
                 use App\Models\Feedback;
+
+                $lang = app()->getLocale();
+                $const = 'SUBJECTS_'.strtoupper($lang);
+                if (defined('App\\Models\\Feedback::' . $const)) {
+                    $constValue = constant('App\\Models\\Feedback::'.$const);
+                } else {
+                    $constValue = Feedback::SUBJECTS_RU;
+                }
             @endphp
             <footer>
                 <div class="main">
@@ -32,7 +40,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalFeedbackTitle">{{ __('Обратная связь') }}</h5>
+                        <h5 class="modal-title" id="modalFeedbackTitle">{{ __('crud.feedback.title_modal') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -56,14 +64,14 @@
                                     placeholder="7 901 234 5678" value="{{ old('phone') }}">
                                 @if ($errors->has('phone'))
                                     @foreach ($errors->get('phone') as $item)
-                                        <p class="error">{{ $item  }}</p>                                
+                                        <p class="error">{{ $item }}</p>
                                     @endforeach
                                 @endif
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ __('crud.feedback.fields.subject') }}</label>
                                 <select name="subject" class="form-select @error('subject') is-invalid @enderror" required>
-                                    @foreach(Feedback::SUBJECTS as $subject)
+                                    @foreach($constValue as $subject)
                                         <option>{{ $subject }}</option>
                                     @endforeach
                                 </select>
@@ -76,8 +84,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">{{ __('system.add') }}</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('btn.close') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('btn.add') }}</button>
                     </div>
                 </div>
             </div>

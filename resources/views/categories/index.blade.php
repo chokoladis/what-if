@@ -10,7 +10,7 @@
     <div class="categories-list container">
 
         @if ($categories->isEmpty())
-            <p>{{ __('Нэт категорий') }}</p>
+            <p>{{ __('categories.not_found') }}</p>
         @else
             <div class="row">
 

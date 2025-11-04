@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\File;
-use App\Models\FileCategory;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class FileService {
@@ -107,5 +106,16 @@ class FileService {
         }
 
         return [ 'subdir' => $mk_name, 'file_name' => $file_name ];
-    }   
+    }
+
+    static function getPhoto(?File $file, string $subdir)
+    {
+        $nophoto_src = Storage::url('main/nophoto.jpg');
+
+        if ($file){
+            return $file->path ? Storage::url($subdir.'/'.$file->path) : $nophoto_src;
+        }
+
+        return $nophoto_src;
+    }
 }

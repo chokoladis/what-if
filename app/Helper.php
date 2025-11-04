@@ -30,18 +30,6 @@ if (!function_exists('getNumbers')){
     }
 }
 
-if (!function_exists('getPhoto')){
-    function getPhoto(\App\Models\File|null $file, string $subdir){
-
-        global $SITE_NOPHOTO;
-
-        if ($file){
-            return $file->path ? \Illuminate\Support\Facades\Storage::url($subdir.'/'.$file->path) : $SITE_NOPHOTO;
-        }
-
-        return $SITE_NOPHOTO;
-    }
-}
 if (!function_exists('getIPAddress')){
     function getIPAddress(){
 

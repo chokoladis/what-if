@@ -79,7 +79,18 @@ class QuestionController extends Controller
             }
         }
 
-        return view('questions.detail', compact('question', 'arStatuses', 'questionUserStatus', 'arComments', 'error'));
+        $isNeedShowFullTitle = false;
+
+        if (mb_strlen($question->title) > 70){
+            $title = mb_strcut($question->title, 0, 70).'...';
+            $isNeedShowFullTitle = true;
+        } else {
+            $title = $question->title;
+        }
+
+        return view('questions.detail',
+            compact('question', 'arStatuses', 'questionUserStatus', 'arComments', 'error', 'title', 'isNeedShowFullTitle')
+        );
     }
 
     public static function findByUrl(string $url){

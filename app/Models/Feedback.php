@@ -11,8 +11,11 @@ class Feedback extends Model
 
     public $guarded = [];
 
-    const SUBJECTS = [
+    const SUBJECTS_RU = [
         'Проблемы с сайтом', 'Предложения и идеи', 'Сотрудничество/реклама', 'Другое'
+    ];
+    const SUBJECTS_EN = [
+        'Problem on site', 'Suggestions and ideas', 'Cooperation/advertising', 'Other'
     ];
     
 }
