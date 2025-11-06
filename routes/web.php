@@ -7,7 +7,7 @@ use App\Http\Controllers\ServicesAuthController;
 
 Route::get('/api/google_auth.php', [ServicesAuthController::class, 'googleAuth'])->name('google_auth');
 Route::get('/api/yandex_auth.php', [ServicesAuthController::class, 'yandexAuth'])->name('yandex_auth');
-Route::get('/api/telegram_auth.php', [ServicesAuthController::class, 'telegramAuth'])->name('telegram_auth');
+//Route::get('/api/telegram_auth.php', [ServicesAuthController::class, 'telegramAuth'])->name('telegram_auth');
 
 
 Route::middleware(['locale'])->group(function () {
@@ -17,7 +17,6 @@ Route::middleware(['locale'])->group(function () {
     })->name('welcome');
 
     \Illuminate\Support\Facades\Auth::routes();
-
 
     Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
@@ -60,17 +59,6 @@ Route::middleware(['locale'])->group(function () {
 
 
             Route::post('/ajax/questionStatus', 'QuestionUserStatusController@set')->name('ajax.questionStatus');
-            //        admin
-
-    //        Route::middleware(['admin'])->group(function () {
-    //
-    //            Route::group(['prefix' => 'categories', 'controller' => 'CategoryController'], function () {
-    //                Route::name('categories.')->group(function () {
-    //                    Route::get('/add', 'add')->name('add');
-    //                    Route::post('/', 'store')->name('store');
-    //                });
-    //            });
-    //        });
         });
         Route::post('/feedback', 'FeedbackController@store')->name('feedback.store');
 

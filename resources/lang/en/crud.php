@@ -23,11 +23,15 @@ return [
         ]
     ],
     'feedback' => [
+        'title_modal' => 'Feedback',
         'fields' => [
             'email' => 'Email',
-            'phone' => 'Телефон',
-            'subject' => 'Тема',
-            'comment' => 'Комментарий'
+            'phone' => 'Phone',
+            'subject' => 'Subject',
+            'comment' => 'Comment'
+        ],
+        'options_subject' => [
+
         ]
     ],
     'users' => [

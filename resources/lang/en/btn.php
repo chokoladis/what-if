@@ -8,4 +8,6 @@ return [
     'change' => 'Change',
     'update' => 'Update',
     'callback' => 'Callback',
+    'close' => 'Close',
+    'login' => 'Let me pass basurman'
 ];

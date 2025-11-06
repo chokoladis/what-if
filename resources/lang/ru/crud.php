@@ -23,6 +23,7 @@ return [
         ]
     ],
     'feedback' => [
+        'title_modal' => 'Обратная связь',
         'fields' => [
             'email' => 'Email',
             'phone' => 'Телефон',

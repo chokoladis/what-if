@@ -459,3 +459,12 @@
         }
     }
 }
+
+html[data-bs-theme="light"]{
+    .question-page{
+        .description h1{
+            -webkit-text-stroke: 1px rgba(6, 140, 223, 0.9);
+            text-stroke: 1px rgba(6, 140, 223, 0.9);
+        }
+    }
+}
