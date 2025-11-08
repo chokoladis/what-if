@@ -72,11 +72,11 @@
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('profile.index') }}">
-                                    {{ __('Profile') }}
+                                    {{ __('menu.main.profile') }}
                                 </a>
                                 @can('isAdmin')
                                     <a class="dropdown-item" href="{{ route('filament.admin.pages.dashboard') }}">
-                                        {{ __('Dashboard') }}
+                                        {{ __('menu.main.dashboard') }}
                                     </a>
                                 @endcan
                                 <a class="dropdown-item" href="{{ route('logout') }}"

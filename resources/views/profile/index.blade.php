@@ -17,20 +17,19 @@
         <div class="main">
             <div class="card photo">
                 <img src="{{ $photo ? Storage::url('users/'.$photo->path) : $SITE_NOPHOTO }}" class="card-img-top">
-                <div class="card-body">
+                <div class="card-body @if($errors->has('photo')) active @endif">
                     <form action="{{ route('profile.setPhoto') }}" class="update-photo" method="POST" enctype="multipart/form-data">
 
                         @csrf
 
-                        <label class="form-label">{{ __('crud.users.fields.photo') }}</label>
-                        <input type="file" name="photo" class="btn btn-primary" value="{{ __('Изменить фото') }}">
+                        <input type="file" name="photo" class="btn btn-primary" value="{{ __('user.change_photo') }}">
                         @if ($errors->has('photo'))
                             @foreach ($errors->get('photo') as $item)
-                                <p class="error">{{ $item  }}</p>
+                                <p class="error">{{ $item }}</p>
                             @endforeach
                         @endif
 
-                        <button type="submit" class="btn btn-success">{{ __('Изменить фото') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('user.change_photo') }}</button>
                     </form>
                 </div>
             </div>
@@ -48,7 +47,7 @@
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary mb-3">{{ __('system.change') }}</button>
+                <button type="submit" class="btn btn-outline-success mb-3">{{ __('btn.change') }}</button>
             </form>
         </div>
     </div>

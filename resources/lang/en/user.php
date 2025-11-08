@@ -19,4 +19,6 @@ return [
     'forgot_password' => 'Forgot Your Password?',
     'auth_throw_service' => 'Auth throw by:',
     'login_success' => 'You are success logged in!',
+    //    profile
+    'change_photo' => 'Change photo',
 ];

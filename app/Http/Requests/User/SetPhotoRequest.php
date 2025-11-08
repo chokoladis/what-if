@@ -26,4 +26,14 @@ class SetPhotoRequest extends FormRequest
             'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:'.FileService::MAX_FILE_SIZE_KB],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+
+            //The photo field must be an image.
+            //
+            //The photo field must be a file of type: jpeg, png, jpg, gif.
+        ];
+    }
 }

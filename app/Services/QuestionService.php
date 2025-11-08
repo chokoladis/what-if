@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTO\Errors\CommonError;
+use App\DTO\Errors\ValidationError;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
@@ -85,7 +87,7 @@ Class QuestionService
                     unset($data['img']);
                 } else {
                     // todo translate
-                    return [null, ['File not valid']];
+                    return [null, [ new ValidationError('File not valid', 'img', 'img_not_valid')]];
                 }
             }
 
@@ -97,7 +99,7 @@ Class QuestionService
             }
         } catch (\Throwable $th) {
             Log::error('Prepare data error: ' . $th->getMessage());
-            return [null, 'Ошибка обработки данных: ' . $th->getMessage()];
+            return [null, new CommonError('Ошибка обработки данных: ' . $th->getMessage())];
         }
 
         return [$data, null];

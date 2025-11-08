@@ -2,15 +2,21 @@
 
 namespace App\Services\AI;
 
+use App\Interfaces\AiApiInterface;
 use Illuminate\Support\Facades\Log;
 
-abstract class BaseAI
+abstract class BaseAI implements AiApiInterface
 {
     private string $model;
 
     function __construct()
     {
         $this->prepareSettings();
+    }
+
+    function isSetOn(): bool
+    {
+        return false;
     }
 
     private function setModel(string $model)

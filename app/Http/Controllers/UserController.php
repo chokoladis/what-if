@@ -23,9 +23,11 @@ class UserController extends Controller
 
         $data = $request->validated();
         $user = User::find(auth()->id());
-        $user->update($data);
+        if ($user->update($data)){
+            return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
+        }
 
-        return redirect()->route('profile.index');
+        return redirect()->route('profile.index')->with('error', __('system.alerts.error'));
     }
 
     public function setPhoto(SetPhotoRequest $request)
@@ -49,6 +51,6 @@ class UserController extends Controller
         $user->photo_id = $photo->id;
         $user->save();
 
-        return redirect()->route('profile.index')->with('message', 'Фото успешно обновлено');
+        return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
     }
 }

@@ -36,8 +36,8 @@ return [
     ],
     'users' => [
         'fields' => [
-            'name' => 'Имя',
-            'photo' => 'Фото',
+            'name' => 'Name',
+            'photo' => 'Photo',
         ]
     ]
 ];

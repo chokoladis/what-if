@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Category extends Model
@@ -137,7 +138,7 @@ class Category extends Model
         static::creating(function($category) {
 
 //            todo
-//            Log::debug('create categori');
+//            Log::debug('creating category 2', [$category]);
 //
 //            if (!is_numeric($category->file_id)){
 //                $file = FileService::save($category->file_id, 'categories');

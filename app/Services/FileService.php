@@ -11,7 +11,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class FileService {
 
-    const MAX_FILE_SIZE = 3150000; //bites
+    const MAX_FILE_SIZE = 5242880; //bites
     const MAX_FILE_SIZE_KB = self::MAX_FILE_SIZE/1024;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE/1048576;
     const ALLOW_IMG_EXT = ['jpg', 'png', 'jpeg', 'gif'];

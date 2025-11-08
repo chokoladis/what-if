@@ -7,5 +7,7 @@ return [
         'login' => 'Вход',
         'logout' => 'Выйти',
         'register' => 'Регистрация',
+        'profile' => 'Профиль',
+        'dashboard' => 'Админ панель'
     ]
 ];

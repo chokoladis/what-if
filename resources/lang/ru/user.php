@@ -19,4 +19,6 @@ return [
     'send_link_reset_password' => 'Отправить ссылку для сброса',
     'auth_throw_service' => 'Войти с помощью:',
     'login_success' => 'Вы успешно авторизовались!',
+    //    profile
+    'change_photo' => 'Изменить фото',
 ];

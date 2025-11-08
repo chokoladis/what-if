@@ -2,6 +2,7 @@
 
 namespace App\Services\AI\Gemini;
 
+use App\DTO\Errors\CommonError;
 use App\Services\AI\BaseAI;
 use Illuminate\Support\Facades\Log;
 
@@ -72,7 +73,7 @@ class BaseService extends BaseAI
             $isLegal = filter_var($isLegal, FILTER_VALIDATE_BOOLEAN);
 
             if (!$isLegal) {
-                return [false, new \Error($error)];
+                return [false, new CommonError($error)];
             } else {
                 return [true, null];
             }

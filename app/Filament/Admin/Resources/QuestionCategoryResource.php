@@ -11,10 +11,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class QuestionCategoryResource extends Resource
 {
+    protected static ?string $modelLabel = 'Категории';
+    protected static ?string $navigationLabel = 'Категории';
+    protected static ?string $pluralModelLabel = 'Категории';
+    protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -25,24 +30,30 @@ class QuestionCategoryResource extends Resource
     {
         return $form
             ->schema([
+//                todo убрать самого себя
                 Forms\Components\Select::make('parent_id')
                     ->options(Category::query()->pluck('title', 'id'))
                     ->preload()
                     ->nullable()
-                    ->default(null),
+                    ->default(null)
+                    ->label('Родитель'),
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->label('Заголовок'),
                 Forms\Components\TextInput::make('code')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->label('Символьный код'),
                 Forms\Components\TextInput::make('sort')
                     ->integer()
                     ->nullable()
-                    ->default(300),
+                    ->default(300)
+                    ->label('Сортировка'),
                 Forms\Components\Checkbox::make('active')
                     ->default(false)
-                    ->nullable(),
+                    ->nullable()
+                    ->label('Активность'),
 //                todo save file (как вывести)?
                 Forms\Components\FileUpload::make('file_id')
                     ->image()
@@ -53,31 +64,26 @@ class QuestionCategoryResource extends Resource
                             return null;
                         }
 
-                        /**
-                         * @var File $file
-                         */
+                        /** @var File $file */
                         $file = $record->file;
+                        $path = public_path('storage/categories/' . $file->path);
 
-                        $data = [
-//                            'file_id' => [
-//                                'name' => $file->name,
-//                                'size' => 11111, // можно подставить реальный размер из $record->file->size
-//                                'type' => 'image/'.$file->expansion, // или другой, если знаешь
-//                                'url' => $file->full_url,
-//                                'path' => $file->full_url,
-//                                'tmp_name' => $file->full_url,
-//                                'uploaded' => true,
-//                            ]
-//                            'tmp_name' => public_path('storage/categories/' . $record->file->path),
-//                            'url' => $file->full_url
-                        ];
-
-//                        Log::debug('FILE PREVIEW:', [
-//                            'url' => $record->file->full_url ?? null,
-//                            'exists' => file_exists(public_path('storage/categories/' . $record->file->path ?? ''))
-//                        ]);
-
-//                        $component->state(1);
+                        if (!file_exists($path)) {
+                            return;
+                        }
+//
+//                        // Создаём временную копию для предпросмотра
+////                        $tempPath = tempnam(sys_get_temp_dir(), 'filament_preview_') . '.' . pathinfo($file->path, PATHINFO_EXTENSION);
+////                        copy($path, $tempPath);
+//
+////                        $arPath = explode('/', $path);
+////                        unset($arPath[array_key_last($arPath)]);
+////                        $arPath = implode('/', $arPath).'/';
+//
+                        $component->state(new \Illuminate\Http\UploadedFile(
+                            $path,
+                            $file->name,
+                        ));
                     })
                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile|null $file) {
                         if ($file && $file->get()){
@@ -85,7 +91,6 @@ class QuestionCategoryResource extends Resource
                             return $file->id;
                         }
                     })
-//                    ->default(fn ($record) => $record?->file?->full_url)
 //                    ->url(fn ($record) => optional($record->file)->full_url)
                     ->nullable(),
             ]);
@@ -101,7 +106,9 @@ class QuestionCategoryResource extends Resource
                 Tables\Columns\TextColumn::make('code')->sortable(),
                 Tables\Columns\ImageColumn::make('file.full_url')
                     ->label('Файл')
-                    ->url(fn ($record) => optional($record->file)->full_url),
+                    ->url(fn ($record) => optional($record->file)->full_url)
+                    ->width(120)
+                    ->height(120),
                 Tables\Columns\TextColumn::make('sort')->sortable(),
                 Tables\Columns\TextColumn::make('active')->sortable(),
                 Tables\Columns\TextColumn::make('level')->sortable(),

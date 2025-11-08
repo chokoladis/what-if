@@ -19,6 +19,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class QuestionResource extends Resource
 {
+    protected static ?string $modelLabel = 'Вопросы';
+    protected static ?string $navigationLabel = 'Вопросы';
+
+    protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $model = Question::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

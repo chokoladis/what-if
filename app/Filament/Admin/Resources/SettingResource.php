@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SettingResource extends Resource
 {
+    protected static ?string $modelLabel = 'Настройки';
+    protected static ?string $navigationLabel = 'Настройки';
+    protected static ?string $pluralModelLabel = 'Настройки';
     protected static ?string $model = Setting::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

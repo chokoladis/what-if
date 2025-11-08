@@ -9,7 +9,12 @@ return [
         'btn' => '*chponk'
     ],
     'permission_denied' => 'You don\'t have enough access',
-
+    // footer
     'developed' => 'Developed by ',
+    //
+    'alerts' => [
+        'success' => 'Operation completed successfully',
+        'error' => 'Operation failed',
+    ],
 ];
 ?>
