@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Errors\CommonError;
 use App\Http\Requests\Comment\StoreRequest;
 use App\Http\Requests\Question\LoadSubcommentsRequest;
 use App\Models\Comment;
@@ -36,14 +37,11 @@ class CommentController extends Controller
                     'comment_main_id' => $comment_main_id,
                 ]);
             }
-            
 
-            $message = 'success';
+            return redirect()->back()->with('message', __('system.alert.success'));
         } else {
-            $message = 'exists';
+            return redirect()->back()->withErrors('error', new CommonError('Вы уже оставляли такой комментарий'));
         }
-
-        return redirect()->back()->with('message', $message);
     }
 
     public function loadSubcomments(LoadSubcommentsRequest $request)

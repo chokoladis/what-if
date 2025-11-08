@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
         return [
             'category' => ['nullable', 'string'],
             'title' => ['required', 'string', 'min:3'],
-            'img' => [ 'nullable', 'mimes:'.implode(',', FileService::ALLOW_IMG_EXT), 'size:'.FileService::MAX_FILE_SIZE ]
+            'img' => [ 'nullable', 'image', 'mimes:'.implode(',', FileService::ALLOW_IMG_EXT), 'max:'.FileService::MAX_FILE_SIZE_KB ]
         ];
     }
 

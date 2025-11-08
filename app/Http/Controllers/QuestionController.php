@@ -39,7 +39,7 @@ class QuestionController extends Controller
         [$question, $error] = $this->questionService->store($request);
 
         if (!$question) {
-            return redirect()->back()->with('error', $error);
+            return redirect()->back()->with('error', $error)->withInput();
         }
 
         if ($question->wasRecentlyCreated){

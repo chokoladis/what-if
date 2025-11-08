@@ -112,7 +112,7 @@
                                     @endif
                                     @if (auth()->user())
                                         <div class="comment_actions">
-                                            <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
+                                            <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('btn.reply') }}</div>
                                             @if($question->user == auth()->user() && !$isRight)
                                                 <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
                                             @endif

@@ -58,7 +58,8 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">{{ __('crud.questions.fields.title') }}</label>
-                <input type="text" name="title" class="form-control" placeholder="Почему цыгане моются, но все равно воняют?">
+                <input type="text" name="title" class="form-control"
+                       placeholder="Почему цыгане моются, но все равно воняют?" autocomplete="search">
                 @if ($errors->has('title'))
                     @foreach ($errors->get('title') as $item)
                         <p class="error">{{ $item  }}</p>
@@ -77,7 +78,7 @@
             
             <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
             
-            <button type="submit" class="btn btn-primary mb-3">{{ __('system.add') }}</button>
+            <button type="submit" class="btn btn-primary mb-3">{{ __('btn.add') }}</button>
         
         </form>
     </div>
