@@ -9,7 +9,9 @@
 @endpush
 
 @section('content')
-    <div class="questions-page container">
+    <div class="search-page container">
+        <h1>{{ __('Поиск по сайту') }}</h1>
+{{--        категории слайдер - возможно искали эти разделы 5-10 штук --}}
         @foreach ($questions as $question)
 
             @php
@@ -52,7 +54,7 @@
 
                             <div class="date">
                                 <p class="card-text">
-                                    <i uk-icon="question"></i>
+                                    <i uk-icon="calendar"></i>
                                     <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
                                 </p>
                                 @if ($question->created_at != $question->updated_at)
@@ -66,10 +68,8 @@
                     </div>
                 </a>
             </div>
-        {{ $questions->links() }}
-{{--            links
-        total
---}}
+            {{ $questions->links() }}
+{{--            total --}}
         @endforeach
 
         @if ($questions->isEmpty())

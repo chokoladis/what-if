@@ -25,6 +25,7 @@ Route::middleware(['locale'])->group(function () {
         Route::get('/categories/detail/{category}/', 'CategoryController@detail')->name('categories.detail');
         Route::get('/questions/detail/{question}/', 'QuestionController@detail')->name('questions.detail');
         Route::post('/comments/load-subcomments', 'CommentController@loadSubcomments')->name('comments.load.subcomments');
+
         Route::post('/setting/lang', 'SettingController@setLang')->name('setting.set.lang');
         Route::post('/setting/theme', 'SettingController@setTheme')->name('setting.set.theme');
 
@@ -60,6 +61,8 @@ Route::middleware(['locale'])->group(function () {
 
             Route::post('/ajax/questionStatus', 'QuestionUserStatusController@set')->name('ajax.questionStatus');
         });
+
+        Route::get('/search', 'SearchController@index')->name('search.index');
         Route::post('/feedback', 'FeedbackController@store')->name('feedback.store');
 
         Route::post('/ajax/setThemeMode', 'UserController@setThemeMode')->name('setThemeMode');

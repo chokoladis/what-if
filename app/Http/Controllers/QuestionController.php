@@ -12,6 +12,7 @@ use App\Models\QuestionUserStatus;
 use App\Services\FileService;
 use App\Services\QuestionService;
 use App\View\Components\CommentReply;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class QuestionController extends Controller
@@ -23,8 +24,8 @@ class QuestionController extends Controller
         $this->questionService = new QuestionService();
     }
 
-    public function index(){
-        $questions = Question::getActive();
+    public function index(Request $request){
+        $questions = QuestionService::getActive($request);
         return view('questions.index', compact('questions'));
     }
 

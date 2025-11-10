@@ -50,6 +50,22 @@
                     </li>
                 </ul>
 
+{{--                todo--}}
+                <ul class="navbar-nav ms-auto search">
+                    <form action="{{ route('search.index') }}" method="GET" class="d-flex">
+                        <li>
+                            <input class="form-control form-control-sm" type="search" name="q" placeholder="Поиск" autocomplete="on" value="{{ request('q') }}">
+                        </li>
+                        <li>
+                            <button type="button" class="btn btn-outline-info btn-sm">
+                                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" class="DocSearch-Search-Icon">
+                                    <path d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </button>
+                        </li>
+                    </form>
+                </ul>
+
                 <ul class="navbar-nav ms-auto">
                     @guest
                         @if (Route::has('login'))

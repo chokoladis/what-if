@@ -8,30 +8,44 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 Class QuestionService
 {
+    const DEFAULT_LIMIT = 10;
+    const MAX_LIMIT = 100;
     private static $model = Question::class;
 
-    public static function getList($filter = [], $select = ['*'], $limit = 10)
+    public static function getList(
+        array $filter = [],
+        array $sort = [],
+        int $limit = 10)
     {
         //        cache
         if (empty($filter)) {
             return false;
         }
 
-        $limit = $limit > 0 && $limit < 100 ? $limit : 10;
+        $limit = $limit > 0 && $limit < self::MAX_LIMIT ? $limit : self::DEFAULT_LIMIT;
 
         $query = self::$model::query();
 
         foreach ($filter as $key => $item) {
-            $query->where($key, $item);
+            if (is_array($item)){
+                [$col, $operator, $value] = $item;
+                $query->where($col, $operator, $value);
+            } else {
+                $query->where($key, $item);
+            }
         }
 
-        $result = $query->paginate($limit, $select);
+        if (!empty($sort)) {
+            $query->orderBy($sort[0], $sort[1]);
+        }
 
-        return $result;
+//        $select
+        return $query->paginate($limit);
     }
 
     public function getByCode(string $code)
@@ -103,5 +117,14 @@ Class QuestionService
         }
 
         return [$data, null];
+    }
+
+    public static function getActive(Request $request)
+    {
+//        todo css pagination
+        //cache
+        return Question::where('active', true)
+            ->paginate(10)
+            ->withQueryString();
     }
 }
