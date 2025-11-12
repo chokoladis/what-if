@@ -54,7 +54,8 @@
                 <ul class="navbar-nav ms-auto search">
                     <form action="{{ route('search.index') }}" method="GET" class="d-flex">
                         <li>
-                            <input class="form-control form-control-sm" type="search" name="q" placeholder="Поиск" autocomplete="on" value="{{ request('q') }}">
+                            <input class="form-control form-control-sm" type="search" name="q" placeholder="Поиск"
+                                   autocomplete="on" value="{{ request('q') }}">
                         </li>
                         <li>
                             <button type="button" class="btn btn-outline-info btn-sm">

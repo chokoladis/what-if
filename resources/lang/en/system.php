@@ -16,5 +16,11 @@ return [
         'success' => 'Operation completed successfully',
         'error' => 'Operation failed',
     ],
+    //
+    'sort' => [
+        'new' => 'First new',
+        'old' => 'First old',
+        'popular' => 'Popular'
+    ]
 ];
 ?>

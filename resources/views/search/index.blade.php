@@ -11,6 +11,25 @@
 @section('content')
     <div class="search-page container">
         <h1>{{ __('Поиск по сайту') }}</h1>
+
+        <form action="{{ route('search.index') }}" method="GET" class="d-flex" id="search-page-form">
+            <input type="hidden" name="query" value="{{ request('q') }}">
+            <div class="mb-3">
+                <select class="form-select form-select-sm" name="sort">
+                    <option value="id,desc" selected>{{ __('system.sort.new') }}</option>
+                    <option value="id,asc">{{ __('system.sort.old') }}</option>
+                    <option value="popular">{{ __('system.sort.popular') }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-outline-info btn-sm">
+                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" class="DocSearch-Search-Icon">
+                        <path d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+
 {{--        категории слайдер - возможно искали эти разделы 5-10 штук --}}
         @foreach ($questions as $question)
 

@@ -9,25 +9,24 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 Class QuestionService
 {
-    const DEFAULT_LIMIT = 10;
-    const MAX_LIMIT = 100;
     private static $model = Question::class;
 
     public static function getList(
         array $filter = [],
         array $sort = [],
-        int $limit = 10)
-    {
-        //        cache
+        int $limit = 10
+    ){
         if (empty($filter)) {
             return false;
         }
 
-        $limit = $limit > 0 && $limit < self::MAX_LIMIT ? $limit : self::DEFAULT_LIMIT;
+//        $key = implode('_', $filter).'_'.implode('_', $sort).'_'.$limit;
+//        $query = Cache::remember('question_list_'.$key, 36000, function () use ($filter, $sort, $limit) {
 
         $query = self::$model::query();
 
@@ -41,10 +40,17 @@ Class QuestionService
         }
 
         if (!empty($sort)) {
-            $query->orderBy($sort[0], $sort[1]);
+            if (is_int(stripos($sort[0], 'statistics'))){
+                $col = explode('.', $sort[0]);
+                $sortBy = $col[array_key_last($col)];
+
+                $query->join('question_statistics', 'questions.id', '=', 'question_id');
+                $query->orderBy($sortBy, $sort[1]);
+            } else {
+                $query->orderBy($sort[0], $sort[1]);
+            }
         }
 
-//        $select
         return $query->paginate($limit);
     }
 

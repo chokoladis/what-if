@@ -10,6 +10,7 @@
 
 @section('content')
     <div class="questions-page container">
+        {{--            todo поля фильтры - теги --}}
         @foreach ($questions as $question)
 
             @php
