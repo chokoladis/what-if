@@ -1,12 +1,11 @@
 /node_modules
-vendor/*
+vendor
 .env
 .idea
 *.xml
 .DS_Store
 */.DS_Store
 .vscode
-vendor
 *.cache
 public/storage/users
 public/storage/categories
