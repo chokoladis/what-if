@@ -1,26 +1,30 @@
 services:
 
   nginx:
-    build: ./docker-files/nginx
+    build: nginx:1.29.4-alpine
     ports:
       - "8080:80"
     volumes:
-      - ./:/app
+      - ./dockerfiles/nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - .:/var/www/what_if
+    container_name: what-if_nginx
 
   php:
-    build: ./docker-files/php
+    build: ./dockerfiles/php
     volumes:
-      - ./:/app
+      - .:/var/www/what_if
     container_name: what-if_php
 
-#  mysql:
-#    image: 'mysql/mysql-server:8.0'
-#    container_name: what-if_mysql
-#    ports:
-#      - 'DB_PORT:3306'
-#    environment:
-#      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+  mysql:
+    image: mysql:8.0
+    container_name: what-if_mysql
+    ports:
+      - "3316:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
 #      MYSQL_ROOT_HOST: '%'
-#      MYSQL_DATABASE: '${DB_DATABASE}'
-#      MYSQL_USER: '${DB_USERNAME}'
-#      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+
+#  redis:

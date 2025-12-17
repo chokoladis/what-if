@@ -13,7 +13,7 @@ use App\Services\FileService;
 use App\Services\QuestionService;
 use App\View\Components\CommentReply;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class QuestionController extends Controller
 {
@@ -25,7 +25,12 @@ class QuestionController extends Controller
     }
 
     public function index(Request $request){
-        $questions = QuestionService::getActive($request);
+        $key = json_encode($request->all());
+
+        $questions = Cache::remember('questions_'.$key, 3600, function () use ($request){
+            return QuestionService::getActive($request);
+        });
+
         return view('questions.index', compact('questions'));
     }
 
