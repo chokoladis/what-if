@@ -1,0 +1,26 @@
+services:
+
+  nginx:
+    build: ./docker-files/nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app
+
+  php:
+    build: ./docker-files/php
+    volumes:
+      - ./:/app
+    container_name: what-if_php
+
+#  mysql:
+#    image: 'mysql/mysql-server:8.0'
+#    container_name: what-if_mysql
+#    ports:
+#      - 'DB_PORT:3306'
+#    environment:
+#      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+#      MYSQL_ROOT_HOST: '%'
+#      MYSQL_DATABASE: '${DB_DATABASE}'
+#      MYSQL_USER: '${DB_USERNAME}'
+#      MYSQL_PASSWORD: '${DB_PASSWORD}'
