@@ -1,7 +1,7 @@
 services:
 
   nginx:
-    build: nginx:1.29.4-alpine
+    build: ./dockerfiles/nginx
     ports:
       - "8080:80"
     volumes:
@@ -19,12 +19,17 @@ services:
     image: mysql:8.0
     container_name: what-if_mysql
     ports:
-      - "3316:3306"
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-#      MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_USER: '${DB_USERNAME}'
+#      MYSQL_USER: '${DB_USERNAME}'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
 
-#  redis:
+  redis:
+    build: ./dockerfiles/redis
+    volumes:
+      - .:/var/www/what_if
+    container_name: what-if_redis
+    ports:
+      - "6379:6379"
