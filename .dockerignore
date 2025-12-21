@@ -1,0 +1,5 @@
+vendor
+node_modules
+readme
+.vscode
+todolist.txt

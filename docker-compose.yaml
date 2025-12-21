@@ -3,7 +3,7 @@ services:
   nginx:
     build: ./dockerfiles/nginx
     ports:
-      - "8080:80"
+      - "8000:80"
     volumes:
       - ./dockerfiles/nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - .:/var/www/what_if
@@ -21,9 +21,9 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_DATABASE: '${DB_DATABASE}'
-#      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
 
   redis:
