@@ -11,40 +11,40 @@
 @endpush
 
 @section('content')
-    <div class="question-page container" data-question-id="{{ $question->id }}">
+    <div class="question-page container" data-question-id="{{ $question?->id ?? 0 }}">
         @if($error)
             <div class="title error">
                 <div class="description">
                     <img src="{{ Storage::url('404.gif') }}">
                     <div class="shadow"></div>
-                    <h1>{{ $error }}</h1>
+                    <h1>{{ $error->message }}</h1>
                 </div>
             </div>
         @else
             <div class="title">
                 <div class="question-actions">
                     @php
-                        $currentReaction = !empty($questionUserStatus) ? $questionUserStatus['status'] : '';
+                        $currentVote = !empty($questionUserVoite) ? $questionUserVoite['vote'] : '';
                     @endphp
                     @if(auth()->id())
 {{--                        todo boostrap icons ?--}}
                         <input type="hidden" id="question_id" value="{{ $question->id }}">
-                        <div class="icon like btn {{ $currentReaction === 'like' ? 'btn-success' : 'btn-outline-success' }}" data-action="like">
+                        <div class="icon like btn {{ $currentVote === 1 ? 'btn-success' : 'btn-outline-success' }}" data-vote="1">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
-                            <b>{{ $arStatuses['likes'] ?? 0 }}</b>
+                            <b>{{ $arVotes['likes'] ?? 0 }}</b>
                         </div>
-                        <div class="icon dislike btn {{ $currentReaction === 'dislike' ? 'btn-danger' : 'btn-outline-danger' }}" data-action="dislike">
+                        <div class="icon dislike btn {{ $currentVote === -1 ? 'btn-danger' : 'btn-outline-danger' }}" data-vote="-1">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
-                            <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
+                            <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
                     @else
                         <div class="icon like btn btn-success">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
-                            <b>{{ $arStatuses['likes'] ?? 0 }}</b>
+                            <b>{{ $arVotes['likes'] ?? 0 }}</b>
                         </div>
                         <div class="icon dislike btn btn-danger">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
-                            <b>{{ $arStatuses['dislikes'] ?? 0 }}</b>
+                            <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
                     @endif
 {{--                    текущий юзер -статус --}}
@@ -172,11 +172,11 @@
                     <button type="submit" class="btn btn-primary mb-3">{{ __('btn.reply') }}</button>
                 </form>
             @endif
-        @endif
-        @if($question->category)
-            <div class="category">
-                <a href="{{route('categories.detail', $question->category->code)}}" class="btn btn-outline-primary">Все категории {{$question->category->title}}</a>
-            </div>
+            @if($question->category)
+                <div class="category">
+                    <a href="{{route('categories.detail', $question->category->code)}}" class="btn btn-outline-primary">Все категории {{$question->category->title}}</a>
+                </div>
+            @endif
         @endif
     </div>
 @endsection

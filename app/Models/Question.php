@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Exceptions\Models\QuestionNotFoundException;
+use App\Interfaces\Models\SearchableInterface;
+use App\Models\Errors\CommonError;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
-class Question extends Model
+class Question extends BaseModel
 {
     use HasFactory;
 
@@ -19,9 +22,8 @@ class Question extends Model
         if ($question = Question::where('code', $code)->where('active', true)->first()){
             return [$question, null];
         } else {
-            return [false, 'Вопрос не найден или не прошел модерацию'];
+            return [false, new CommonError(__('questions.alerts.not_available'))];
         }
-
     }
 
     public static function getActive(){
@@ -36,6 +38,9 @@ class Question extends Model
             ->with(['statistics' => function($q) {
                     $q->orderBy('views', 'desc');
                 }, 'statistics'])
+            ->with(['user_votes' => function($q) {
+                $q->sum('status');
+            }, 'user_votes'])
             ->limit(10)
             ->get();
 
@@ -66,14 +71,14 @@ class Question extends Model
 
             // todo deficlt sql
             $query = QuestionComments::where('question_id',$this->id)
-                ->join('comment_user_statuses as statuses','question_comments.comment_id','=','statuses.comment_id')
+                ->join('comment_user_votes as statuses','question_comments.comment_id','=','statuses.comment_id')
                 ->select(['statuses.status','statuses.comment_id'])
                 ->get();
 
 //            $query = QuestionComments::query()
 //                ->where('question_id',$this->id)
 ////                ->where('question_comments.question_id', $this->id)
-//                ->join('comment_user_statuses as statuses','question_comments.comment_id','=','statuses.comment_id')
+//                ->join('comment_user_votes as statuses','question_comments.comment_id','=','statuses.comment_id')
 //                ->select(['question_comments.id', 'question_comments.comment_id', 'statuses.status','statuses.comment_id'])
 //                // ->groupBy('statuses.comment_id')
 //                ->get();
@@ -127,7 +132,7 @@ class Question extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function user_statuses() : hasMany {
+    public function user_votes() : hasMany {
         return $this->hasMany(QuestionUserStatus::class, 'id', 'question_id');
     }
 
@@ -160,4 +165,15 @@ class Question extends Model
 //        updated to active = true // send sms/mail message about it
 
     }
+
+//    public function prepareSearchData($request)
+//    {
+//        $data = $request->validated();
+//
+//        if (isset($data['q'])){
+//            $filter = [
+//                'title' => ['title', 'LIKE', '%' . $data['q'] . '%'],
+//            ];
+//        }
+//    }
 }

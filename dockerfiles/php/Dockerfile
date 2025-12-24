@@ -1,4 +1,4 @@
-FROM php:8.3.14-fpm-alpine
+FROM php:8.3.13-fpm-alpine
 MAINTAINER Chokoladis
 
 WORKDIR /var/www/what_if

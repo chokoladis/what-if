@@ -30,7 +30,8 @@ class SearchController extends Controller
 
     public function index(IndexRequest $request)
     {
-        [$filter, $sort, $limit] = $this->searchService->prepareData($request);
+        [$filter, $sort, $limit] = $this->searchService->get(new Question, $request);
+//        [$filter, $sort, $limit] = $this->searchService->get($request);
 
         $questions = QuestionService::getList($filter, $sort, $limit);
 //        todo    $categories = Category::

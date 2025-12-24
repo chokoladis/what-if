@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Question;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserStatusStore extends FormRequest
+class UserVoteStore extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class UserStatusStore extends FormRequest
     public function rules(): array
     {
         return [
-            'question_id' => ['required', 'exists:questions,id'],
-            'status' => ['required', 'string', 'min:4', 'max:7'],
+            'entity_id' => ['required', 'integer'],
+            'vote' => ['required', 'between:-1,1'],
         ];
     }
 }

@@ -21,19 +21,20 @@ $(function(){
     });
 
     $('.actions .icon').on('click', function (){
-        let action = $(this).data('action');
+        let vote = $(this).data('vote');
         let question_id = $(this).parents('.actions').find('#question_id').val();
 
-        if (action && question_id){
+        if (vote && question_id){
+            // todo
             let sendData = new FormData();
-            sendData.append("status",action);
-            sendData.append("question_id",Number(question_id));
+            sendData.append("vote",vote);
+            sendData.append("entity_id",Number(question_id));
 
-            updUserStatus(sendData);
+            updUserVote(sendData);
         }
     });
 
-    async function updUserStatus(sendData){
+    async function updUserVote(sendData){
         try {
             let settings = {
                 method: 'POST',
@@ -43,9 +44,10 @@ $(function(){
                 body: sendData,
             };
 
-            let query = await fetch('/ajax/questionStatus', settings);
+            console.log(location);
+            // let query = await fetch('/ajax/questionStatus', settings);
             // let json = await query.json();
-            console.log(query);
+            // console.log(query);
         } catch (error) {
             console.error(error);
         }

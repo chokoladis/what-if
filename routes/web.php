@@ -31,23 +31,18 @@ Route::middleware(['locale'])->group(function () {
 
         Route::middleware(['auth'])->group(function () {
 
-            Route::group(['prefix' => 'questions', 'controller' => 'QuestionController'], function () {
-                Route::name('questions.')->group(function () {
-                    Route::get('/add', 'add')->name('add');
-                    Route::post('/', 'store')->middleware(['captcha'])->name('store');
-                    Route::post('/right_comment', 'setRightComment')->name('setRightComment');
-                });
+            Route::prefix('questions')->name('questions.')->group(function () {
+                Route::get('/add', 'QuestionController@add')->name('add');
+                Route::post('/', 'QuestionController@store')->middleware(['captcha'])->name('store');
+                Route::post('/right_comment', 'QuestionController@setRightComment')->name('setRightComment');
+
+                Route::post('/{question}/vote', 'QuestionUserVoteController@set')->name('vote');
             });
 
-            Route::group(['prefix' => 'comments'], function () {
-                Route::name('comments.')->group(function () {
-                    Route::group(['controller' => 'CommentController'], function () {
-                        Route::post('/', 'store')->name('store');
-                    });
-                    Route::group(['controller' => 'CommentUserStatusController'], function () {
-                        Route::post('/status', 'setStatus')->name('status.set');
-                    });
-                });
+            Route::prefix('comments')->name('comments.')->group(function () {
+                Route::post('/', 'CommentController@store')->name('store');
+
+                Route::post('/status', 'CommentUserVotesController@setStatus')->name('status.set');
             });
 
             Route::group(['prefix' => 'profile', 'controller' => 'UserController'], function () {
@@ -57,9 +52,6 @@ Route::middleware(['locale'])->group(function () {
                     Route::post('/photo', 'setPhoto')->name('setPhoto');
                 });
             });
-
-
-            Route::post('/ajax/questionStatus', 'QuestionUserStatusController@set')->name('ajax.questionStatus');
         });
 
         Route::get('/search', 'SearchController@index')->name('search.index');

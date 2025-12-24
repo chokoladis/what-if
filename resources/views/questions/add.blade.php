@@ -59,7 +59,7 @@
             <div class="mb-3">
                 <label class="form-label">{{ __('crud.questions.fields.title') }}</label>
                 <input type="text" name="title" class="form-control"
-                       placeholder="Почему цыгане моются, но все равно воняют?" autocomplete="search">
+                       placeholder="{{ __('crud.questions.placeholders.title') }}" autocomplete="search">
                 @if ($errors->has('title'))
                     @foreach ($errors->get('title') as $item)
                         <p class="error">{{ $item  }}</p>

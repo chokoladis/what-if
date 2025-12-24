@@ -2,14 +2,16 @@
 
 namespace App\Services;
 
+use App\Interfaces\Services\FileProxyRedisInterface;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\File;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class FileService {
+class FileService implements FileProxyRedisInterface {
 
     const MAX_FILE_SIZE = 5242880; //bites
     const MAX_FILE_SIZE_KB = self::MAX_FILE_SIZE/1024;
@@ -117,5 +119,24 @@ class FileService {
         }
 
         return $nophoto_src;
+    }
+
+    public static function getFromRedis(?File $file, string $subdir)
+    {
+        $src = self::getPhoto($file, $subdir);
+
+//        try {
+        $fileDataRaw = Redis::get($src);
+            if (!$fileDataRaw){
+                $fileDataRaw = file_get_contents(public_path($src));
+                $test = Redis::set($src, $fileDataRaw);
+                $exp = Redis::expire($src, 3600*3);
+            }
+
+//        } catch (\Throwable $th) {
+//            dd($th->getFile(), $th->getLine(), $th->getMessage());
+//        }
+
+        return $fileDataRaw ?? null;
     }
 }

@@ -1,5 +1,6 @@
 <?php
 return [
+    'search' => 'Search',
     'main' => [
         'questions' => 'Questions',
         'categories' => 'Categories',

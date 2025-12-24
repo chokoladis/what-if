@@ -9,6 +9,7 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionUserStatus;
+use App\Models\QuestionUserVotes;
 use App\Services\FileService;
 use App\Services\QuestionService;
 use App\View\Components\CommentReply;
@@ -49,40 +50,39 @@ class QuestionController extends Controller
         }
 
         if ($question->wasRecentlyCreated){
-            return redirect()->route('questions.index')->with('message', 'Вопрос будет опубликован после модерации'); //Question saved and will public late
+            return redirect()->route('questions.index')->with('message', __('questions.alerts.store'));
         } else {
-            return redirect()->back()->with('message', 'Тако вопрос уже опубликован'); //Like question already public
+            return redirect()->back()->with('message', __('questions.alerts.already_exists'));
         }
     }
 
     public function detail($question){
 
-        $arStatuses = $questionUserStatus = $arComments = null;
-
         [$question, $error] = Question::getElement($question);
 
-        if ($question){
+        if ($error) {
+            return view('questions.detail', compact('error'));
+        }
 
-            Event(new ViewEvent($question));
+        Event(new ViewEvent($question));
 
 //            service and cache
-            $arStatuses = QuestionUserStatus::getByQuestionId($question['id']);
-            $questionUserStatus = QuestionUserStatus::getByQuestionIdForUser($question['id']);
+        $arVotes = QuestionUserVotes::getByQuestionId($question['id']);
+        $questionUserVote = QuestionUserVotes::getByQuestionIdForUser($question['id']);
 
+        $arComments = [];
 //            mb use algoritm
-            foreach ($question->question_comment as $questionComment){
-                $comment = $questionComment->comment;
+        foreach ($question->question_comment as $questionComment){
+            $comment = $questionComment->comment;
 
-                if ($comment->isReply()) {
-                    continue;
-                }
-
-                $countChilds = $comment->getCountChilds($comment->replies);
-
-                $arComments[$comment->id]['comment'] = $comment;
-                $arComments[$comment->id]['count_childs'] = $countChilds;
-
+            if ($comment->isReply()) {
+                continue;
             }
+
+            $countChilds = $comment->getCountChilds($comment->replies);
+
+            $arComments[$comment->id]['comment'] = $comment;
+            $arComments[$comment->id]['count_childs'] = $countChilds;
         }
 
         $isNeedShowFullTitle = false;
@@ -95,7 +95,7 @@ class QuestionController extends Controller
         }
 
         return view('questions.detail',
-            compact('question', 'arStatuses', 'questionUserStatus', 'arComments', 'error', 'title', 'isNeedShowFullTitle')
+            compact('question', 'arVotes', 'questionUserVote', 'arComments', 'title', 'isNeedShowFullTitle')
         );
     }
 

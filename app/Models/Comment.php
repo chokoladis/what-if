@@ -89,7 +89,7 @@ class Comment extends Model
     public function getRating() {
         return $this->newQuery()
             ->where('comments.id', $this->id)
-            ->join('comment_user_statuses as t_statuses','comments.id','=', 'comment_id')
+            ->join('comment_user_votes as t_statuses','comments.id','=', 'comment_id')
             ->selectRaw('SUM(t_statuses.status) as rating')
             ->first();
     }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class QuestionUserStatus extends Model
+class QuestionUserVotes extends Model
 {
     use HasFactory;
 
@@ -17,8 +17,8 @@ class QuestionUserStatus extends Model
 //        cache , to service
         return self::query()
             ->select(
-                DB::raw('(SELECT COUNT(status) from `question_user_statuses` WHERE status = "like" && `question_id` ='.$id.') as likes'),
-                DB::raw('(SELECT COUNT(status) from `question_user_statuses` WHERE status = "dislike" && `question_id` ='.$id.') dislikes')
+                DB::raw('(SELECT COUNT(status) from `question_votes` WHERE status = 1 && `question_id` ='.$id.') as likes'),
+                DB::raw('(SELECT COUNT(status) from `question_votes` WHERE status = 0 && `question_id` ='.$id.') dislikes')
             )
             ->first();
     }

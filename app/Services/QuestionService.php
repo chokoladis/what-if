@@ -8,12 +8,16 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 Class QuestionService
 {
+    CONST POPULAR_VIEW_RATIO = 0.2;
+
     private static $model = Question::class;
 
     public static function getList(
@@ -127,10 +131,63 @@ Class QuestionService
 
     public static function getActive(Request $request)
     {
-//        todo css pagination
+        // todo css pagination
         //cache
         return Question::where('active', true)
             ->paginate(10)
             ->withQueryString();
+    }
+
+    public function getPopularForWeek()
+    {
+        $collection = $this->getRawDataForPopular('1 WEEK');
+    }
+
+    public static function getPopular()
+    {
+//        $time = microtime(true);
+        $collection = self::getRawDataForPopular('1 YEAR'); //todo
+//        dump('first',microtime(true) - $time);
+
+        if ($collection->isEmpty())
+            return new Collection([]);
+
+        $questionIds = array_column($collection->toArray(), 'id');
+
+        $data = self::$model::query()
+            ->whereIn('id', $questionIds)
+            ->where('active', true)
+            ->orderBy(DB::raw("FIELD(id, " . implode(',', $questionIds) . ")"))
+            ->get();
+
+//        dump('sec',microtime(true) - $time);
+        return $data;
+    }
+
+    private static function getRawDataForPopular(string $interval = '1 DAY')
+    {
+        if ($interval === '1 DAY'){
+            // cache 3h
+        } else {
+            // cache 12h
+        }
+
+        $statistics = DB::table('question_statistics')
+            ->select(['question_id', 'views']);
+
+        $votes = DB::table('question_user_votes')
+            ->groupBy('question_id')
+            ->select(['question_id', DB::raw('SUM(vote) as total_votes')]);
+
+        return DB::table('questions as q')
+            ->select([
+                'q.id',
+                DB::raw('(COALESCE(statistics.views, 0) * 0.2 + COALESCE(votes.total_votes, 0)) as popularity'),
+            ])
+            ->leftJoinSub($statistics, 'statistics',  'statistics.question_id', '=', 'q.id')
+            ->leftJoinSub($votes, 'votes', 'votes.question_id', '=', 'q.id')
+            ->where('q.created_at', '>', DB::raw('NOW() - INTERVAL '.$interval))
+            ->orderBy('popularity', 'desc')
+            ->get();
     }
 }

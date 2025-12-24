@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\DTO\Errors\CommonError;
-use App\DTO\Errors\ValidationError;
-use App\Http\Requests\Question\StoreRequest;
 use App\Http\Requests\Search\IndexRequest;
+use App\Interfaces\Models\SearchableInterface;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
-use Illuminate\Http\Request;
+use \Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Log;
 
 Class SearchService
@@ -18,6 +16,13 @@ Class SearchService
     const MAX_LIMIT = 100;
 
 
+    public function get(SearchableInterface $searchable, Request $request)
+    {
+//        $searchable->prepareSearchData($request);
+//        $searchable->search()
+    }
+
+//    todo suggest search - limit 3 or 5
     public function prepareData(IndexRequest $request)
     {
         $data = $request->validated();
@@ -49,4 +54,9 @@ Class SearchService
 
         return [$filter, [$sortBy, $order], $limit];
     }
+
+//    private function getByTrigram()
+//    {
+//
+//    }
 }
