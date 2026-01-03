@@ -12,7 +12,7 @@
 
 @section('content')
     <div class="question-page container" data-question-id="{{ $question?->id ?? 0 }}">
-        @if($error)
+        @if(isset($error) && !empty($error))
             <div class="title error">
                 <div class="description">
                     <img src="{{ Storage::url('404.gif') }}">
@@ -174,7 +174,10 @@
             @endif
             @if($question->category)
                 <div class="category">
-                    <a href="{{route('categories.detail', $question->category->code)}}" class="btn btn-outline-primary">Все категории {{$question->category->title}}</a>
+                    <a href="{{ route('categories.detail', $question->category->code)}}"
+                       class="btn btn-outline-primary">
+                        {{ __('questions.all_questions') . ' in "'. $question->category->title . '"'}}
+                    </a>
                 </div>
             @endif
         @endif

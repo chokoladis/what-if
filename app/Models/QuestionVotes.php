@@ -6,25 +6,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class QuestionUserVotes extends Model
+class QuestionVotes extends Model
 {
     use HasFactory;
 
     public $guarded = [];
+
+    public function getTable()
+    {
+        return 'question_user_votes';
+    }
 
     public static function getByQuestionId(int $id)
     {
 //        cache , to service
         return self::query()
             ->select(
-                DB::raw('(SELECT COUNT(status) from `question_votes` WHERE status = 1 && `question_id` ='.$id.') as likes'),
-                DB::raw('(SELECT COUNT(status) from `question_votes` WHERE status = 0 && `question_id` ='.$id.') dislikes')
+                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 1 && `question_id` ='.$id.') as likes'),
+                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 0 && `question_id` ='.$id.') as dislikes')
             )
             ->first();
     }
 
     public static function getByQuestionIdForUser(int $id)
     {
-        return self::where('question_id', $id)->where('user_id', auth()->id())->first('status');
+        return self::where('question_id', $id)->where('user_id', auth()->id())->first('vote');
     }
 }

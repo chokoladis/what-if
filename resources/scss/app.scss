@@ -57,9 +57,14 @@ nav.header{
 
     .navbar-nav{
         align-items: center;
+        margin-top: unset;
         
         .nav-item{
             height: fit-content;
+
+            img {
+                height: 100%;
+            }
         }
 
 

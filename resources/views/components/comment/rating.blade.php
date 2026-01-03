@@ -1,10 +1,10 @@
 @props(['comment'])
 @php
-    use App\Models\CommentUserStatus;
+    use App\Models\CommentVotes;
 
     $queryRating = $comment->getRating();
     
-    $commentStatus = CommentUserStatus::getForCurrentUser($comment->id);
+    $commentStatus = CommentVotes::getForCurrentUser($comment->id);
     
     $rating = intval($queryRating['rating']);
     $userRating = !empty($commentStatus) ? intval($commentStatus['status']) : 0;

@@ -30,10 +30,12 @@ class SearchController extends Controller
 
     public function index(IndexRequest $request)
     {
-        [$filter, $sort, $limit] = $this->searchService->get(new Question, $request);
-//        [$filter, $sort, $limit] = $this->searchService->get($request);
+//        $questions = $this->searchService->get(new Question, $request);
+        $data = $request->validated();
+        $questions = Question::search($data['q'])->where('active', 1)->paginate(10);
+//        $categories = Category::search($data['q'])->where('active', 1)->get();
 
-        $questions = QuestionService::getList($filter, $sort, $limit);
+//        $questions = QuestionService::getList($filter, $sort, $limit);
 //        todo    $categories = Category::
 
         return view('search.index', compact('questions'));

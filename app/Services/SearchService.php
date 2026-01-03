@@ -16,12 +16,6 @@ Class SearchService
     const MAX_LIMIT = 100;
 
 
-    public function get(SearchableInterface $searchable, Request $request)
-    {
-//        $searchable->prepareSearchData($request);
-//        $searchable->search()
-    }
-
 //    todo suggest search - limit 3 or 5
     public function prepareData(IndexRequest $request)
     {

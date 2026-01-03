@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserVoteStore;
-use App\Models\QuestionUserVotes;
+use App\Models\QuestionVotes;
 
 class QuestionUserVoteController extends Controller
 {
@@ -14,7 +14,7 @@ class QuestionUserVoteController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id();
 
-        $status = QuestionUserVotes::updateOrCreate(
+        $status = QuestionVotes::updateOrCreate(
             ['question_id' => $data['entity_id'], 'user_id' => $data['user_id']],
             $data
         );

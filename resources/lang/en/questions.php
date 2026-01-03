@@ -6,5 +6,7 @@ return [
     'alerts' => [
         'store' => 'Question saved and will public late',
         'already_exists' => 'Like question already exists',
-    ]
+    ],
+    'all_questions' => 'All questions',
+    'comments' => 'Comments'
 ];

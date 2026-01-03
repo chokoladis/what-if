@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
 @endpush
 @php
-    use App\Models\QuestionUserStatus;
+    use App\Models\QuestionVotes;
 
     $parents = $category->getParents();
 
@@ -31,7 +31,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item active" aria-current="page">
-                        <a href="{{ route("categories.index") }}">{{ __('Категории') }}</a>
+                        <a href="{{ route("categories.index") }}">{{ __('categories.categories') }}</a>
                     </li>
 
                     @if (!empty($parents))
@@ -48,7 +48,7 @@
         @if (!$childs->isEmpty())
 
             <div class="daughters mt-4">
-                <h4>Подразделы</h4>
+                <h4>{{ __('categories.subcategories') }}</h4>
 
                 <x-category-slider :childs="$childs"></x-category-slider>
             </div>
@@ -57,11 +57,11 @@
 
         @if (!$questions->isEmpty())
             <div class="questions_block">
-                <h4>{{ __('Вопросы') }}</h4>
+                <h4>{{ __('menu.main.questions') }}</h4>
                 <div class="list-group">
                     @foreach($questions as $question)
                         @php
-                            $userReaction = QuestionUserStatus::getByQuestionId($question->id)
+                            $userReaction = QuestionVotes::getByQuestionId($question->id)
                         @endphp
                         <li class="list-group-item @if($question->right_comment_id) list-group-item-success @endif">
                             <div class="reaction">
@@ -81,7 +81,7 @@
                                 </div>
                             </a>
                             <span class="comments-count badge rounded-pill {{ count($question->question_comment) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">
-                                {{ __('Ответов ('.(count($question->question_comment) ?? 0).')') }}</span>
+                                {{ sprintf(__('questions.comments') . ' (%u)', count($question->question_comment) ?? 0) }}</span>
                         </li>
                     @endforeach
                 </div>

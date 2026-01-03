@@ -90,7 +90,7 @@ class Comment extends Model
         return $this->newQuery()
             ->where('comments.id', $this->id)
             ->join('comment_user_votes as t_statuses','comments.id','=', 'comment_id')
-            ->selectRaw('SUM(t_statuses.status) as rating')
+            ->selectRaw('SUM(t_statuses.votes) as rating')
             ->first();
     }
 
@@ -107,7 +107,7 @@ class Comment extends Model
         static::created(function($item) {
             try {
                 $userComment = UserComments::create([
-                    'user_id' => auth()->id(),
+                    'user_id' => $item->user_id, // auth()->id(), //for factory - $item->user_id
                     'comment_id' => $item->id
                 ]);
     

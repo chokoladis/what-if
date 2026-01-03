@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'not_found' => 'Нэт категорий'
+    'not_found' => 'Нэт категорий',
+    'categories' => 'Категории',
+    'subcategories' => 'Подкатегории'
 ];

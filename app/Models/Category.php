@@ -88,8 +88,12 @@ class Category extends Model
         while(true){
             $parentId = !empty($queryResult) ? $queryResult->parent_id : $this->parent_id;
             $level = !empty($queryResult) ? $queryResult->level - 1 : $this->level - 1;
-            if ($queryResult = $this->getParentById($parentId, $level)){
-                $arParents[] = $queryResult;
+            if ($parentId) {
+                if ($queryResult = $this->getParentById($parentId, $level)){
+                    $arParents[] = $queryResult;
+                } else {
+                    break;
+                }
             } else {
                 break;
             }

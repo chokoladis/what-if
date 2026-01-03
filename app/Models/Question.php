@@ -5,13 +5,17 @@ namespace App\Models;
 use App\Exceptions\Models\QuestionNotFoundException;
 use App\Interfaces\Models\SearchableInterface;
 use App\Models\Errors\CommonError;
+use App\Services\QuestionService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class Question extends BaseModel
+class Question extends BaseModel //implements SearchableInterface
 {
     use HasFactory;
 
@@ -63,35 +67,26 @@ class Question extends BaseModel
         return $res;
     }
 
-    public function getPopularComment(){
-        
-        $result = false;
-
-        if ($this->question_comment){
+    public function getPopularComment()
+    {
+        if (!$this->question_comment->isEmpty()){
 
             // todo deficlt sql
             $query = QuestionComments::where('question_id',$this->id)
-                ->join('comment_user_votes as statuses','question_comments.comment_id','=','statuses.comment_id')
-                ->select(['statuses.status','statuses.comment_id'])
+                ->join('comment_user_votes as comment_votes','question_comments.comment_id','=','comment_votes.comment_id')
+                ->select(['comment_votes.votes','comment_votes.comment_id'])
                 ->get();
-
-//            $query = QuestionComments::query()
-//                ->where('question_id',$this->id)
-////                ->where('question_comments.question_id', $this->id)
-//                ->join('comment_user_votes as statuses','question_comments.comment_id','=','statuses.comment_id')
-//                ->select(['question_comments.id', 'question_comments.comment_id', 'statuses.status','statuses.comment_id'])
-//                // ->groupBy('statuses.comment_id')
-//                ->get();
 
             $comments = [];
 
             if ($query->isNotEmpty()){
                 foreach ($query as $comment) {
 
+//                    todo check
                     if (!isset($comments[$comment->comment_id]))
                         $comments[$comment->comment_id] = 0;
 
-                    $plus = $comment->status === 'like' ? 1 : -1;
+                    $plus = $comment->votes === 'like' ? 1 : -1;
 
                     $comments[$comment->comment_id] = $comments[$comment->comment_id] + $plus;
                 }
@@ -166,14 +161,41 @@ class Question extends BaseModel
 
     }
 
-//    public function prepareSearchData($request)
+    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $title)
+    {
+        return $query->where('title', 'LIKE', '%' . $title . '%')
+            ->orWhere('code', 'LIKE', '%' . $title . '%');
+    }
+
+//    public function getSearchBuilder($request): \Illuminate\Database\Eloquent\Builder
 //    {
 //        $data = $request->validated();
 //
+//        $query = $this->newQuery();
 //        if (isset($data['q'])){
-//            $filter = [
-//                'title' => ['title', 'LIKE', '%' . $data['q'] . '%'],
-//            ];
+//
 //        }
+//
+//        return $query;
+//    }
+
+//    public function search($request): false|\Illuminate\Pagination\LengthAwarePaginator
+//    {
+//        $data = $request->validated();
+//
+//        $query = $this->getSearchBuilder($request);
+//        $count = $query->count('id'); //get(DB::raw('COUNT(id) as count'));
+//        if (!$count) {
+////            malisearch or typesence
+////            $query = $this->searchByTrigram($request);
+//        }
+//
+//        $queryTitle = $request->get('q');
+//
+//        $result = $query->get();
+////        foreach ($result as $item) {
+////        }
+//
+//        return false;
 //    }
 }

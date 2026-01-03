@@ -8,11 +8,8 @@ use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
-use App\Models\QuestionUserStatus;
-use App\Models\QuestionUserVotes;
-use App\Services\FileService;
+use App\Models\QuestionVotes;
 use App\Services\QuestionService;
-use App\View\Components\CommentReply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -67,8 +64,8 @@ class QuestionController extends Controller
         Event(new ViewEvent($question));
 
 //            service and cache
-        $arVotes = QuestionUserVotes::getByQuestionId($question['id']);
-        $questionUserVote = QuestionUserVotes::getByQuestionIdForUser($question['id']);
+        $arVotes = QuestionVotes::getByQuestionId($question['id']);
+        $questionUserVote = QuestionVotes::getByQuestionIdForUser($question['id']);
 
         $arComments = [];
 //            mb use algoritm
