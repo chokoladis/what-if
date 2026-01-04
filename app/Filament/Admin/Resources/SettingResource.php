@@ -9,10 +9,12 @@ use App\Models\Setting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BackedEnum;
 
 class SettingResource extends Resource
 {
@@ -21,14 +23,16 @@ class SettingResource extends Resource
     protected static ?string $pluralModelLabel = 'Настройки';
     protected static ?string $model = Setting::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null | string | BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static null | string | BackedEnum $activeNavigationIcon = 'heroicon-o-document-text';
 
     const DIR = 'settings';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\TextInput::make('area')
                     ->string()
                     ->label('Область применения')

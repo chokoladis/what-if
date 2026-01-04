@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Comment\UserStatusStoreRequest;
-use App\Models\CommentUserStatus;
+use App\Models\CommentVotes;
 
-class CommentUserStatusController extends Controller
+class CommentVotesController extends Controller
 {
     public function setStatus(UserStatusStoreRequest $request)
     {
@@ -13,22 +13,22 @@ class CommentUserStatusController extends Controller
         $comment_id = intval($data['comment_id']);
         $action = intval($data['action']);
 
-        $commentStatus = CommentUserStatus::query()
+        $commentVote = CommentVotes::query()
             ->where('comment_id', $comment_id)
             ->where('user_id', auth()->id())
-            ->where('status', $action)
+            ->where('votes', $action)
             ->first();
 
-        if ($commentStatus->exists) {
-            $commentStatus->delete();
+        if ($commentVote) {
+            $commentVote->delete();
 
             return true;
         }
 
-        CommentUserStatus::updateOrCreate([
+        CommentVotes::updateOrCreate([
             'comment_id' => $comment_id, 'user_id' => auth()->id()
         ], [
-            'status' => $action
+            'votes' => $action
         ]);
 
         return true;

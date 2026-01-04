@@ -9,6 +9,7 @@ use App\Services\FileService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Log;
@@ -22,14 +23,14 @@ class QuestionCategoryResource extends Resource
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null | string | \BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
 
     const DIR = 'categories';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 //                todo убрать самого себя
                 Forms\Components\Select::make('parent_id')
                     ->options(Category::query()->pluck('title', 'id'))

@@ -122,9 +122,9 @@
                                         <div class="user">
                                             <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
                                             <div class="icon">
-                                                <img src="{{ \App\Services\FileService::getPhoto($comment->user_comment->user->photo, 'users') }}" alt="">
+                                                <img src="{{ \App\Services\FileService::getPhoto($comment->user->photo, 'users') }}" alt="">
                                             </div>
-                                            <b>{{ $comment->user_comment->user->name }}</b>
+                                            <b>{{ $comment->user->name }}</b>
                                         </div>
                                         <div class="date">
                                             {{  $comment->created_at->format('d M Y, H:i:s') }}

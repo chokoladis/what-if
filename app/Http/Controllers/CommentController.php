@@ -38,7 +38,7 @@ class CommentController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with('message', __('system.alert.success'));
+            return redirect()->back()->with('message', __('system.alerts.success'));
         } else {
             return redirect()->back()->withErrors('error', new CommonError('Вы уже оставляли такой комментарий'));
         }

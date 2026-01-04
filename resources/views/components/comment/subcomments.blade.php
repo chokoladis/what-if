@@ -27,7 +27,7 @@
                 <div class="additional_info">
                     <div class="user">
                         <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
-                        <b>{{ $comment->user_comment->user->name }}</b>
+                        <b>{{ $comment->user->name }}</b>
                     </div>
                     <div class="date">
                         {{  $comment->created_at->format('d M Y, H:i:s') }}

@@ -27,10 +27,6 @@ class Comment extends Model
         return $this->HasOne(User::class, 'id', 'user_id');
     }
 
-    public function user_comment() : HasOne {
-        return $this->HasOne(UserComments::class);
-    }
-
     public function isReply() : bool {
         return $this->HasOne(CommentsReply::class, 'comment_reply_id', 'id')->exists();
     }

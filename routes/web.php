@@ -42,7 +42,7 @@ Route::middleware(['locale'])->group(function () {
             Route::prefix('comments')->name('comments.')->group(function () {
                 Route::post('/', 'CommentController@store')->name('store');
 
-                Route::post('/status', 'CommentUserVotesController@setStatus')->name('status.set');
+                Route::post('/vote', 'CommentVotesController@setStatus')->name('status.set');
             });
 
             Route::group(['prefix' => 'profile', 'controller' => 'UserController'], function () {
