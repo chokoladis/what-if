@@ -17,7 +17,6 @@ class Handler extends \Illuminate\Foundation\Exceptions\Handler
                 ], 422);
             }
 
-            // Если это обычная web-форма
             return redirect()->back()->with('error', $e->getMessage());
         }
 

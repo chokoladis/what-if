@@ -8,14 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
-class Category extends Model
+class Category extends BaseModel
 {
-    use HasFactory;
-
-    static $timeCache = 43200;
-    
-    public $guarded = [];
+    use Searchable;
 
     public function getRouteKeyName()
     {
@@ -165,6 +162,38 @@ class Category extends Model
         static::deleted(function($item){
             File::find($item->file_id)->delete();
         });
+    }
 
+    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $title)
+    {
+        return $query->where('title', 'LIKE', '%' . $title . '%')
+            ->orWhere('code', 'LIKE', '%' . $title . '%');
+    }
+
+    public function toSearchableArray()
+    {
+        $count = $this->getCountQuestion();
+
+        return [
+            'title' => $this->title,
+            'code' => $this->code,
+            'parents' => $this->getParents(),
+            'parent_id' => $this->parent_id,
+            'created_at' => $this->created_at,
+            'count_question' => $count
+        ];
+    }
+
+    public function shouldBeSearchable()
+    {
+        return $this->active;
+    }
+
+    public function getCountQuestion()
+    {
+        return Question::search()
+            ->where('category_id', $this->id)
+            ->whereIn('category_list', $this->id)
+            ->get()->count();
     }
 }

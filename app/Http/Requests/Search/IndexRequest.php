@@ -25,6 +25,7 @@ class IndexRequest extends FormRequest
             'limit' => ['integer', 'min:1', 'max:100'],
             'sort' => [],
             'q' => ['required', 'string'],
+            'filters' => ['array', 'nullable'],
         ];
     }
 }

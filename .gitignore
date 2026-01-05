@@ -11,3 +11,4 @@ public/storage/users
 public/storage/categories
 public/storage/questions
 /public/build/
+/vendor/

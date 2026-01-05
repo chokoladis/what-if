@@ -8,6 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
 @endpush
 
+@php
+    $collectionCategory = current($categories->getCollection())['hits'];
+    $collectionQuestion = current($questions->getCollection())['hits'];
+@endphp
 @section('content')
     <div class="search-page container">
         <h1>{{ __('Поиск по сайту') }}</h1>
@@ -30,15 +34,21 @@
             </div>
         </form>
 
+        @foreach($collectionCategory as $category)
+            <button type="button" class="btn btn-primary">
+                {{ $category['title'] }} <span class="badge text-bg-secondary">{{ $category['count_question'] }}</span>
+            </button>
+        @endforeach
+
 {{--        категории слайдер - возможно искали эти разделы 5-10 штук --}}
-        @foreach ($questions as $question)
+        @foreach ($collectionQuestion as $question)
 
             @php
-                $mainClass = $question->right_comment_id ? 'border-success' : '';
+                $mainClass = ''; //$question->right_comment_id ? 'border-success' : '';
             @endphp
 
             <div class="item card mb-3 {{ $mainClass }} ">
-                <a href="{{ route('questions.detail', $question->code) }}" class="row g-0">
+                <a href="{{ route('questions.detail', $question['code']) }}" class="row g-0">
                     <div class="img-col col-sm-4 col-md-3">
                         <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions/') }}" alt="" class="img-fluid rounded-start">
                     </div>

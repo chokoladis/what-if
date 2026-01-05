@@ -32,6 +32,8 @@ use function var_export;
 use Closure;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final class GlobalState
@@ -110,6 +112,42 @@ final class GlobalState
         ],
 
         '8.3' => [
+            'auto_detect_line_endings'     => true,
+            'filter.default'               => true,
+            'iconv.input_encoding'         => true,
+            'iconv.output_encoding'        => true,
+            'iconv.internal_encoding'      => true,
+            'mbstring.http_input'          => true,
+            'mbstring.http_output'         => true,
+            'mbstring.internal_encoding'   => true,
+            'oci8.old_oci_close_semantics' => true,
+        ],
+
+        '8.4' => [
+            'auto_detect_line_endings'     => true,
+            'filter.default'               => true,
+            'iconv.input_encoding'         => true,
+            'iconv.output_encoding'        => true,
+            'iconv.internal_encoding'      => true,
+            'mbstring.http_input'          => true,
+            'mbstring.http_output'         => true,
+            'mbstring.internal_encoding'   => true,
+            'oci8.old_oci_close_semantics' => true,
+        ],
+
+        '8.5' => [
+            'auto_detect_line_endings'     => true,
+            'filter.default'               => true,
+            'iconv.input_encoding'         => true,
+            'iconv.output_encoding'        => true,
+            'iconv.internal_encoding'      => true,
+            'mbstring.http_input'          => true,
+            'mbstring.http_output'         => true,
+            'mbstring.internal_encoding'   => true,
+            'oci8.old_oci_close_semantics' => true,
+        ],
+
+        '8.6' => [
             'auto_detect_line_endings'     => true,
             'filter.default'               => true,
             'iconv.input_encoding'         => true,

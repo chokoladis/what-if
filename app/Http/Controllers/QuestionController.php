@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\ViewEvent;
-use App\Http\Middleware\CaptchaMiddleware;
 use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
@@ -28,6 +27,7 @@ class QuestionController extends Controller
         $questions = Cache::remember('questions_'.$key, 3600, function () use ($request){
             return QuestionService::getActive($request);
         });
+//        todo paginate
 
         return view('questions.index', compact('questions'));
     }

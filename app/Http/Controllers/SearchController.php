@@ -2,43 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ViewEvent;
-use App\Http\Middleware\CaptchaMiddleware;
-use App\Http\Requests\Question\RightCommentStoreRequest;
-use App\Http\Requests\Question\StoreRequest;
 use App\Http\Requests\Search\IndexRequest;
 use App\Models\Category;
 use App\Models\Question;
-use App\Models\QuestionUserStatus;
-use App\Services\FileService;
-use App\Services\QuestionService;
-use App\Services\SearchService;
-use App\View\Components\CommentReply;
-use http\Env\Request;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\EventListener\FragmentListener;
+use App\Repositories\CategoryRepository;
+use App\Repositories\QuestionRepository;
 
 class SearchController extends Controller
 {
-
-    private SearchService $searchService;
+    private QuestionRepository $questionRepository;
+    private CategoryRepository $categoryRepository;
 
     function __construct()
     {
-        $this->searchService = new SearchService();
+        $this->questionRepository = new QuestionRepository(Question::class);
+        $this->categoryRepository = new CategoryRepository(Category::class);
     }
 
     public function index(IndexRequest $request)
     {
-//        $questions = $this->searchService->get(new Question, $request);
         $data = $request->validated();
-        $questions = Question::search($data['q'])->where('active', 1)->paginate(10);
-//        $categories = Category::search($data['q'])->where('active', 1)->get();
+        $filters = $data['filters'] ?? [];
 
-//        $questions = QuestionService::getList($filter, $sort, $limit);
-//        todo    $categories = Category::
+        $questions = $this->questionRepository->search($data, $filters);
+        $categories = $this->categoryRepository->search($data, $filters);
 
-        return view('search.index', compact('questions'));
+        return view('search.index', compact('questions', 'categories'));
     }
 
 }

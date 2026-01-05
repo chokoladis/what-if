@@ -11,6 +11,7 @@
 @section('content')
     <div class="questions-page container">
         {{--            todo поля фильтры - теги --}}
+
         @foreach ($questions as $question)
 
             @php
@@ -24,7 +25,7 @@
                     </div>
                     <div class="col-sm-8 col-md-9">
                         <div class="card-body">
-                            <h4 class="card-title">{{ $question->title }}</h4>
+                            <h4 class="card-title fw-bold">{{ $question->title }}</h4>
 
                             @if ($question->right_comment_id)
                                 <div class="right-answer card-text alert alert-success">
@@ -38,7 +39,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if ($popularComment = $question->getPopularComment() && !$question->right_comment_id)
+                            @if (!$question->right_comment_id && $popularComment = $question->getPopularComment())
                                 <div class="popular-answer alert alert-warning" role="alert">
                                     <i uk-icon="bolt"></i>
                                     <div class="content">
@@ -46,7 +47,7 @@
                                             <img src="{{ \App\Services\FileService::getPhoto($popularComment->user->file, 'users') }}" alt="">
                                             <p>{{ $popularComment->user->name }}</p>
                                         </div>
-                                        <p class="mb-0">{{ $popularComment->text }}</p>
+                                        <p class="mb-0 fst-italic">{{ $popularComment->text }}</p>
                                     </div>
                                 </div>
                             @endif

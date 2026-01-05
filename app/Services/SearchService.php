@@ -4,11 +4,6 @@ namespace App\Services;
 
 use App\Http\Requests\Search\IndexRequest;
 use App\Interfaces\Models\SearchableInterface;
-use App\Models\Category;
-use App\Models\Question;
-use App\Models\QuestionComments;
-use \Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Log;
 
 Class SearchService
 {
@@ -48,9 +43,4 @@ Class SearchService
 
         return [$filter, [$sortBy, $order], $limit];
     }
-
-//    private function getByTrigram()
-//    {
-//
-//    }
 }

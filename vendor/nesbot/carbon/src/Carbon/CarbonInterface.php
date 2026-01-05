@@ -1080,9 +1080,9 @@ interface CarbonInterface extends DateTimeInterface, JsonSerializable
      * @example $date->add(15, 'days')
      * @example $date->add(CarbonInterval::days(4))
      *
-     * @param Unit|string|DateInterval|Closure|CarbonConverterInterface $unit
-     * @param int|float                                                 $value
-     * @param bool|null                                                 $overflow
+     * @param Unit|int|string|DateInterval|Closure|CarbonConverterInterface $unit
+     * @param Unit|int|float|string                                         $value
+     * @param bool|null                                                     $overflow
      *
      * @return static
      */
@@ -2890,6 +2890,30 @@ interface CarbonInterface extends DateTimeInterface, JsonSerializable
     public static function isMutable(): bool;
 
     /**
+     * Determines if the instance is now or in the future, ie. greater (after) than or equal to now.
+     *
+     * @example
+     * ```
+     * Carbon::now()->isNowOrFuture(); // true
+     * Carbon::now()->addHours(5)->isNowOrFuture(); // true
+     * Carbon::now()->subHours(5)->isNowOrFuture(); // false
+     * ```
+     */
+    public function isNowOrFuture(): bool;
+
+    /**
+     * Determines if the instance is now or in the past, ie. less (before) than or equal to now.
+     *
+     * @example
+     * ```
+     * Carbon::now()->isNowOrPast(); // true
+     * Carbon::now()->subHours(5)->isNowOrPast(); // true
+     * Carbon::now()->addHours(5)->isNowOrPast(); // false
+     * ```
+     */
+    public function isNowOrPast(): bool;
+
+    /**
      * Determines if the instance is in the past, ie. less (before) than now.
      *
      * @example
@@ -3351,6 +3375,8 @@ interface CarbonInterface extends DateTimeInterface, JsonSerializable
      * });
      * echo Carbon::yesterday()->hours(11)->userFormat();
      * ```
+     *
+     * @param-closure-this  static  $macro
      */
     public static function macro(string $name, ?callable $macro): void;
 
@@ -4206,9 +4232,9 @@ interface CarbonInterface extends DateTimeInterface, JsonSerializable
      * @example $date->sub(15, 'days')
      * @example $date->sub(CarbonInterval::days(4))
      *
-     * @param Unit|string|DateInterval|Closure|CarbonConverterInterface $unit
-     * @param int|float                                                 $value
-     * @param bool|null                                                 $overflow
+     * @param Unit|int|string|DateInterval|Closure|CarbonConverterInterface $unit
+     * @param Unit|int|float|string                                         $value
+     * @param bool|null                                                     $overflow
      *
      * @return static
      */
@@ -4258,9 +4284,9 @@ interface CarbonInterface extends DateTimeInterface, JsonSerializable
      *
      * @see sub()
      *
-     * @param string|DateInterval $unit
-     * @param int|float           $value
-     * @param bool|null           $overflow
+     * @param Unit|int|string|DateInterval $unit
+     * @param Unit|int|float|string        $value
+     * @param bool|null                    $overflow
      *
      * @return static
      */

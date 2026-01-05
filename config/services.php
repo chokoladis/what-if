@@ -45,6 +45,10 @@ return [
     ],
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
+    ],
+    'meili_search' => [
+        'host' => env('MEILISEARCH_HOST'),
+        'api_key' => env('MEILISEARCH_KEY'),
     ]
 
 ];

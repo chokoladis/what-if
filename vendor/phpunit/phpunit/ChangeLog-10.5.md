@@ -2,6 +2,322 @@
 
 All notable changes of the PHPUnit 10.5 release series are documented in this file using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
+## [10.5.60] - 2025-12-06
+
+* No changes; `phpunit.phar` rebuilt with PHP 8.4 to work around PHP-Scoper issue [#1139](https://github.com/humbug/php-scoper/issues/1139)
+
+## [10.5.59] - 2025-12-01
+
+### Changed
+
+* [#6338](https://github.com/sebastianbergmann/phpunit/pull/6338): Removed code from `PHPUnit\Runner\TestSuiteSorter` that was only used in the tests for this class
+* Updated list of deprecated PHP configuration settings for PHP 8.4, PHP 8.5, and PHP 8.6
+
+## [10.5.58] - 2025-09-28
+
+### Fixed
+
+* [#6368](https://github.com/sebastianbergmann/phpunit/issues/6368): `failOnPhpunitWarning="false"` has no effect
+
+## [10.5.57] - 2025-09-24
+
+* No changes; `phpunit.phar` rebuilt with updated dependencies
+
+## [10.5.56] - 2025-09-23
+
+* No changes; `phpunit.phar` rebuilt with updated dependencies
+
+## [10.5.55] - 2025-09-14
+
+### Changed
+
+* [#6366](https://github.com/sebastianbergmann/phpunit/issues/6366): Exclude `__sleep()` and `__wakeup()` from test double code generation on PHP >= 8.5
+
+## [10.5.54] - 2025-09-11
+
+### Changed
+
+* Do not use `__sleep()` method (which will be deprecated in PHP 8.5)
+
+## [10.5.53] - 2025-08-20
+
+### Changed
+
+* Do not configure `report_memleaks` setting (which will be deprecated in PHP 8.5) for PHPT processes
+
+## [10.5.52] - 2025-08-16
+
+### Changed
+
+* [#6321](https://github.com/sebastianbergmann/phpunit/issues/6321): Allow `error_reporting=E_ALL` for `--check-php-configuration`
+
+## [10.5.51] - 2025-08-12
+
+### Changed
+
+* [#6308](https://github.com/sebastianbergmann/phpunit/pull/6308): Improve output of `--check-php-configuration`
+* The version number for the test result cache file has been incremented to reflect that its structure for PHPUnit 10.5 is not compatible with its structure for PHPUnit 8.5 and PHPUnit 9.6
+
+## [10.5.50] - 2025-08-10
+
+### Changed
+
+* [#6300](https://github.com/sebastianbergmann/phpunit/issues/6300): Emit warning when the name of a data provider method begins with `test`
+* Do not use `SplObjectStorage` methods that will be deprecated in PHP 8.5
+
+## [10.5.49] - 2025-08-09
+
+### Added
+
+* [#6297](https://github.com/sebastianbergmann/phpunit/issues/6297): `--check-php-configuration` CLI option for checking whether PHP is configured for testing
+
+### Fixed
+
+* Errors due to invalid data provided using `#[TestWith]` or `#[TestWithJson]` attributes are now properly reported
+
+## [10.5.48] - 2025-07-11
+
+### Fixed
+
+* [#6254](https://github.com/sebastianbergmann/phpunit/issues/6254): `defects,random`configuration is supported by implementation, but it is not allowed by the XML configuration file schema
+
+## [10.5.47] - 2025-06-20
+
+### Added
+
+* [#6236](https://github.com/sebastianbergmann/phpunit/issues/6236): `failOnPhpunitWarning` attribute on the `<phpunit>` element of the XML configuration file and `--fail-on-phpunit-warning` CLI option for controlling whether PHPUnit should fail on PHPUnit warnings (default: `true`)
+* [#6239](https://github.com/sebastianbergmann/phpunit/issues/6239): `--do-not-fail-on-deprecation`, `--do-not-fail-on-phpunit-warning`, `--do-not-fail-on-phpunit-deprecation`, `--do-not-fail-on-empty-test-suite`, `--do-not-fail-on-incomplete`, `--do-not-fail-on-notice`, `--do-not-fail-on-risky`, `--do-not-fail-on-skipped`, and `--do-not-fail-on-warning` CLI options
+* `--do-not-report-useless-tests` CLI option as a replacement for `--dont-report-useless-tests`
+
+### Deprecated
+
+* `--dont-report-useless-tests` CLI option (use `--do-not-report-useless-tests` instead)
+
+### Fixed
+
+* [#6243](https://github.com/sebastianbergmann/phpunit/issues/6243): Constraints cannot be implemented without using internal class `ExpectationFailedException`
+
+## [10.5.46] - 2025-05-02
+
+### Added
+
+* `displayDetailsOnAllIssues` attribute on the `<phpunit>` element of the XML configuration file and `--display-all-issues` CLI option for controlling whether PHPUnit should display details on all issues that are triggered (default: `false`)
+* `failOnAllIssues` attribute on the `<phpunit>` element of the XML configuration file and `--fail-on-all-issues` CLI option for controlling whether PHPUnit should fail on all issues that are triggered (default: `false`)
+
+### Changed
+
+* [#5956](https://github.com/sebastianbergmann/phpunit/issues/5956): Improved handling of deprecated `E_STRICT` constant
+* Improved message when test is considered risky for printing unexpected output
+
+## [10.5.45] - 2025-02-06
+
+### Changed
+
+* [#6117](https://github.com/sebastianbergmann/phpunit/issues/6117): Include source location information for issues triggered during test in `--debug` output
+* [#6119](https://github.com/sebastianbergmann/phpunit/issues/6119): Improve message for errors that occur while parsing attributes
+
+## [10.5.44] - 2025-01-31
+
+### Fixed
+
+* [#6115](https://github.com/sebastianbergmann/phpunit/issues/6115): Backed enumerations with values not of type `string` cannot be used in customized TestDox output
+
+## [10.5.43] - 2025-01-29
+
+### Changed
+
+* Do not skip execution of test that depends on a test that is larger than itself
+
+## [10.5.42] - 2025-01-28
+
+### Fixed
+
+* [#6103](https://github.com/sebastianbergmann/phpunit/issues/6103): Output from test run in separate process is printed twice
+* [#6109](https://github.com/sebastianbergmann/phpunit/issues/6109): Skipping a test in a before-class method crashes JUnit XML logger
+* [#6111](https://github.com/sebastianbergmann/phpunit/issues/6111): Deprecations cause `SourceMapper` to scan all `<source/>` files
+
+## [10.5.41] - 2025-01-13
+
+### Added
+
+* `Test\AfterLastTestMethodErrored`, `Test\AfterTestMethodErrored`, `Test\BeforeTestMethodErrored`, `Test\PostConditionErrored`, and `Test\PreConditionErrored` events
+
+### Fixed
+
+* [#6094](https://github.com/sebastianbergmann/phpunit/issues/6094): Errors in after-last-test methods are not reported
+* [#6095](https://github.com/sebastianbergmann/phpunit/issues/6095): Expectation is not counted correctly when a doubled method is called more often than is expected
+* [#6098](https://github.com/sebastianbergmann/phpunit/issues/6098): No `system-out` element in JUnit XML logfile
+
+## [10.5.40] - 2024-12-21
+
+### Fixed
+
+* [#6082](https://github.com/sebastianbergmann/phpunit/issues/6082): `assertArrayHasKey()`, `assertArrayNotHasKey()`, `arrayHasKey()`, and `ArrayHasKey::__construct()` do not support all possible key types
+* [#6087](https://github.com/sebastianbergmann/phpunit/issues/6087): `--migrate-configuration` does not remove `beStrictAboutTodoAnnotatedTests` attribute from XML configuration file
+
+## [10.5.39] - 2024-12-11
+
+### Added
+
+* [#6081](https://github.com/sebastianbergmann/phpunit/pull/6081): `DefaultResultCache::mergeWith()` for merging result cache instances
+
+### Fixed
+
+* [#6066](https://github.com/sebastianbergmann/phpunit/pull/6066): TeamCity logger does not handle error/skipped events in before-class methods correctly
+
+## [10.5.38] - 2024-10-28
+
+### Changed
+
+* [#6012](https://github.com/sebastianbergmann/phpunit/pull/6012): Remove empty lines between TeamCity events
+
+## [10.5.37] - 2024-10-19
+
+### Fixed
+
+* [#5982](https://github.com/sebastianbergmann/phpunit/pull/5982): Typo in exception message
+
+## [10.5.36] - 2024-10-08
+
+### Changed
+
+* [#5957](https://github.com/sebastianbergmann/phpunit/pull/5957): Skip data provider build when requirements are not satisfied
+* [#5969](https://github.com/sebastianbergmann/phpunit/pull/5969): Check for requirements before creating a separate process
+* Updated regular expressions used by `StringMatchesFormatDescription` constraint to be consistent with PHP's `run-tests.php`
+
+### Fixed
+
+* [#5965](https://github.com/sebastianbergmann/phpunit/issues/5965): `PHPUnit\Framework\Exception` does not handle string error codes (`PDOException` with error code `'HY000'`, for example)
+
+## [10.5.35] - 2024-09-19
+
+### Changed
+
+* [#5956](https://github.com/sebastianbergmann/phpunit/issues/5956): Deprecation of the `E_STRICT` constant in PHP 8.4
+
+### Fixed
+
+* [#5950](https://github.com/sebastianbergmann/phpunit/pull/5950): TestDox text should not be `trim()`med when it contains `$` character
+* The attribute parser will no longer try to instantiate attribute classes that do not exist
+
+## [10.5.34] - 2024-09-13
+
+### Fixed
+
+* [#5931](https://github.com/sebastianbergmann/phpunit/pull/5931): Reverted addition of `name` property on `<testsuites>` element in JUnit XML logfile
+* [#5946](https://github.com/sebastianbergmann/phpunit/issues/5946): `Callback` throws a `TypeError` when checking a `callable` has variadic parameters
+
+## [10.5.33] - 2024-09-09
+
+### Fixed
+
+* [#4584](https://github.com/sebastianbergmann/phpunit/issues/4584): `assertJsonStringEqualsJsonString()` considers objects with sequential numeric keys equal to be arrays
+* [#4625](https://github.com/sebastianbergmann/phpunit/issues/4625): Generator yielding keys that are neither integer or string leads to hard-to-understand error message when used as data provider
+* [#4674](https://github.com/sebastianbergmann/phpunit/issues/4674): JSON assertions should treat objects as unordered
+* [#5891](https://github.com/sebastianbergmann/phpunit/issues/5891): `Callback` constraint does not handle variadic arguments correctly when used for mock object expectations
+* [#5929](https://github.com/sebastianbergmann/phpunit/issues/5929): TestDox output containing `$` at the beginning gets truncated when used with a data provider
+
+## [10.5.32] - 2024-09-04
+
+### Added
+
+* [#5937](https://github.com/sebastianbergmann/phpunit/issues/5937): `failOnPhpunitDeprecation` attribute on the `<phpunit>` element of the XML configuration file and `--fail-on-phpunit-deprecation` CLI option for controlling whether PHPUnit deprecations should be considered when determining the test runner's shell exit code (default: do not consider)
+* `displayDetailsOnPhpunitDeprecations` attribute on the `<phpunit>` element of the XML configuration file and `--display-phpunit-deprecations` CLI option for controlling whether details on PHPUnit deprecations should be displayed (default: do not display)
+
+### Changed
+
+* [#5937](https://github.com/sebastianbergmann/phpunit/issues/5937): PHPUnit deprecations will, by default, no longer affect the test runner's shell exit code. This can optionally be turned back on using the `--fail-on-phpunit-deprecation` CLI option or the `failOnPhpunitDeprecation="true"` attribute on the `<phpunit>` element of the XML configuration file.
+* Details for PHPUnit deprecations will, by default, no longer be displayed. This can optionally be turned back on using the `--display-phpunit-deprecations` CLI option or the `displayDetailsOnPhpunitDeprecations` attribute on the `<phpunit>` element of the XML configuration file.
+
+## [10.5.31] - 2024-09-03
+
+### Changed
+
+* [#5931](https://github.com/sebastianbergmann/phpunit/pull/5931): `name` property on `<testsuites>` element in JUnit XML logfile
+* Removed `.phpstorm.meta.php` file as methods such as `TestCase::createStub()` use generics / template types for their return types and PhpStorm, for example, uses that information
+
+### Fixed
+
+* [#5884](https://github.com/sebastianbergmann/phpunit/issues/5884): TestDox printer does not consider that issues can be suppressed by attribute, baseline, source location, or `@` operator
+
+## [10.5.30] - 2024-08-13
+
+### Changed
+
+* Improved error message when stubbed method is called more often than return values were configured for it
+
+## [10.5.29] - 2024-07-30
+
+### Fixed
+
+* [#5887](https://github.com/sebastianbergmann/phpunit/pull/5887): Issue baseline generator does not correctly handle ignoring suppressed issues
+* [#5908](https://github.com/sebastianbergmann/phpunit/issues/5908): `--list-tests` and `--list-tests-xml` CLI options do not report error when data provider method throws exception
+
+## [10.5.28] - 2024-07-18
+
+### Fixed
+
+* [#5898](https://github.com/sebastianbergmann/phpunit/issues/5898): `Test\Passed` event is not emitted for PHPT tests
+* `--coverage-filter` CLI option could not be used multiple times
+
+## [10.5.27] - 2024-07-10
+
+### Changed
+
+* Updated dependencies (so that users that install using Composer's `--prefer-lowest` CLI option also get recent versions)
+
+### Fixed
+
+* [#5892](https://github.com/sebastianbergmann/phpunit/issues/5892): Errors during write of `phpunit.xml` are not handled correctly when `--generate-configuration` is used
+
+## [10.5.26] - 2024-07-08
+
+### Added
+
+* `--only-summary-for-coverage-text` CLI option to reduce the code coverage report in text format to a summary
+* `--show-uncovered-for-coverage-text` CLI option to expand the code coverage report in text format to include a list of uncovered files
+
+## [10.5.25] - 2024-07-03
+
+### Changed
+
+* Updated dependencies for PHAR distribution
+
+## [10.5.24] - 2024-06-20
+
+### Changed
+
+* [#5877](https://github.com/sebastianbergmann/phpunit/pull/5877): Use `array_pop()` instead of `array_shift()` for processing `Test` objects in `TestSuite::run()` and optimize `TestSuite::isEmpty()`
+
+## [10.5.23] - 2024-06-20
+
+### Changed
+
+* [#5875](https://github.com/sebastianbergmann/phpunit/pull/5875): Also destruct `TestCase` objects early that use a data provider
+
+## [10.5.22] - 2024-06-19
+
+### Changed
+
+* [#5871](https://github.com/sebastianbergmann/phpunit/pull/5871): Do not collect unnecessary information using `debug_backtrace()`
+
+## [10.5.21] - 2024-06-15
+
+### Changed
+
+* [#5861](https://github.com/sebastianbergmann/phpunit/pull/5861): Destroy `TestCase` object after its test was run
+
+## [10.5.20] - 2024-04-24
+
+* [#5771](https://github.com/sebastianbergmann/phpunit/issues/5771): JUnit XML logger may crash when test that is run in separate process exits unexpectedly
+* [#5819](https://github.com/sebastianbergmann/phpunit/issues/5819): Duplicate keys from different data providers are not handled properly
+
+## [10.5.19] - 2024-04-17
+
+### Fixed
+
+* [#5818](https://github.com/sebastianbergmann/phpunit/issues/5818): Calling `method()` on a test stub created using `createStubForIntersectionOfInterfaces()` throws an unexpected exception
+
 ## [10.5.18] - 2024-04-14
 
 ### Deprecated
@@ -193,6 +509,48 @@ All notable changes of the PHPUnit 10.5 release series are documented in this fi
 
 * [#5563](https://github.com/sebastianbergmann/phpunit/issues/5563): `createMockForIntersectionOfInterfaces()` does not automatically register mock object for expectation verification
 
+[10.5.60]: https://github.com/sebastianbergmann/phpunit/compare/10.5.59...10.5.60
+[10.5.59]: https://github.com/sebastianbergmann/phpunit/compare/10.5.58...10.5.59
+[10.5.58]: https://github.com/sebastianbergmann/phpunit/compare/10.5.57...10.5.58
+[10.5.57]: https://github.com/sebastianbergmann/phpunit/compare/10.5.56...10.5.57
+[10.5.56]: https://github.com/sebastianbergmann/phpunit/compare/10.5.55...10.5.56
+[10.5.55]: https://github.com/sebastianbergmann/phpunit/compare/10.5.54...10.5.55
+[10.5.54]: https://github.com/sebastianbergmann/phpunit/compare/10.5.53...10.5.54
+[10.5.53]: https://github.com/sebastianbergmann/phpunit/compare/10.5.52...10.5.53
+[10.5.52]: https://github.com/sebastianbergmann/phpunit/compare/10.5.51...10.5.52
+[10.5.51]: https://github.com/sebastianbergmann/phpunit/compare/10.5.50...10.5.51
+[10.5.50]: https://github.com/sebastianbergmann/phpunit/compare/10.5.49...10.5.50
+[10.5.49]: https://github.com/sebastianbergmann/phpunit/compare/10.5.48...10.5.49
+[10.5.48]: https://github.com/sebastianbergmann/phpunit/compare/10.5.47...10.5.48
+[10.5.47]: https://github.com/sebastianbergmann/phpunit/compare/10.5.46...10.5.47
+[10.5.46]: https://github.com/sebastianbergmann/phpunit/compare/10.5.45...10.5.46
+[10.5.45]: https://github.com/sebastianbergmann/phpunit/compare/10.5.44...10.5.45
+[10.5.44]: https://github.com/sebastianbergmann/phpunit/compare/10.5.43...10.5.44
+[10.5.43]: https://github.com/sebastianbergmann/phpunit/compare/10.5.42...10.5.43
+[10.5.42]: https://github.com/sebastianbergmann/phpunit/compare/10.5.41...10.5.42
+[10.5.41]: https://github.com/sebastianbergmann/phpunit/compare/10.5.40...10.5.41
+[10.5.40]: https://github.com/sebastianbergmann/phpunit/compare/10.5.39...10.5.40
+[10.5.39]: https://github.com/sebastianbergmann/phpunit/compare/10.5.38...10.5.39
+[10.5.38]: https://github.com/sebastianbergmann/phpunit/compare/10.5.37...10.5.38
+[10.5.37]: https://github.com/sebastianbergmann/phpunit/compare/10.5.36...10.5.37
+[10.5.36]: https://github.com/sebastianbergmann/phpunit/compare/10.5.35...10.5.36
+[10.5.35]: https://github.com/sebastianbergmann/phpunit/compare/10.5.34...10.5.35
+[10.5.34]: https://github.com/sebastianbergmann/phpunit/compare/10.5.33...10.5.34
+[10.5.33]: https://github.com/sebastianbergmann/phpunit/compare/10.5.32...10.5.33
+[10.5.32]: https://github.com/sebastianbergmann/phpunit/compare/10.5.31...10.5.32
+[10.5.31]: https://github.com/sebastianbergmann/phpunit/compare/10.5.30...10.5.31
+[10.5.30]: https://github.com/sebastianbergmann/phpunit/compare/10.5.29...10.5.30
+[10.5.29]: https://github.com/sebastianbergmann/phpunit/compare/10.5.28...10.5.29
+[10.5.28]: https://github.com/sebastianbergmann/phpunit/compare/10.5.27...10.5.28
+[10.5.27]: https://github.com/sebastianbergmann/phpunit/compare/10.5.26...10.5.27
+[10.5.26]: https://github.com/sebastianbergmann/phpunit/compare/10.5.25...10.5.26
+[10.5.25]: https://github.com/sebastianbergmann/phpunit/compare/10.5.24...10.5.25
+[10.5.24]: https://github.com/sebastianbergmann/phpunit/compare/10.5.23...10.5.24
+[10.5.23]: https://github.com/sebastianbergmann/phpunit/compare/10.5.22...10.5.23
+[10.5.22]: https://github.com/sebastianbergmann/phpunit/compare/10.5.21...10.5.22
+[10.5.21]: https://github.com/sebastianbergmann/phpunit/compare/10.5.20...10.5.21
+[10.5.20]: https://github.com/sebastianbergmann/phpunit/compare/10.5.19...10.5.20
+[10.5.19]: https://github.com/sebastianbergmann/phpunit/compare/10.5.18...10.5.19
 [10.5.18]: https://github.com/sebastianbergmann/phpunit/compare/10.5.17...10.5.18
 [10.5.17]: https://github.com/sebastianbergmann/phpunit/compare/10.5.16...10.5.17
 [10.5.16]: https://github.com/sebastianbergmann/phpunit/compare/10.5.15...10.5.16

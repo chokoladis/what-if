@@ -38,6 +38,8 @@ use SebastianBergmann\CodeUnit\InvalidCodeUnitException;
 use SebastianBergmann\CodeUnit\Mapper;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final class CodeCoverage
@@ -46,9 +48,9 @@ final class CodeCoverage
      * @psalm-param class-string $className
      * @psalm-param non-empty-string $methodName
      *
-     * @psalm-return array<string,list<int>>|false
-     *
      * @throws CodeCoverageException
+     *
+     * @psalm-return array<string,list<int>>|false
      */
     public function linesToBeCovered(string $className, string $methodName): array|false
     {
@@ -128,9 +130,9 @@ final class CodeCoverage
      * @psalm-param class-string $className
      * @psalm-param non-empty-string $methodName
      *
-     * @psalm-return array<string,list<int>>
-     *
      * @throws CodeCoverageException
+     *
+     * @psalm-return array<string,list<int>>
      */
     public function linesToBeUsed(string $className, string $methodName): array
     {

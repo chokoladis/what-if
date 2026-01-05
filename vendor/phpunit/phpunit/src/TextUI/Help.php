@@ -23,6 +23,8 @@ use PHPUnit\Util\Color;
 use SebastianBergmann\Environment\Console;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final class Help
@@ -192,7 +194,7 @@ final class Help
                 ['arg'    => '--disallow-test-output', 'desc' => 'Be strict about output during tests'],
                 ['arg'    => '--enforce-time-limit', 'desc' => 'Enforce time limit based on test size'],
                 ['arg'    => '--default-time-limit <sec>', 'desc' => 'Timeout in seconds for tests that have no declared size'],
-                ['arg'    => '--dont-report-useless-tests', 'desc' => 'Do not report tests that do not test anything'],
+                ['arg'    => '--do-not-report-useless-tests', 'desc' => 'Do not report tests that do not test anything'],
                 ['spacer' => ''],
 
                 ['arg'    => '--stop-on-defect', 'desc' => 'Stop after first error, failure, warning, or risky test'],
@@ -210,9 +212,23 @@ final class Help
                 ['arg'    => '--fail-on-warning', 'desc' => 'Signal failure using shell exit code when a warning was triggered'],
                 ['arg'    => '--fail-on-risky', 'desc' => 'Signal failure using shell exit code when a test was considered risky'],
                 ['arg'    => '--fail-on-deprecation', 'desc' => 'Signal failure using shell exit code when a deprecation was triggered'],
+                ['arg'    => '--fail-on-phpunit-deprecation', 'desc' => 'Signal failure using shell exit code when a PHPUnit deprecation was triggered'],
+                ['arg'    => '--fail-on-phpunit-warning', 'desc' => 'Signal failure using shell exit code when a PHPUnit warning was triggered'],
                 ['arg'    => '--fail-on-notice', 'desc' => 'Signal failure using shell exit code when a notice was triggered'],
                 ['arg'    => '--fail-on-skipped', 'desc' => 'Signal failure using shell exit code when a test was skipped'],
                 ['arg'    => '--fail-on-incomplete', 'desc' => 'Signal failure using shell exit code when a test was marked incomplete'],
+                ['arg'    => '--fail-on-all-issues', 'desc' => 'Signal failure using shell exit code when an issue is triggered'],
+                ['spacer' => ''],
+
+                ['arg'    => '--do-not-fail-on-empty-test-suite', 'desc' => 'Do not signal failure using shell exit code when no tests were run'],
+                ['arg'    => '--do-not-fail-on-warning', 'desc' => 'Do not signal failure using shell exit code when a warning was triggered'],
+                ['arg'    => '--do-not-fail-on-risky', 'desc' => 'Do not signal failure using shell exit code when a test was considered risky'],
+                ['arg'    => '--do-not-fail-on-deprecation', 'desc' => 'Do not signal failure using shell exit code when a deprecation was triggered'],
+                ['arg'    => '--do-not-fail-on-phpunit-deprecation', 'desc' => 'Do not signal failure using shell exit code when a PHPUnit deprecation was triggered'],
+                ['arg'    => '--do-not-fail-on-phpunit-warning', 'desc' => 'Do not signal failure using shell exit code when a PHPUnit warning was triggered'],
+                ['arg'    => '--do-not-fail-on-notice', 'desc' => 'Do not signal failure using shell exit code when a notice was triggered'],
+                ['arg'    => '--do-not-fail-on-skipped', 'desc' => 'Do not signal failure using shell exit code when a test was skipped'],
+                ['arg'    => '--do-not-fail-on-incomplete', 'desc' => 'Do not signal failure using shell exit code when a test was marked incomplete'],
                 ['spacer' => ''],
 
                 ['arg'    => '--cache-result', 'desc' => 'Write test results to cache file'],
@@ -238,9 +254,11 @@ final class Help
                 ['arg'    => '--display-incomplete', 'desc' => 'Display details for incomplete tests'],
                 ['arg'    => '--display-skipped', 'desc' => 'Display details for skipped tests'],
                 ['arg'    => '--display-deprecations', 'desc' => 'Display details for deprecations triggered by tests'],
+                ['arg'    => '--display-phpunit-deprecations', 'desc' => 'Display details for PHPUnit deprecations'],
                 ['arg'    => '--display-errors', 'desc' => 'Display details for errors triggered by tests'],
                 ['arg'    => '--display-notices', 'desc' => 'Display details for notices triggered by tests'],
                 ['arg'    => '--display-warnings', 'desc' => 'Display details for warnings triggered by tests'],
+                ['arg'    => '--display-all-issues', 'desc' => 'Display details for all issues that are triggered'],
                 ['arg'    => '--reverse-list', 'desc' => 'Print defects in reverse order'],
                 ['spacer' => ''],
 
@@ -268,6 +286,8 @@ final class Help
                 ['arg' => '--coverage-html <dir>', 'desc' => 'Write code coverage report in HTML format to directory'],
                 ['arg' => '--coverage-php <file>', 'desc' => 'Write serialized code coverage data to file'],
                 ['arg' => '--coverage-text=<file>', 'desc' => 'Write code coverage report in text format to file [default: standard output]'],
+                ['arg' => '--only-summary-for-coverage-text', 'desc' => 'Option for code coverage report in text format: only show summary'],
+                ['arg' => '--show-uncovered-for-coverage-text', 'desc' => 'Option for code coverage report in text format: show uncovered files'],
                 ['arg' => '--coverage-xml <dir>', 'desc' => 'Write code coverage report in XML format to directory'],
                 ['arg' => '--warm-coverage-cache', 'desc' => 'Warm static analysis cache'],
                 ['arg' => '--coverage-filter <dir>', 'desc' => 'Include <dir> in code coverage reporting'],
@@ -290,6 +310,7 @@ final class Help
             ['arg' => '--version', 'desc' => 'Prints the version and exits'],
             ['arg' => '--atleast-version <min>', 'desc' => 'Checks that version is greater than <min> and exits'],
             ['arg' => '--check-version', 'desc' => 'Checks whether PHPUnit is the latest version and exits'],
+            ['arg' => '--check-php-configuration', 'desc' => 'Checks whether PHP configuration follows best practices'],
         ];
 
         return $elements;

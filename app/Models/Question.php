@@ -2,22 +2,16 @@
 
 namespace App\Models;
 
-use App\Exceptions\Models\QuestionNotFoundException;
-use App\Interfaces\Models\SearchableInterface;
 use App\Models\Errors\CommonError;
-use App\Services\QuestionService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
-class Question extends BaseModel //implements SearchableInterface
+class Question extends BaseModel
 {
-    use HasFactory;
+    use Searchable;
 
     public $guarded = [];
 
@@ -42,8 +36,8 @@ class Question extends BaseModel //implements SearchableInterface
             ->with(['statistics' => function($q) {
                     $q->orderBy('views', 'desc');
                 }, 'statistics'])
-            ->with(['user_votes' => function($q) {
-                $q->sum('status');
+            ->with(['votes' => function($q) {
+                $q->sum('votes');
             }, 'user_votes'])
             ->limit(10)
             ->get();
@@ -82,13 +76,11 @@ class Question extends BaseModel //implements SearchableInterface
             if ($query->isNotEmpty()){
                 foreach ($query as $comment) {
 
-//                    todo check
+                    // todo check
                     if (!isset($comments[$comment->comment_id]))
                         $comments[$comment->comment_id] = 0;
 
-                    $plus = $comment->votes === 'like' ? 1 : -1;
-
-                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $plus;
+                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $comment->votes;
                 }
 
                 $popularCommentId = array_search(max($comments), $comments);
@@ -102,7 +94,6 @@ class Question extends BaseModel //implements SearchableInterface
         }
 
         return false;
-
     }
 
     public function category() : HasOne {
@@ -127,8 +118,8 @@ class Question extends BaseModel //implements SearchableInterface
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function user_votes() : hasMany {
-        return $this->hasMany(QuestionUserStatus::class, 'id', 'question_id');
+    public function votes() : hasMany {
+        return $this->hasMany(QuestionVotes::class, 'id', 'question_id');
     }
 
     public function right_comment() : hasOne
@@ -157,8 +148,7 @@ class Question extends BaseModel //implements SearchableInterface
             ]);
         });
 
-//        updated to active = true // send sms/mail message about it
-
+        // updated to active = true // send sms/mail message about it
     }
 
     public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $title)
@@ -167,35 +157,42 @@ class Question extends BaseModel //implements SearchableInterface
             ->orWhere('code', 'LIKE', '%' . $title . '%');
     }
 
-//    public function getSearchBuilder($request): \Illuminate\Database\Eloquent\Builder
-//    {
-//        $data = $request->validated();
-//
-//        $query = $this->newQuery();
-//        if (isset($data['q'])){
-//
-//        }
-//
-//        return $query;
-//    }
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'code' => $this->code,
+            'category_list' => $this->getCategoryIds(),
+            'category_id' => $this->category_id,
+            'created_at' => $this->created_at
+        ];
+    }
 
-//    public function search($request): false|\Illuminate\Pagination\LengthAwarePaginator
-//    {
-//        $data = $request->validated();
-//
-//        $query = $this->getSearchBuilder($request);
-//        $count = $query->count('id'); //get(DB::raw('COUNT(id) as count'));
-//        if (!$count) {
-////            malisearch or typesence
-////            $query = $this->searchByTrigram($request);
-//        }
-//
-//        $queryTitle = $request->get('q');
-//
-//        $result = $query->get();
-////        foreach ($result as $item) {
-////        }
-//
-//        return false;
-//    }
+    public function shouldBeSearchable()
+    {
+        return $this->active;
+    }
+
+    public function getCategoryIds()
+    {
+        $categoryId = $this->category_id;
+
+        $arIds = [$categoryId];
+
+        while (true) {
+            $category = Category::query()
+                ->where('active', true)
+                ->where('id', $categoryId)
+                ->whereNotNull('parent_id')->first();
+
+            if ($category && $category->parent_id) {
+                $categoryId = $category->parent_id;
+                $arIds[] = $categoryId;
+            } else {
+                break;
+            }
+        }
+
+        return $arIds;
+    }
 }

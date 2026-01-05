@@ -24,6 +24,8 @@ use function unlink;
 use PHPUnit\Framework\Exception;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 class DefaultPhpProcess extends AbstractPhpProcess
@@ -33,10 +35,10 @@ class DefaultPhpProcess extends AbstractPhpProcess
     /**
      * Runs a single job (PHP code) using a separate PHP process.
      *
-     * @psalm-return array{stdout: string, stderr: string}
-     *
      * @throws Exception
      * @throws PhpProcessException
+     *
+     * @psalm-return array{stdout: string, stderr: string}
      */
     public function runJob(string $job, array $settings = []): array
     {
@@ -57,10 +59,10 @@ class DefaultPhpProcess extends AbstractPhpProcess
     /**
      * Handles creating the child process and returning the STDOUT and STDERR.
      *
-     * @psalm-return array{stdout: string, stderr: string}
-     *
      * @throws Exception
      * @throws PhpProcessException
+     *
+     * @psalm-return array{stdout: string, stderr: string}
      */
     protected function runProcess(string $job, array $settings): array
     {
