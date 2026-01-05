@@ -15,15 +15,17 @@ class UserController extends Controller
         $this->middleware('throttle:4,1')->only('update', 'setPhoto');
     }
 
-    public function index(){
+    public function index()
+    {
         return view('profile.index');
     }
 
-    public function update(UpdateRequest $request){
+    public function update(UpdateRequest $request)
+    {
 
         $data = $request->validated();
         $user = User::find(auth()->id());
-        if ($user->update($data)){
+        if ($user->update($data)) {
             return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
         }
 
@@ -34,16 +36,16 @@ class UserController extends Controller
     {
         $file = $request->file('photo');
 
-        if ($file->getError()){
+        if ($file->getError()) {
             return redirect()->route('profile.index')->with('error', $file->getErrorMessage());
         }
 
         $photo = FileService::save($file, 'users');
 
 //        todo on stack
-         [$isLegal, $error] = (new UserService())->isContentFileLegal($photo);
+        [$isLegal, $error] = (new UserService())->isContentFileLegal($photo);
 
-        if (!$isLegal){
+        if (!$isLegal) {
             return redirect()->route('profile.index')->with('error', $error);
         }
 

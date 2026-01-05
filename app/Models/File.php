@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 class File extends Model
 {
@@ -19,10 +18,11 @@ class File extends Model
 
     public function getFullUrlAttribute(): string
     {
-        return asset('storage/'.$this->relation.'/' . $this->path);
+        return asset('storage/' . $this->relation . '/' . $this->path);
     }
 
-    public static function boot() {
+    public static function boot()
+    {
 
         parent::boot();
 
@@ -31,17 +31,17 @@ class File extends Model
          *
          * @return response()
          */
-        static::created(function($item) {
+        static::created(function ($item) {
 
             // $item->path_thumbnail = FileService::createThumbWebp($item->path);
-            
+
         });
 
-        static::deleting(function($file) {
-            $fullpath = $_SERVER['DOCUMENT_ROOT'].'/storage/'.$file->relation.'/'.$file->path;
+        static::deleting(function ($file) {
+            $fullpath = $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $file->relation . '/' . $file->path;
             if (file_exists($fullpath))
                 unlink($fullpath);
         });
-   
+
     }
 }

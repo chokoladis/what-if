@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\Search\IndexRequest;
 use App\Interfaces\Models\SearchableInterface;
 
-Class SearchService
+class SearchService
 {
     const DEFAULT_LIMIT = 10;
     const MAX_LIMIT = 100;
@@ -16,7 +16,7 @@ Class SearchService
     {
         $data = $request->validated();
 
-        if (isset($data['q'])){
+        if (isset($data['q'])) {
             $filter = [
                 'title' => ['title', 'LIKE', '%' . $data['q'] . '%'],
             ];
@@ -26,8 +26,8 @@ Class SearchService
             $limit = $data['limit'] > 0 && $data['limit'] < self::MAX_LIMIT ? $data['limit'] : self::DEFAULT_LIMIT;
         }
 
-        if (isset($data['sort'])){
-            if ($data['sort'] === 'popular'){
+        if (isset($data['sort'])) {
+            if ($data['sort'] === 'popular') {
                 $sortBy = 'statistics.views';
                 $order = 'desc';
             } else {

@@ -8,16 +8,16 @@ class UserService extends BaseService
 {
     public function isContentFileLegal(File $file)
     {
-        $fullPath = $_SERVER['DOCUMENT_ROOT'].'/storage/'.$file->relation.'/'.$file->path;
+        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $file->relation . '/' . $file->path;
 
-        if (!file_exists($fullPath)){
+        if (!file_exists($fullPath)) {
             return [false, new \Error(__('entities.integrations.file_not_found'), 'file_not_found')];
         }
 
         $mimeType = mime_content_type($fullPath);
         $base64data = base64_encode(file_get_contents($fullPath));
 
-        $fileContent = 'data:'.$mimeType.';base64,'.$base64data;
+        $fileContent = 'data:' . $mimeType . ';base64,' . $base64data;
 
         $requestData = [
             'role' => 'user',

@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\SettingResource\Pages;
 
 use App\Filament\Admin\Resources\SettingResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSetting extends CreateRecord

@@ -61,7 +61,8 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(File::class, 'id', 'photo_id');
     }
 
-    public static function boot() {
+    public static function boot()
+    {
 
         parent::boot();
 
@@ -70,9 +71,9 @@ class User extends Authenticatable implements FilamentUser
          *
          * @return response()
          */
-        static::updated(function($user) {
+        static::updated(function ($user) {
 
-            if ($user->getOriginal('photo_id') !== $user->photo_id){
+            if ($user->getOriginal('photo_id') !== $user->photo_id) {
                 File::find($user->getOriginal('photo_id'))->delete();
             }
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Category;
 
-use Illuminate\Validation\Rules\File;
 use App\Services\FileService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 
 class StoreRequest extends FormRequest
 {
@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
         return [
             'parent_id' => 'int|nullable',
             'title' => 'required|string',
-            'img' => [ 'nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE) ],
+            'img' => ['nullable', 'mimes:jpg,png,jpeg,gif', File::image()->max(FileService::MAX_FILE_SIZE)],
             'sort' => 'int|nullable'
         ];
     }

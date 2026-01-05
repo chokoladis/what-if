@@ -22,8 +22,8 @@ class QuestionVotes extends Model
 //        cache , to service
         return self::query()
             ->select(
-                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 1 && `question_id` ='.$id.') as likes'),
-                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 0 && `question_id` ='.$id.') as dislikes')
+                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
+                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 0 && `question_id` =' . $id . ') as dislikes')
             )
             ->first();
     }

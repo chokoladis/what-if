@@ -21,6 +21,10 @@ return [
         'new' => 'First new',
         'old' => 'First old',
         'popular' => 'Popular'
+    ],
+    'search' => [
+        'title' => 'Search by site',
+        'not_found' => 'No results found by query',
     ]
 ];
 ?>

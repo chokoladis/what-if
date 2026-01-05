@@ -7,14 +7,15 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 
-class SettingService {
-    
+class SettingService
+{
+
     const LANG = ['ru', 'en'];
     const THEME = ['dark', 'light'];
 
     public function setLang(string $lang): array
     {
-        if (in_array($lang, self::LANG)){
+        if (in_array($lang, self::LANG)) {
             App::setLocale($lang);
             Cookie::queue('lang', $lang, 36000000);
 

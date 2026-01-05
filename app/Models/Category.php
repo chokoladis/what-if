@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
@@ -19,7 +16,8 @@ class Category extends BaseModel
         return 'code';
     }
 
-    public static function getCategoriesLevel0(){
+    public static function getCategoriesLevel0()
+    {
 
         // use cache
         $categories = Category::query()
@@ -37,11 +35,11 @@ class Category extends BaseModel
 
         $arr = $res = [];
 
-        foreach ($categories as $item) {            
+        foreach ($categories as $item) {
             $arr[$item->level][] = $item;
         }
 
-        foreach($arr as $level => $items){
+        foreach ($arr as $level => $items) {
 
             foreach ($items as $category) {
 
@@ -55,7 +53,8 @@ class Category extends BaseModel
         return $res;
     }
 
-    public function getDaughterCategories($catLevel, $categoryParentId){
+    public function getDaughterCategories($catLevel, $categoryParentId)
+    {
 
         // dump($catLevel, '..', $categoryParentId);
 
@@ -64,7 +63,7 @@ class Category extends BaseModel
             ->where('parent_id', $categoryParentId)
             ->get()
             ->toArray();
-            // imgs
+        // imgs
     }
 
     public function getNLevelChildByCategoryId()
@@ -82,11 +81,11 @@ class Category extends BaseModel
         $arParents = [];
         $queryResult = null;
 
-        while(true){
+        while (true) {
             $parentId = !empty($queryResult) ? $queryResult->parent_id : $this->parent_id;
             $level = !empty($queryResult) ? $queryResult->level - 1 : $this->level - 1;
             if ($parentId) {
-                if ($queryResult = $this->getParentById($parentId, $level)){
+                if ($queryResult = $this->getParentById($parentId, $level)) {
                     $arParents[] = $queryResult;
                 } else {
                     break;
@@ -108,16 +107,19 @@ class Category extends BaseModel
             ->get()->first();
     }
 
-    public static function getElement(?string $code){
+    public static function getElement(?string $code)
+    {
         // use cache 
         return Category::where('code', $code)->first();
     }
 
-    public function file() : HasOne {
+    public function file(): HasOne
+    {
         return $this->hasOne(File::class, 'id', 'file_id');
     }
 
-    public function categorytable() : MorphTo {
+    public function categorytable(): MorphTo
+    {
         return $this->morphTo();
     }
 
@@ -127,7 +129,8 @@ class Category extends BaseModel
         return $this->hasOne(CategoryStats::class, 'category_id', 'id');
     }
 
-    public static function boot() {
+    public static function boot()
+    {
 
         parent::boot();
 
@@ -136,7 +139,7 @@ class Category extends BaseModel
          *
          * @return response()
          */
-        static::creating(function($category) {
+        static::creating(function ($category) {
 
 //            todo
 //            Log::debug('creating category 2', [$category]);
@@ -145,10 +148,10 @@ class Category extends BaseModel
 //                $file = FileService::save($category->file_id, 'categories');
 //                $category->file_id = $file->id;
 //            }
-            $category->code = Str::slug(Str::lower($category->title),'-');
+            $category->code = Str::slug(Str::lower($category->title), '-');
         });
 
-        static::updating(function($category) {
+        static::updating(function ($category) {
 
 //            todo
 //            Log::debug('upd categori - '.$category->file_id);
@@ -159,7 +162,7 @@ class Category extends BaseModel
 //            }
         });
 
-        static::deleted(function($item){
+        static::deleted(function ($item) {
             File::find($item->file_id)->delete();
         });
     }

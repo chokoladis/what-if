@@ -15,12 +15,14 @@ class BaseModel extends Model
 
     public $guarded = [];
 
-    public static function getByCode(?string $code){
+    public static function getByCode(?string $code)
+    {
         // use cache
         return static::class::where('code', $code)->first();
     }
 
-    public function file() : HasOne {
+    public function file(): HasOne
+    {
         return $this->hasOne(File::class, 'id', 'file_id');
     }
 }

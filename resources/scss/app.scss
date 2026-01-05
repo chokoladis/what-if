@@ -321,3 +321,20 @@ footer{
         height: 40px;
     }
 }
+
+.search-page {
+    .header {
+        display: flex;
+        margin-bottom: 20px;
+        align-items: center;
+
+        h1 {
+            width: fit-content;
+            margin: 0;
+        }
+
+        form {
+            margin-left: auto;
+        }
+    }
+}

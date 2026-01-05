@@ -24,12 +24,12 @@ class ViewsCounterListener
         $user_id = auth()->id() ?? request()->ip();
         $user_id = str_replace('.', '_', $user_id);
 
-        $name_session = 'view_user_'.$user_id.'_model_'.$model->getTable().'_'.$model->id;
+        $name_session = 'view_user_' . $user_id . '_model_' . $model->getTable() . '_' . $model->id;
         $session_user_view = session($name_session);
-        if (!$session_user_view){
+        if (!$session_user_view) {
             session([$name_session => true]);
 
-            if ($event->model->statistics){
+            if ($event->model->statistics) {
                 $event->model->statistics->increment('views');
             }
         }

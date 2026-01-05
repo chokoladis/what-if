@@ -21,10 +21,11 @@ class QuestionController extends Controller
         $this->questionService = new QuestionService();
     }
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $key = json_encode($request->all());
 
-        $questions = Cache::remember('questions_'.$key, 3600, function () use ($request){
+        $questions = Cache::remember('questions_' . $key, 3600, function () use ($request) {
             return QuestionService::getActive($request);
         });
 //        todo paginate
@@ -32,7 +33,8 @@ class QuestionController extends Controller
         return view('questions.index', compact('questions'));
     }
 
-    public function add(){
+    public function add()
+    {
         $categories = Category::getDaughtersCategories();
 
         return view('questions.add', compact('categories'));
@@ -46,14 +48,15 @@ class QuestionController extends Controller
             return redirect()->back()->with('error', $error)->withInput();
         }
 
-        if ($question->wasRecentlyCreated){
+        if ($question->wasRecentlyCreated) {
             return redirect()->route('questions.index')->with('message', __('questions.alerts.store'));
         } else {
             return redirect()->back()->with('message', __('questions.alerts.already_exists'));
         }
     }
 
-    public function detail($question){
+    public function detail($question)
+    {
 
         [$question, $error] = Question::getElement($question);
 
@@ -69,7 +72,7 @@ class QuestionController extends Controller
 
         $arComments = [];
 //            mb use algoritm
-        foreach ($question->question_comment as $questionComment){
+        foreach ($question->question_comment as $questionComment) {
             $comment = $questionComment->comment;
 
             if ($comment->isReply()) {
@@ -84,8 +87,8 @@ class QuestionController extends Controller
 
         $isNeedShowFullTitle = false;
 
-        if (mb_strlen($question->title) > 70){
-            $title = mb_strcut($question->title, 0, 70).'...';
+        if (mb_strlen($question->title) > 70) {
+            $title = mb_strcut($question->title, 0, 70) . '...';
             $isNeedShowFullTitle = true;
         } else {
             $title = $question->title;
@@ -96,7 +99,8 @@ class QuestionController extends Controller
         );
     }
 
-    public static function findByUrl(string $url){
+    public static function findByUrl(string $url)
+    {
         $urlExplode = explode('/', $url);
         $questionCode = $urlExplode[count($urlExplode) - 1];
 
@@ -114,10 +118,10 @@ class QuestionController extends Controller
             ]);
         }
 
-        if ($this->questionService->isCommentContains($data) !== null){
-           if ($this->questionService->setRightComment($data)){
-               return responseJson(true);
-           }
+        if ($this->questionService->isCommentContains($data) !== null) {
+            if ($this->questionService->setRightComment($data)) {
+                return responseJson(true);
+            }
         }
 
         return responseJson(false, [

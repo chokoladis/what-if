@@ -26,11 +26,11 @@ class CaptchaService
         $result = json_decode($curl_response, 1);
 
         if ($result['success']) {
-            if (isset($result['score']) && $result['score'] < 0.5){
+            if (isset($result['score']) && $result['score'] < 0.5) {
                 return [false, $result['error-codes']];
             }
         } else {
-            return [$result['success'], array_merge($result['error-codes'], [$errors]) ];
+            return [$result['success'], array_merge($result['error-codes'], [$errors])];
         }
 
         return [true, null];
@@ -42,7 +42,7 @@ class CaptchaService
             ->where('name', 'h_captcha_secret')
             ->first();
 
-        if (!empty($arResult) && $arResult->value){
+        if (!empty($arResult) && $arResult->value) {
             return $arResult->value;
         }
 

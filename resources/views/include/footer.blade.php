@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="container">
-                    <div class="copyright text-center">{{ __('system.developed') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2025') }}</div>
+                    <div class="copyright text-center">{{ __('system.developed') }}<a href="https://github.com/chokoladis">{{ config('app.develop.name') }}</a>{{ __(' / 2024-2026') }}</div>
                 </div>
             </footer>
         </div>

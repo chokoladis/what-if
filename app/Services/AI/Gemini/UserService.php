@@ -5,15 +5,13 @@ namespace App\Services\AI\Gemini;
 use App\DTO\Errors\CommonError;
 use App\Models\File;
 use App\Models\Setting;
-use App\Services\AI\Gemini\BaseService;
-use App\Services\SettingService;
 
 class UserService extends BaseService
 {
     public function isSetOn(): bool
     {
         $res = Setting::query()->where('name', 'gemini_validate_user_photos')->first();
-        if ($res){
+        if ($res) {
             return filter_var($res->value, FILTER_VALIDATE_BOOLEAN);
         }
 
@@ -22,20 +20,20 @@ class UserService extends BaseService
 
     public function isContentFileLegal(File $file)
     {
-        if (!$this->isSetOn()){
+        if (!$this->isSetOn()) {
             return [true];
         }
 
-        $fullPath = $_SERVER['DOCUMENT_ROOT'].'/storage/'.$file->relation.'/'.$file->path;
+        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $file->relation . '/' . $file->path;
 
-        if (!file_exists($fullPath)){
+        if (!file_exists($fullPath)) {
             return [false, new CommonError(__('entities.integrations.file_not_found'), 'file_not_found')];
         }
 
         $mimeType = mime_content_type($fullPath);
         $base64data = base64_encode(file_get_contents($fullPath));
 
-        $requestData = [ 'contents' => [
+        $requestData = ['contents' => [
             'parts' => [
                 [
                     'inline_data' => [

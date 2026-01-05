@@ -23,7 +23,7 @@ class CommentController extends Controller
         $question = QuestionController::findByUrl(url()->previous());
         $comment = Comment::firstOrCreate(['text' => $data['text'], 'user_id' => $data['user_id']], $data);
 
-        if ($comment->wasRecentlyCreated){
+        if ($comment->wasRecentlyCreated) {
 
             // мб не добавлять везде для подкомментариев
             QuestionComments::create([
@@ -31,7 +31,7 @@ class CommentController extends Controller
                 'comment_id' => $comment->id,
             ]);
 
-            if ($comment_main_id){
+            if ($comment_main_id) {
                 CommentsReply::create([
                     'comment_reply_id' => $comment->id,
                     'comment_main_id' => $comment_main_id,
@@ -56,7 +56,7 @@ class CommentController extends Controller
             ->where('comment_id', $mainCommentId)
             ->exists();
 
-        if($isCorrect){
+        if ($isCorrect) {
 
             $question = Question::query()->where('id', $questionId)->first();
             // cache

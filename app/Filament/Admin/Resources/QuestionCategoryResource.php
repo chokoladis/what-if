@@ -12,7 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class QuestionCategoryResource extends Resource
@@ -23,7 +22,7 @@ class QuestionCategoryResource extends Resource
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $model = Category::class;
 
-    protected static null | string | \BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
 
     const DIR = 'categories';
 
@@ -87,7 +86,7 @@ class QuestionCategoryResource extends Resource
                         ));
                     })
                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile|null $file) {
-                        if ($file && $file->get()){
+                        if ($file && $file->get()) {
                             $file = FileService::save($file, self::DIR);
                             return $file->id;
                         }
@@ -107,7 +106,7 @@ class QuestionCategoryResource extends Resource
                 Tables\Columns\TextColumn::make('code')->sortable(),
                 Tables\Columns\ImageColumn::make('file.full_url')
                     ->label('Файл')
-                    ->url(fn ($record) => optional($record->file)->full_url)
+                    ->url(fn($record) => optional($record->file)->full_url)
                     ->width(120)
                     ->height(120),
                 Tables\Columns\TextColumn::make('sort')->sortable(),

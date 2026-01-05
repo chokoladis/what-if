@@ -3,7 +3,6 @@
 namespace App\Services\AI;
 
 use App\Interfaces\AiApiInterface;
-use Illuminate\Support\Facades\Log;
 
 abstract class BaseAI implements AiApiInterface
 {
@@ -49,6 +48,8 @@ abstract class BaseAI implements AiApiInterface
 
 
     abstract protected function getDefaultModel();
+
     abstract protected function getConfigApiKey();
+
     abstract protected function sendCurl(array $data);
 }

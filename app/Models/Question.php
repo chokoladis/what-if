@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Errors\CommonError;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -15,28 +14,31 @@ class Question extends BaseModel
 
     public $guarded = [];
 
-    public static function getElement(string $code){
+    public static function getElement(string $code)
+    {
         // use cache 
-        if ($question = Question::where('code', $code)->where('active', true)->first()){
+        if ($question = Question::where('code', $code)->where('active', true)->first()) {
             return [$question, null];
         } else {
             return [false, new CommonError(__('questions.alerts.not_available'))];
         }
     }
 
-    public static function getActive(){
+    public static function getActive()
+    {
         //cache
         return Question::query()->where('active', true)->get();
     }
-    
-    public static function getTopPopular(){
+
+    public static function getTopPopular()
+    {
         //cache
         $query = Question::query()
             ->where('active', true)
-            ->with(['statistics' => function($q) {
-                    $q->orderBy('views', 'desc');
-                }, 'statistics'])
-            ->with(['votes' => function($q) {
+            ->with(['statistics' => function ($q) {
+                $q->orderBy('views', 'desc');
+            }, 'statistics'])
+            ->with(['votes' => function ($q) {
                 $q->sum('votes');
             }, 'user_votes'])
             ->limit(10)
@@ -45,7 +47,8 @@ class Question extends BaseModel
         return $query;
     }
 
-    public function getCurrentUserComment(){
+    public function getCurrentUserComment()
+    {
 
         $userId = auth()->id();
 
@@ -57,23 +60,23 @@ class Question extends BaseModel
             ->join('comments', 'comments.id', '=', 'comment_id')
             ->where('comments.user_id', auth()->id())
             ->first();
-        
+
         return $res;
     }
 
     public function getPopularComment()
     {
-        if (!$this->question_comment->isEmpty()){
+        if (!$this->question_comment->isEmpty()) {
 
             // todo deficlt sql
-            $query = QuestionComments::where('question_id',$this->id)
-                ->join('comment_user_votes as comment_votes','question_comments.comment_id','=','comment_votes.comment_id')
-                ->select(['comment_votes.votes','comment_votes.comment_id'])
+            $query = QuestionComments::where('question_id', $this->id)
+                ->join('comment_user_votes as comment_votes', 'question_comments.comment_id', '=', 'comment_votes.comment_id')
+                ->select(['comment_votes.votes', 'comment_votes.comment_id'])
                 ->get();
 
             $comments = [];
 
-            if ($query->isNotEmpty()){
+            if ($query->isNotEmpty()) {
                 foreach ($query as $comment) {
 
                     // todo check
@@ -89,46 +92,53 @@ class Question extends BaseModel
 
                 return $popularComment;
             }
-            
+
             return false;
         }
 
         return false;
     }
 
-    public function category() : HasOne {
+    public function category(): HasOne
+    {
         return $this->HasOne(Category::class, 'id', 'category_id');
     }
 
-    public function question_comment() : HasMany {
+    public function question_comment(): HasMany
+    {
         return $this->HasMany(QuestionComments::class, 'question_id', 'id')
-            ->join('comments','question_comments.comment_id','=','comments.id')
+            ->join('comments', 'question_comments.comment_id', '=', 'comments.id')
             ->where('comments.active', true);
     }
 
-    public function file() : HasOne {
+    public function file(): HasOne
+    {
         return $this->hasOne(File::class, 'id', 'file_id');
     }
 
-    public function statistics() : HasOne {
+    public function statistics(): HasOne
+    {
         return $this->hasOne(QuestionStatistics::class, 'question_id', 'id');
     }
 
-    public function user() : HasOne {
+    public function user(): HasOne
+    {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function votes() : hasMany {
+    public function votes(): hasMany
+    {
         return $this->hasMany(QuestionVotes::class, 'id', 'question_id');
     }
 
-    public function right_comment() : hasOne
+    public function right_comment(): hasOne
     {
-        return  $this->HasOne(Comment::class, 'id', 'right_comment_id');
+        return $this->HasOne(Comment::class, 'id', 'right_comment_id');
     }
 
 
-    public static function boot() {
+    public static function boot()
+    {
 
         parent::boot();
 
@@ -137,11 +147,11 @@ class Question extends BaseModel
          *
          * @return response()
          */
-        static::creating(function($item) {
-            $item->code = Str::slug(Str::lower($item->title),'-');
+        static::creating(function ($item) {
+            $item->code = Str::slug(Str::lower($item->title), '-');
         });
 
-        static::created(function($item) {
+        static::created(function ($item) {
             // File::find($item->file_id)->update(['question_id' => $item->id]);
             QuestionStatistics::create([
                 'question_id' => $item->id

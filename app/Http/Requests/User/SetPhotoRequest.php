@@ -23,7 +23,7 @@ class SetPhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:'.FileService::MAX_FILE_SIZE_KB],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:' . FileService::MAX_FILE_SIZE_KB],
         ];
     }
 

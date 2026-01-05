@@ -10,21 +10,21 @@ use App\Models\Question;
 use App\Models\QuestionComments;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-Class QuestionService
+class QuestionService
 {
-    CONST POPULAR_VIEW_RATIO = 0.2;
+    const POPULAR_VIEW_RATIO = 0.2;
 
     private static $model = Question::class;
 
     public static function getList(
         array $filter = [],
         array $sort = [],
-        int $limit = 10
-    ){
+        int   $limit = 10
+    )
+    {
         if (empty($filter)) {
             return false;
         }
@@ -35,7 +35,7 @@ Class QuestionService
         $query = self::$model::query();
 
         foreach ($filter as $key => $item) {
-            if (is_array($item)){
+            if (is_array($item)) {
                 [$col, $operator, $value] = $item;
                 $query->where($col, $operator, $value);
             } else {
@@ -44,7 +44,7 @@ Class QuestionService
         }
 
         if (!empty($sort)) {
-            if (is_int(stripos($sort[0], 'statistics'))){
+            if (is_int(stripos($sort[0], 'statistics'))) {
                 $col = explode('.', $sort[0]);
                 $sortBy = $col[array_key_last($col)];
 
@@ -83,17 +83,17 @@ Class QuestionService
         $question = Question::query()
             ->where('title', $request->get('title'))
             ->first();
-        if ($question){
+        if ($question) {
             return [$question, null];
         }
 
         [$data, $error] = $this->prepareStoreData($request);
 
-        if (!$data){
+        if (!$data) {
             return [false, $error];
         }
 
-        return [ Question::create($data), null ];
+        return [Question::create($data), null];
     }
 
     private function prepareStoreData(StoreRequest $request)
@@ -111,12 +111,12 @@ Class QuestionService
                     unset($data['img']);
                 } else {
                     // todo translate
-                    return [null, [ new ValidationError('File not valid', 'img', 'img_not_valid')]];
+                    return [null, [new ValidationError('File not valid', 'img', 'img_not_valid')]];
                 }
             }
 
-            if (isset($data['category'])){
-                if ($category = Category::getElement($data['category'])){
+            if (isset($data['category'])) {
+                if ($category = Category::getElement($data['category'])) {
                     $data['category_id'] = $category->id;
                 }
                 unset($data['category']);
@@ -166,7 +166,7 @@ Class QuestionService
 
     private static function getRawDataForPopular(string $interval = '1 DAY')
     {
-        if ($interval === '1 DAY'){
+        if ($interval === '1 DAY') {
             // cache 3h
         } else {
             // cache 12h
@@ -184,9 +184,9 @@ Class QuestionService
                 'q.id',
                 DB::raw('(COALESCE(statistics.views, 0) * 0.2 + COALESCE(votes.total_votes, 0)) as popularity'),
             ])
-            ->leftJoinSub($statistics, 'statistics',  'statistics.question_id', '=', 'q.id')
+            ->leftJoinSub($statistics, 'statistics', 'statistics.question_id', '=', 'q.id')
             ->leftJoinSub($votes, 'votes', 'votes.question_id', '=', 'q.id')
-            ->where('q.created_at', '>', DB::raw('NOW() - INTERVAL '.$interval))
+            ->where('q.created_at', '>', DB::raw('NOW() - INTERVAL ' . $interval))
             ->orderBy('popularity', 'desc')
             ->get();
     }

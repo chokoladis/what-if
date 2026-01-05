@@ -12,16 +12,16 @@ class CaptchaMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next)
     {
         $service = new SettingService;
 
-        if ($service->isCaptchaSetOn()){
+        if ($service->isCaptchaSetOn()) {
 
             $captcha = new CaptchaService();
-            [$success, ] = $captcha->verify($request->get('h-captcha-response') ?? '');
+            [$success,] = $captcha->verify($request->get('h-captcha-response') ?? '');
 
             if (!$success) {
                 if ($request->expectsJson()) {

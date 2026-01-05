@@ -23,49 +23,52 @@ class Comment extends Model
         return 'comments';
     }
 
-    public function user() : HasOne {
+    public function user(): HasOne
+    {
         return $this->HasOne(User::class, 'id', 'user_id');
     }
 
-    public function isReply() : bool {
+    public function isReply(): bool
+    {
         return $this->HasOne(CommentsReply::class, 'comment_reply_id', 'id')->exists();
     }
 
-    public function replies() : HasMany {
+    public function replies(): HasMany
+    {
         return $this->HasMany(CommentsReply::class, 'comment_main_id', 'id')->orderBy('created_at');
     }
 
-    public function parent() : HasOne {
+    public function parent(): HasOne
+    {
         return $this->hasOne(CommentsReply::class, 'comment_reply_id', 'id');
     }
 
     public function getCountChilds($replies, int &$count = 0): int
     {
-        if (empty($replies)){
+        if (empty($replies)) {
             return $count;
-        } elseif(is_array($replies)){
-            $replies = CommentsReply::whereIn('comment_main_id', $replies)->orderBy('created_at')->get(['comment_reply_id','id']);
+        } elseif (is_array($replies)) {
+            $replies = CommentsReply::whereIn('comment_main_id', $replies)->orderBy('created_at')->get(['comment_reply_id', 'id']);
 
             if ($replies->isEmpty())
                 return $count;
         }
 
         $commentsIds = [];
-        foreach( $replies as $reply){
+        foreach ($replies as $reply) {
             $commentsIds[] = $reply->comment_reply_id;
             $count++;
         }
 
-        return $this->getCountChilds( $commentsIds, $count);
+        return $this->getCountChilds($commentsIds, $count);
     }
 
-    
 
     public function getReplies($replies, &$result = [])
     {
-        if (empty($replies)){
+        if (empty($replies)) {
             return $result;
-        } elseif(is_array($replies)){
+        } elseif (is_array($replies)) {
             $replies = CommentsReply::whereIn('comment_main_id', $replies)->orderBy('created_at')->get();
 
             if ($replies->isEmpty())
@@ -73,24 +76,26 @@ class Comment extends Model
         }
 
         $commentsIds = [];
-        foreach( $replies as $reply){
+        foreach ($replies as $reply) {
             $commentsIds[] = $reply->comment_reply_id;
             $result[] = $reply->reply;
         }
         // limit
 
-        return $this->getReplies( $commentsIds, $result);
+        return $this->getReplies($commentsIds, $result);
     }
 
-    public function getRating() {
+    public function getRating()
+    {
         return $this->newQuery()
             ->where('comments.id', $this->id)
-            ->join('comment_user_votes as t_statuses','comments.id','=', 'comment_id')
+            ->join('comment_user_votes as t_statuses', 'comments.id', '=', 'comment_id')
             ->selectRaw('SUM(t_statuses.votes) as rating')
             ->first();
     }
 
-    public static function boot() {
+    public static function boot()
+    {
 
         parent::boot();
 
@@ -100,18 +105,18 @@ class Comment extends Model
          * @return response()
          */
 
-        static::created(function($item) {
+        static::created(function ($item) {
             try {
                 $userComment = UserComments::create([
                     'user_id' => $item->user_id, // auth()->id(), //for factory - $item->user_id
                     'comment_id' => $item->id
                 ]);
-    
-                if (!$userComment || !$userComment->wasRecentlyCreated){
-                    Log::debug(__('Не удалось создать связь комментария - '.$item->id.', пользователя - '. auth()->id));
+
+                if (!$userComment || !$userComment->wasRecentlyCreated) {
+                    Log::debug(__('Не удалось создать связь комментария - ' . $item->id . ', пользователя - ' . auth()->id));
                 }
             } catch (\Throwable $th) {
-                Log::debug(__('Исключение при создании связи комментария - '.$item->id.', пользователя - '. auth()->id.' --- '.$th));
+                Log::debug(__('Исключение при создании связи комментария - ' . $item->id . ', пользователя - ' . auth()->id . ' --- ' . $th));
             }
         });
 

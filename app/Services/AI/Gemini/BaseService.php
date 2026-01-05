@@ -22,11 +22,11 @@ class BaseService extends BaseAI
     {
         [$apiKey, $error] = $this->getApiKey();
 
-        if (!$apiKey){
+        if (!$apiKey) {
             return [false, $error];
         }
 
-        $curl = curl_init('https://generativelanguage.googleapis.com/v1beta/models/'.$this->getModel().':generateContent?key='.$apiKey);
+        $curl = curl_init('https://generativelanguage.googleapis.com/v1beta/models/' . $this->getModel() . ':generateContent?key=' . $apiKey);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
         ]);

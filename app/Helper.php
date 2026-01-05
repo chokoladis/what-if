@@ -4,7 +4,7 @@ if (!function_exists('responseJson')) {
 //    todo middleware ?
     function responseJson(bool $success = true, mixed $result = null, int $status = null)
     {
-        $data = ['success' => $success,'result' => $result];
+        $data = ['success' => $success, 'result' => $result];
 
         if (!$success) {
 
@@ -23,19 +23,21 @@ if (!function_exists('responseJson')) {
     }
 }
 
-if (!function_exists('getNumbers')){
-    function getNumbers($var){
+if (!function_exists('getNumbers')) {
+    function getNumbers($var)
+    {
         preg_match_all('/[\d]/', $var, $matches);
         return implode('', $matches[0]);
     }
 }
 
-if (!function_exists('getIPAddress')){
-    function getIPAddress(){
+if (!function_exists('getIPAddress')) {
+    function getIPAddress()
+    {
 
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])){
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
 

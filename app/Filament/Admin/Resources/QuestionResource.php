@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\QuestionResource\Pages;
 use App\Filament\Admin\Resources\QuestionResource\RelationManagers;
 use App\Models\Category;
-use App\Models\Comment;
 use App\Models\Question;
 use App\Models\QuestionComments;
 use App\Models\User;
@@ -15,8 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class QuestionResource extends Resource
 {
@@ -26,7 +23,7 @@ class QuestionResource extends Resource
     protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $model = Question::class;
 
-    protected static null | string | \BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
     {

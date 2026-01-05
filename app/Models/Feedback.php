@@ -17,5 +17,5 @@ class Feedback extends Model
     const SUBJECTS_EN = [
         'Problem on site', 'Suggestions and ideas', 'Cooperation/advertising', 'Other'
     ];
-    
+
 }

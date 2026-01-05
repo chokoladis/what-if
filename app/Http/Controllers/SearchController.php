@@ -24,8 +24,8 @@ class SearchController extends Controller
         $data = $request->validated();
         $filters = $data['filters'] ?? [];
 
-        $questions = $this->questionRepository->search($data, $filters);
-        $categories = $this->categoryRepository->search($data, $filters);
+        $questions = $this->questionRepository->searchWithPaginate($data, $filters);
+        $categories = $this->categoryRepository->getSearchBuilder($data, $filters)->raw();
 
         return view('search.index', compact('questions', 'categories'));
     }

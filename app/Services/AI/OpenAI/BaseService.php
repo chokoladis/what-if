@@ -21,7 +21,7 @@ abstract class BaseService extends BaseAI
     {
         [$apiKey, $error] = $this->getApiKey();
 
-        if (!$apiKey){
+        if (!$apiKey) {
             return [false, $error];
         }
 

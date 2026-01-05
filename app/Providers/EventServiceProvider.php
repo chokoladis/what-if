@@ -5,7 +5,6 @@ namespace App\Providers;
 
 use App\Events\ViewEvent;
 use App\Listeners\ViewsCounterListener;
-
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 

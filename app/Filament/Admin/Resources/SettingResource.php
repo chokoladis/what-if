@@ -4,17 +4,14 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\SettingResource\Pages;
 use App\Filament\Admin\Resources\SettingResource\RelationManagers;
-use App\Models\Category;
 use App\Models\Setting;
+use BackedEnum;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use BackedEnum;
 
 class SettingResource extends Resource
 {
@@ -23,9 +20,9 @@ class SettingResource extends Resource
     protected static ?string $pluralModelLabel = 'Настройки';
     protected static ?string $model = Setting::class;
 
-    protected static null | string | BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string|BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static null | string | BackedEnum $activeNavigationIcon = 'heroicon-o-document-text';
+    protected static null|string|BackedEnum $activeNavigationIcon = 'heroicon-o-document-text';
 
     const DIR = 'settings';
 

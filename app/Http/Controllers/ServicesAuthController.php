@@ -12,13 +12,14 @@ class ServicesAuthController extends Controller
 {
     const YANDEX_LINK_PICTURE = 'https://avatars.mds.yandex.net/get-yapic/';
 
-    public function googleAuth(Request $request){
+    public function googleAuth(Request $request)
+    {
 
         $code = urldecode($request->get('code'));
 
         if (!empty($code)) {
 
-            if ($data = $this->getGoogleUserToken($code)){
+            if ($data = $this->getGoogleUserToken($code)) {
 
                 $userData = $this->getGoogleUserInfo($data);
 
@@ -26,7 +27,7 @@ class ServicesAuthController extends Controller
                     ->where('email', $userData['email'])
                     ->first();
 
-                if (!$user){
+                if (!$user) {
                     $password = Str::random(12);
 
                     $newUser = User::create([
@@ -54,32 +55,33 @@ class ServicesAuthController extends Controller
         return redirect()->back()->with('message', __('user.login_success'));
     }
 
-    public function getGoogleUserToken(string $code){
+    public function getGoogleUserToken(string $code)
+    {
 
         try {
             $params = array(
-                'client_id'     => config('auth.socials.google.client_id'),
+                'client_id' => config('auth.socials.google.client_id'),
                 'client_secret' => config('auth.socials.google.client_secret'),
-                'redirect_uri'  => config('auth.socials.google.redirect_uri'),
-                'grant_type'    => 'authorization_code',
-                'code'          => $code
+                'redirect_uri' => config('auth.socials.google.redirect_uri'),
+                'grant_type' => 'authorization_code',
+                'code' => $code
             );
-                    
+
             $ch = curl_init('https://accounts.google.com/o/oauth2/token');
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $params); 
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_HEADER, false);
             $data = curl_exec($ch);
             curl_close($ch);
-        
+
             $data = json_decode($data, true);
-            
-            if (!empty($data['access_token'])){
+
+            if (!empty($data['access_token'])) {
                 return $data;
             } elseif (isset($data['error']) && !empty($data['error'])) {
-                echo 'error -> '.$data['error'];
+                echo 'error -> ' . $data['error'];
             } else {
                 echo 'Неизвестная ошибка<br>';
                 print_r($data);
@@ -92,13 +94,14 @@ class ServicesAuthController extends Controller
         return false;
     }
 
-    public function getGoogleUserInfo(array $data){
+    public function getGoogleUserInfo(array $data)
+    {
 
         $params = array(
             'access_token' => $data['access_token'],
-            'id_token'     => $data['id_token'],
-            'token_type'   => 'Bearer',
-            'expires_in'   => 3599
+            'id_token' => $data['id_token'],
+            'token_type' => 'Bearer',
+            'expires_in' => 3599
         );
 
         $info = file_get_contents('https://www.googleapis.com/oauth2/v1/userinfo?' . urldecode(http_build_query($params)));
@@ -106,14 +109,15 @@ class ServicesAuthController extends Controller
 
         return $info;
     }
-    
-    public function yandexAuth(Request $request){
+
+    public function yandexAuth(Request $request)
+    {
 
         $code = urldecode($request->get('code'));
-        
+
         if (!empty($code)) {
-            
-            if ($data = $this->getYandexUserToken($code)){
+
+            if ($data = $this->getYandexUserToken($code)) {
 
                 $userData = $this->getYandexUserInfo($data);
 
@@ -121,7 +125,7 @@ class ServicesAuthController extends Controller
                     ->where('email', $userData['default_email'])
                     ->first();
 
-                if (!$user){
+                if (!$user) {
                     $password = Str::random(12);
 
                     $newUser = User::create([
@@ -129,7 +133,7 @@ class ServicesAuthController extends Controller
                         'email' => $userData['default_email'],
                         'password' => $password,
                         'active' => 1,
-                        'profile_photo_path' => self::YANDEX_LINK_PICTURE.$userData['default_avatar_id'],
+                        'profile_photo_path' => self::YANDEX_LINK_PICTURE . $userData['default_avatar_id'],
                     ]);
 
                     $user = $newUser;
@@ -137,7 +141,7 @@ class ServicesAuthController extends Controller
                 }
 
                 Auth::login($user);
-            
+
             } else {
                 exit;
             }
@@ -149,32 +153,33 @@ class ServicesAuthController extends Controller
         return redirect()->back()->with('message', __('user.login_success'));
     }
 
-    public function getYandexUserToken(string $code){
+    public function getYandexUserToken(string $code)
+    {
 
         try {
 
             $fields = array(
-                'grant_type'    => 'authorization_code',
-                'code'          => $code,
-                'client_id'     => config('auth.socials.yandex.client_id'),
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'client_id' => config('auth.socials.yandex.client_id'),
                 'client_secret' => config('auth.socials.yandex.client_secret'),
             );
-            
+
             $ch = curl_init('https://oauth.yandex.ru/token');
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_HEADER, false);
             $data = curl_exec($ch);
-            curl_close($ch);	
-                    
+            curl_close($ch);
+
             $data = json_decode($data, true);
 
-            if (!empty($data['access_token'])){
+            if (!empty($data['access_token'])) {
                 return $data;
             } elseif (isset($data['error']) && !empty($data['error'])) {
-                echo 'error -> '.$data['error'];
+                echo 'error -> ' . $data['error'];
             } else {
                 echo 'Неизвестная ошибка<br>';
                 print_r($data);
@@ -187,11 +192,12 @@ class ServicesAuthController extends Controller
         return false;
     }
 
-    public function getYandexUserInfo(array $data){
-        
+    public function getYandexUserInfo(array $data)
+    {
+
         $ch = curl_init('https://login.yandex.ru/info');
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('format' => 'json')); 
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array('format' => 'json'));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: OAuth ' . $data['access_token']));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -203,8 +209,9 @@ class ServicesAuthController extends Controller
         return $info;
     }
 
-    public function telegramAuth($auth_data){
-        
+    public function telegramAuth($auth_data)
+    {
+
         $check_hash = $auth_data['hash'];
         unset($auth_data['hash']);
         $data_check_arr = [];

@@ -4,7 +4,6 @@ namespace App\Http\Requests\Question;
 
 use App\Services\FileService;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\File;
 
 class StoreRequest extends FormRequest
 {
@@ -26,16 +25,17 @@ class StoreRequest extends FormRequest
         return [
             'category' => ['nullable', 'string'],
             'title' => ['required', 'string', 'min:3'],
-            'img' => [ 'nullable', 'image', 'mimes:'.implode(',', FileService::ALLOW_IMG_EXT), 'max:'.FileService::MAX_FILE_SIZE_KB ]
+            'img' => ['nullable', 'image', 'mimes:' . implode(',', FileService::ALLOW_IMG_EXT), 'max:' . FileService::MAX_FILE_SIZE_KB]
         ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         return [
             'title.required' => 'Заголовок обязателен для заполнения',
             'title.min' => 'Заголовок должен иметь не менее 3 символов',
-            'img.mimes'    => 'Файл должен иметь разрешенное расширение: '.implode(',', FileService::ALLOW_IMG_EXT),
-            'img.size' => 'Размер изображение не должно быть больше '.FileService::MAX_FILE_SIZE_MB.' MB',
+            'img.mimes' => 'Файл должен иметь разрешенное расширение: ' . implode(',', FileService::ALLOW_IMG_EXT),
+            'img.size' => 'Размер изображение не должно быть больше ' . FileService::MAX_FILE_SIZE_MB . ' MB',
         ];
     }
 }
