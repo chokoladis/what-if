@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Feedback;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreRequest extends FormRequest
 {
@@ -27,5 +29,23 @@ class StoreRequest extends FormRequest
             'subject' => ['required', 'string', 'max:40'],
             'comment' => ['required', 'string']
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.max' => 'Email превысил лимит символов',
+            'email.email' => 'Email не является email',
+            'email.regex' => 'Email не прошел валидацию',
+        ];
+    }
+
+    protected function failedValidation(Validator|\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'errors' => $validator->errors(),
+            ], 422)
+        );
     }
 }

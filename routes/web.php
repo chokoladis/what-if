@@ -36,7 +36,7 @@ Route::middleware(['locale'])->group(function () {
                 Route::post('/', 'QuestionController@store')->middleware(['captcha'])->name('store');
                 Route::post('/right_comment', 'QuestionController@setRightComment')->name('setRightComment');
 
-                Route::post('/{question}/vote', 'QuestionUserVoteController@set')->name('vote');
+                Route::post('/{question}/vote', 'QuestionVoteController@set')->name('vote');
             });
 
             Route::prefix('comments')->name('comments.')->group(function () {

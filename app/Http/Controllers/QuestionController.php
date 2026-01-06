@@ -68,7 +68,7 @@ class QuestionController extends Controller
 
 //            service and cache
         $arVotes = QuestionVotes::getByQuestionId($question['id']);
-        $questionUserVote = QuestionVotes::getByQuestionIdForUser($question['id']);
+        $questionCurrentUserVote = QuestionVotes::getByQuestionIdForUser($question['id']);
 
         $arComments = [];
 //            mb use algoritm
@@ -95,7 +95,7 @@ class QuestionController extends Controller
         }
 
         return view('questions.detail',
-            compact('question', 'arVotes', 'questionUserVote', 'arComments', 'title', 'isNeedShowFullTitle')
+            compact('question', 'arVotes', 'questionCurrentUserVote', 'arComments', 'title', 'isNeedShowFullTitle')
         );
     }
 

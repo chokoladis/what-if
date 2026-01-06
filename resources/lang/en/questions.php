@@ -7,6 +7,6 @@ return [
         'store' => 'Question saved and will public late',
         'already_exists' => 'Like question already exists',
     ],
-    'all_questions' => 'All questions',
+    'all_questions' => 'All questions in',
     'comments' => 'Comments'
 ];

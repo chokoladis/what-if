@@ -13,7 +13,7 @@ async function sendAjax(route, method, data = null) {
         },
     };
     if (data) {
-        settings.data = data;
+        settings.body = data;
     }
 
     let query = await fetch(route, settings);
@@ -25,46 +25,38 @@ async function sendAjax(route, method, data = null) {
 
 $(function () {
 
-    // $('#modal-feedback [type="submit"]').on('click', function(){
-    //     let form = $('#modal-feedback form');
-    //     let action = form.attr('action');
-    //     let method = form.attr('method');
-    //     let formData = form.serializeArray();
-    //     let sendData = new FormData();
+    $('#modal-feedback [type="submit"]').on('click', function(){
+        let form = $('#modal-feedback form');
+        let action = form.attr('action');
+        let method = form.attr('method');
 
-    //     $.each(formData, function (key, input) {
-    //         sendData.append(input.name, input.value);
-    //     });
+        let formData = form.serializeArray();
+        let sendData = new FormData();
 
-    //     sendAjax(action, method, sendData);
-    // });
+        $.each(formData, function (key, input) {
+            sendData.append(input.name, input.value);
+        });
 
-    // $.ajax({
-    //     url: '/setting/lang',
-    //     type: 'POST',
-    //     data: {
-    //         "_token": $('[name="csrf-token"]').attr('content'),
-    //         lang: $(this).data('lang')
-    //     },
-    //     success: function (data){
-    //         console.log(data);
-    //     }
-    // });
+        const dataPromise = sendAjax(action, method, sendData);
+
+        dataPromise.then(function (result) {
+            let status = result[0];
+            let json = result[1];
+
+            // todo
+            if (status === 422) {
+
+            } else {
+                    // json.result
+            }
+        }
+        ).catch(function (error) {
+            console.log(error)
+        })
+    });
 
 
     $('.js-change-lang .dropdown-item').on('click', function () {
-        // let sendData = new FormData();
-        // sendData.append('lang', $(this).data('lang'));
-        //
-        // let data = sendAjax('/setting/lang', 'POST',  sendData);
-        //
-        // data.then(function(result) {
-        //     let status = result[0];
-        //     let json = result[1];
-        //     if (status === 200){
-        //         location.reload();
-        //     }
-        // });
 
         $.ajax({
             url: '/setting/lang',

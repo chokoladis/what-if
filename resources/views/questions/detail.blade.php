@@ -1,3 +1,4 @@
+@php use App\Services\FileService; @endphp
 @extends('layouts.app')
 
 @push('style')
@@ -22,12 +23,12 @@
             </div>
         @else
             <div class="title">
-                <div class="question-actions">
+                <div class="actions">
                     @php
-                        $currentVote = !empty($questionUserVoite) ? $questionUserVoite['vote'] : '';
+                        $currentVote = !empty($questionCurrentUserVote) ? $questionCurrentUserVote['vote'] : 0;
                     @endphp
                     @if(auth()->id())
-                        {{--                        todo boostrap icons ?--}}
+                        {{--todo boostrap icons ?--}}
                         <input type="hidden" id="question_id" value="{{ $question->id }}">
                         <div class="icon like btn {{ $currentVote === 1 ? 'btn-success' : 'btn-outline-success' }}"
                              data-vote="1">
@@ -49,11 +50,10 @@
                             <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
                     @endif
-                    {{--                    текущий юзер -статус --}}
-
+                    {{--текущий юзер -статус --}}
                 </div>
                 <div class="description">
-                    <img src="{{ $question->file && $question->file->path ? Storage::url('questions/'.$question->file->path) : $SITE_NOPHOTO }}"
+                    <img src="{{ FileService::getPhoto($question->file, 'questions') }}"
                          alt="...">
                     {{--во весь экран --}}
                     <div class="shadow"></div>
@@ -68,13 +68,13 @@
                 <div class="date">
                     <div class="create">
                         <span uk-icon="calendar"></span>
-                        <i>{{ $question->created_at }}</i>
+                        <i>{{ $question->created_at->format('d M Y, H:i:s') }}</i>
                     </div>
 
                     @if($question->created_at != $question->updated_at)
                         <div class="update">
                             <span uk-icon="pencil"></span>
-                            <i>{{ $question->updated_at }}</i>
+                            <i>{{ $question->updated_at->format('d M Y, H:i:s') }}</i>
                         </div>
                     @endif
                 </div>
@@ -102,7 +102,7 @@
                             <div class="main">
                                 <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
                                     <i uk-icon="icon: check; ratio: 1.2"></i>
-                                    <small>{{ __('Верный ответ') }}</small>
+                                    <small>{{ __('comment.is_answer') }}</small>
                                 </div>
                                 <p>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
                                 <div class="under">
@@ -126,7 +126,7 @@
                                         <div class="user">
                                             <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
                                             <div class="icon">
-                                                <img src="{{ \App\Services\FileService::getPhoto($comment->user->photo, 'users') }}"
+                                                <img src="{{ FileService::getPhoto($comment->user->photo, 'users') }}"
                                                      alt="">
                                             </div>
                                             <b>{{ $comment->user->name }}</b>
@@ -155,7 +155,7 @@
                                placeholder="{{ __('comment.placeholder') }}">
                         @if ($errors->has('text'))
                             @foreach ($errors->get('text') as $item)
-                                <p class="error">{{ $item  }}</p>
+                                <p class="error">{{ $item }}</p>
                             @endforeach
                         @endif
                     </div>
@@ -182,7 +182,7 @@
                 <div class="category">
                     <a href="{{ route('categories.detail', $question->category->code)}}"
                        class="btn btn-outline-primary">
-                        {{ __('questions.all_questions') . ' in "'. $question->category->title . '"'}}
+                        {{ __('questions.all_questions') . ' "'. $question->category->title . '"'}}
                     </a>
                 </div>
             @endif

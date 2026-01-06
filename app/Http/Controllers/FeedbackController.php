@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Errors\CommonError;
+use App\DTO\Errors\ValidationError;
 use App\Http\Requests\Feedback\StoreRequest;
 use App\Models\Feedback;
 use Illuminate\Support\Facades\Log;
 
 class FeedbackController extends Controller
 {
-
     public function store(StoreRequest $request)
     {
-
         $success = true;
-        $response = null;
+        $errors = [];
 
         try {
             $data = $request->validated();
@@ -24,12 +24,14 @@ class FeedbackController extends Controller
                 $data['phone'] = getNumbers($data['phone']);
 
                 if (strlen($data['phone']) !== 11) {
-                    $success = false;
-                    $error['phone'] = 'Ошибка заполнения телефона';
+                    $errors[] = new ValidationError(
+                        'Ошибка заполнения телефона',
+                        'phone',
+                    );
                 }
             }
 
-            if ($success) {
+            if (empty($errors)) {
                 $check = Feedback::firstOrCreate([
                     'email' => $data['email'],
                     'comment' => $data['comment']
@@ -38,14 +40,15 @@ class FeedbackController extends Controller
                 if ($check->wasRecentlyCreated) {
                     $response = 'Заявка успешно отправлена';
                 } else {
-                    $success = false;
-                    $error['other'] = 'Ваша заявка уже отправлена и ожидает обработки';
+                    $errors[] = new CommonError('Ваша заявка уже отправлена и ожидает обработки');
                 }
             }
 
-            dump($data);
+            if (!empty($errors)){
+                return responseJson(false, $errors);
+            }
 
-            return responseJson($success, $response, $error, 201);
+            return responseJson($success, $response, 201);
         } catch (\Throwable $th) {
 
             Log::error($th, $data);

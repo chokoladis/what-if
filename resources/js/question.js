@@ -44,10 +44,12 @@ $(function () {
                 body: sendData,
             };
 
-            console.log(location);
-            // let query = await fetch('/ajax/questionStatus', settings);
-            // let json = await query.json();
-            // console.log(query);
+            const arPath = location.pathname.split('/')
+            const questionCode = arPath[arPath.length - 1]
+
+            let query = await fetch(`/questions/${questionCode}/vote`, settings);
+            let json = await query.json();
+            console.log(query);
         } catch (error) {
             console.error(error);
         }

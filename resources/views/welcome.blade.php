@@ -6,8 +6,7 @@
 
 @section('content')
     <div class="container">
-        {{-- component - banner-slider --}}
-        <x-main-slider/>
+        <x-question.slider-popular/>
         <div id="banner" class="banner banner-centred banner-1">
             <img src="/storage/banner_1.png" alt="" class="bg">
             <h1 class="title">{{ __('system.banner.title') }}</h1>

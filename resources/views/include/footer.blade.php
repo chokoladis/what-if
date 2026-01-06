@@ -40,7 +40,6 @@
 </div>
 
 
-<!-- Modal -->
 {{-- do like component --}}
 <div class="modal fade" id="modal-feedback" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="modalFeedbackTitle" aria-hidden="true">
@@ -53,6 +52,8 @@
             <div class="modal-body">
                 <form action="{{ route('feedback.store') }}" method="POST" enctype="multipart/form-data">
 
+                    @method('POST')
+                    {{--todo check--}}
                     @csrf
 
                     <div class="mb-3">
@@ -102,34 +103,35 @@
 </div>
 
 
-@if (\Session::has('message'))
-    <div id="system-alert" class="alert alert-info" role="alert">
-        {!! \Session::get('message') !!}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <script>
-        (function () {
-            setTimeout(function () {
-                $('#system-alert').alert('close');
-            }, 5000);
-        });
-    </script>
-@endif
-@if (\Session::has('error'))
-    <div id="system-alert-error" class="alert alert-danger" role="alert">
-        {!! \Session::get('error') !!}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <script>
-        (function () {
-            setTimeout(function () {
-                $('#system-alert-error').alert('close');
-            }, 5000);
-        });
-    </script>
+    @if (\Session::has('message'))
+        <div id="system-alert" class="alert alert-info" role="alert">
+            {!! \Session::get('message') !!}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <script>
+            (function () {
+                setTimeout(function () {
+                    $('#system-alert').alert('close');
+                }, 5000);
+            });
+        </script>
+    @endif
+    @if (\Session::has('error'))
+        <div id="system-alert-error" class="alert alert-danger" role="alert">
+            {!! \Session::get('error') !!}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <script>
+            (function () {
+                setTimeout(function () {
+                    $('#system-alert-error').alert('close');
+                }, 5000);
+            });
+        </script>
     @endif
 
     @vite(['resources/js/app.js'])
     @stack('script')
+
     </body>
-    </html>
+</html>

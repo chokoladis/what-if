@@ -114,14 +114,10 @@ nav.header {
     overflow: hidden;
     cursor: pointer;
     transform: scale(0.9);
-    //box-shadow: 0px 0px 15px;
-    //border-radius: 30px;
 
 
     &:hover {
       transform: scale(1.05);
-      //box-shadow: 0px 0px 15px #df00df;
-      //    filter - drop-shadow //todo
     }
 
     .img {
@@ -154,12 +150,12 @@ html[data-bs-theme="light"] {
       color: black;
     }
 
-    .uk-icon {
+    div:not(.actions) .uk-icon {
 
       fill: rgba(10, 30, 200, 0.55);
 
       svg *, * {
-        stroke: rgba(10, 30, 200, 0.55) !important;
+        stroke: rgba(10, 30, 200, 0.55) ; //!important
       }
     }
   }
@@ -175,11 +171,11 @@ html[data-bs-theme="dark"] {
     }
   }
 
-  body .uk-icon {
+  body div:not(.actions) .uk-icon {
     fill: rgba(240, 240, 0, 0.55);
 
     svg *, * {
-      stroke: rgba(240, 240, 0, 0.55) !important;
+      stroke: rgba(240, 240, 0, 0.55); //!important
     }
   }
 
