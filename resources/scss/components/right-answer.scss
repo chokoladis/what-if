@@ -1,0 +1,41 @@
+.right-answer {
+  position: relative;
+  display: flex;
+  padding-top: 10px;
+  font-size: 11px;
+
+  i {
+    transform: scale(1.2);
+    left: -10px;
+    top: 5px;
+    position: relative;
+  }
+
+  .content {
+    display: flex;
+    align-items: center;
+
+    .user {
+      display: flex;
+      align-items: center;
+      margin-right: 15px;
+
+      img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    b {
+      margin: 0;
+      font-size: 12px;
+      font-style: italic;
+    }
+  }
+}

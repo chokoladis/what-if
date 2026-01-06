@@ -19,7 +19,7 @@
                     <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
                         <div class="card">
                             <a href="{{ route('categories.detail', $item->code ) }}">
-                                <img src="{{ $item->file ? Storage::url('categories/'.$item->file->path) : $SITE_NOPHOTO }}"
+                                <img src="{{ \App\Services\FileService::getPhoto($item->file, 'categories') }}"
                                      alt="Картинка категории не найдена">
                                 <div class="card-body">
                                     {{ $item->title }}
@@ -30,7 +30,7 @@
 
                 @endforeach
 
-            </div>            
+            </div>
         @endif
 
     </div>

@@ -18,7 +18,8 @@
             <div class="card photo">
                 <img src="{{ $photo ? Storage::url('users/'.$photo->path) : $SITE_NOPHOTO }}" class="card-img-top">
                 <div class="card-body @if($errors->has('photo')) active @endif">
-                    <form action="{{ route('profile.setPhoto') }}" class="update-photo" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('profile.setPhoto') }}" class="update-photo" method="POST"
+                          enctype="multipart/form-data">
 
                         @csrf
 

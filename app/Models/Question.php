@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\DTO\Indexing\CommentDTO;
+use App\DTO\Indexing\UserDTO;
 use App\Models\Errors\CommonError;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -169,13 +171,35 @@ class Question extends BaseModel
 
     public function toSearchableArray()
     {
-        return [
+        $obj = [
             'title' => $this->title,
             'code' => $this->code,
             'category_list' => $this->getCategoryIds(),
             'category_id' => $this->category_id,
-            'created_at' => $this->created_at
+            'file' => $this->file,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
+
+        $rightComment = $this->right_comment;
+        if ($rightComment) {
+            $obj['right_comment'] = New CommentDTO(
+                $rightComment->id,
+                $rightComment->text,
+                New UserDTO($rightComment->user)
+            );
+        }
+
+        $popularComment = $this->getPopularComment();
+        if ($popularComment) {
+            $obj['popular_comment'] = new CommentDTO(
+                $popularComment->id,
+                $popularComment->text,
+                new UserDTO($popularComment->user)
+            );
+        }
+
+        return $obj;
     }
 
     public function shouldBeSearchable()

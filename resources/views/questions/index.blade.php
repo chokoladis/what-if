@@ -21,35 +21,19 @@
             <div class="item card mb-3 {{ $mainClass }} ">
                 <a href="{{ route('questions.detail', $question->code) }}" class="row g-0">
                     <div class="img-col col-sm-4 col-md-3">
-                        <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions/') }}" alt="" class="img-fluid rounded-start">
+                        <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions/') }}" alt=""
+                             class="img-fluid rounded-start">
                     </div>
                     <div class="col-sm-8 col-md-9">
                         <div class="card-body">
                             <h4 class="card-title fw-bold">{{ $question->title }}</h4>
 
                             @if ($question->right_comment_id)
-                                <div class="right-answer card-text alert alert-success">
-                                    <i uk-icon="check"></i>
-                                    <div class="content">
-                                        <div class="user">
-                                            <img src="{{ \App\Services\FileService::getPhoto($question->right_comment->user->file,'users') }}" alt="">
-                                            <p>{{ $question->right_comment->user->name }}</p>
-                                        </div>
-                                        <b class="text-success">{{ mb_strlen($question->right_comment->text) > 60 ? mb_substr($question->right_comment->text, 0, 60) : $question->right_comment->text }}</b>
-                                    </div>
-                                </div>
+                                <x-right-answer :comment="$question->right_comment"></x-right-answer>
                             @endif
-                            @if (!$question->right_comment_id && $popularComment = $question->getPopularComment())
-                                <div class="popular-answer alert alert-warning" role="alert">
-                                    <i uk-icon="bolt"></i>
-                                    <div class="content">
-                                        <div class="user">
-                                            <img src="{{ \App\Services\FileService::getPhoto($popularComment->user->file, 'users') }}" alt="">
-                                            <p>{{ $popularComment->user->name }}</p>
-                                        </div>
-                                        <p class="mb-0 fst-italic">{{ $popularComment->text }}</p>
-                                    </div>
-                                </div>
+                            @if ($question->getPopularComment())
+                                <x-comment.popular-comment
+                                        :comment="$question->getPopularComment()"></x-comment.popular-comment>
                             @endif
 
                             <div class="date">
@@ -68,10 +52,10 @@
                     </div>
                 </a>
             </div>
-        {{ $questions->links() }}
-{{--            links
-        total
---}}
+            {{ $questions->links() }}
+            {{--            links
+                    total
+            --}}
         @endforeach
 
         @if ($questions->isEmpty())

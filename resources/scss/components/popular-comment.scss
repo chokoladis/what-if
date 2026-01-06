@@ -1,0 +1,41 @@
+.popular-comment {
+  display: flex;
+  overflow: hidden;
+  margin-top: 15px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  font-size: 11px;
+
+  .content {
+    display: flex;
+    align-items: center;
+
+    .user {
+      display: flex;
+      align-items: center;
+      margin-right: 15px;
+
+      img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+
+      & + p {
+        font-size: 12px;
+      }
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  i {
+    transform: scale(1.2);
+    left: -10px;
+    top: 5px;
+    position: relative;
+  }
+}

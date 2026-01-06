@@ -21,7 +21,7 @@
         @if ($category->file)
             <div class="category-img">
                 {{-- todo dual img with opacity --}}
-                <img src="{{ Storage::url('categories/'. $category->file?->path ) }}" alt="">
+                <img src="{{ \App\Services\FileService::getPhoto($category->file, 'categories') }}" alt="">
             </div>
         @endif
 
@@ -40,7 +40,7 @@
                                 <a href="{{ route("categories.detail", $item->code) }}">{{ $item->title }}</a>
                             </li>
                         @endforeach
-                   @endif
+                    @endif
                 </ol>
             </nav>
         </div>

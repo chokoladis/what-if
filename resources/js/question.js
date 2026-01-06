@@ -1,6 +1,6 @@
-$(function(){
-    $('form [name="title"]').on('input', function(){
-        if ($(this).val().length > 5){
+$(function () {
+    $('form [name="title"]').on('input', function () {
+        if ($(this).val().length > 5) {
             $('form h1 b').text($(this).val());
         } else {
             if ($('form h1 b').text() !== '...')
@@ -8,11 +8,11 @@ $(function(){
         }
     });
 
-    $('.question-page .comment .reply').on('click', function (){
+    $('.question-page .comment .reply').on('click', function () {
         let main = $(this).parents('.main');
         let comment_id_text = main.find('.comment_id');
-        let name_author  = $(this).parents('.main').find('.user b');
-        let comment_id  = $(this).data('comment');
+        let name_author = $(this).parents('.main').find('.user b');
+        let comment_id = $(this).data('comment');
 
         $('.input-reply').css('display', 'block');
         $('.input-reply input').val(comment_id);
@@ -20,21 +20,21 @@ $(function(){
         $('.input-reply p b').text($(name_author).text());
     });
 
-    $('.actions .icon').on('click', function (){
+    $('.actions .icon').on('click', function () {
         let vote = $(this).data('vote');
         let question_id = $(this).parents('.actions').find('#question_id').val();
 
-        if (vote && question_id){
+        if (vote && question_id) {
             // todo
             let sendData = new FormData();
-            sendData.append("vote",vote);
-            sendData.append("entity_id",Number(question_id));
+            sendData.append("vote", vote);
+            sendData.append("entity_id", Number(question_id));
 
             updUserVote(sendData);
         }
     });
 
-    async function updUserVote(sendData){
+    async function updUserVote(sendData) {
         try {
             let settings = {
                 method: 'POST',
@@ -60,13 +60,13 @@ $(function(){
         let comment_id = form.find('[name="comment_id"]').val();
         let sendData = new FormData();
 
-        sendData.append("comment_id",Number(comment_id));
-        sendData.append("action",Number($(this).data('action')));
+        sendData.append("comment_id", Number(comment_id));
+        sendData.append("action", Number($(this).data('action')));
 
         setCommentRating(action, sendData);
     });
 
-    async function setCommentRating(action, sendData){
+    async function setCommentRating(action, sendData) {
         try {
             let settings = {
                 method: 'POST',
@@ -89,13 +89,13 @@ $(function(){
         let question_id = $(this).parents('.question-page').data('question_id');
         let sendData = new FormData();
 
-        sendData.append("question_id",Number(question_id));
-        sendData.append("comment_id",Number(comment_id));
+        sendData.append("question_id", Number(question_id));
+        sendData.append("comment_id", Number(comment_id));
 
         chooseRightAnswer(sendData);
     });
 
-    async function chooseRightAnswer(sendData){
+    async function chooseRightAnswer(sendData) {
         try {
             let settings = {
                 method: 'POST',
@@ -114,7 +114,7 @@ $(function(){
     }
 
 
-    $('.question-page .js-load-subcomments').on('click', function(){
+    $('.question-page .js-load-subcomments').on('click', function () {
         let parent = $(this).parents('.question-page');
         let parent_comment = $(this).parents('.comment');
 
@@ -126,11 +126,11 @@ $(function(){
                 },
                 data: {
                     "question-id": parent.data('question-id'),
-                    "comment-id" : parent_comment.data('comment-id')
+                    "comment-id": parent_comment.data('comment-id')
                 },
                 method: 'post',
                 dataType: 'json',
-                success: function(html) {
+                success: function (html) {
                     console.log(html);
                 }
             });

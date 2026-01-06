@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('style')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/css/uikit.min.css"/>
     @vite(['resources/scss/questions.scss'])
 @endpush
 @push('script')
@@ -27,13 +27,15 @@
                         $currentVote = !empty($questionUserVoite) ? $questionUserVoite['vote'] : '';
                     @endphp
                     @if(auth()->id())
-{{--                        todo boostrap icons ?--}}
+                        {{--                        todo boostrap icons ?--}}
                         <input type="hidden" id="question_id" value="{{ $question->id }}">
-                        <div class="icon like btn {{ $currentVote === 1 ? 'btn-success' : 'btn-outline-success' }}" data-vote="1">
+                        <div class="icon like btn {{ $currentVote === 1 ? 'btn-success' : 'btn-outline-success' }}"
+                             data-vote="1">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
                             <b>{{ $arVotes['likes'] ?? 0 }}</b>
                         </div>
-                        <div class="icon dislike btn {{ $currentVote === -1 ? 'btn-danger' : 'btn-outline-danger' }}" data-vote="-1">
+                        <div class="icon dislike btn {{ $currentVote === -1 ? 'btn-danger' : 'btn-outline-danger' }}"
+                             data-vote="-1">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
                             <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
@@ -47,7 +49,7 @@
                             <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
                     @endif
-{{--                    текущий юзер -статус --}}
+                    {{--                    текущий юзер -статус --}}
 
                 </div>
                 <div class="description">
@@ -112,9 +114,11 @@
                                     @endif
                                     @if (auth()->user())
                                         <div class="comment_actions">
-                                            <div class="btn btn-mini btn-link reply" data-comment="{{ $comment->id }}">{{ __('btn.reply') }}</div>
+                                            <div class="btn btn-mini btn-link reply"
+                                                 data-comment="{{ $comment->id }}">{{ __('btn.reply') }}</div>
                                             @if($question->user == auth()->user() && !$isRight)
-                                                <div class="btn btn-mini btn-outline-success right_answer" data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
+                                                <div class="btn btn-mini btn-outline-success right_answer"
+                                                     data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
                                             @endif
                                         </div>
                                     @endif
@@ -122,7 +126,8 @@
                                         <div class="user">
                                             <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
                                             <div class="icon">
-                                                <img src="{{ \App\Services\FileService::getPhoto($comment->user->photo, 'users') }}" alt="">
+                                                <img src="{{ \App\Services\FileService::getPhoto($comment->user->photo, 'users') }}"
+                                                     alt="">
                                             </div>
                                             <b>{{ $comment->user->name }}</b>
                                         </div>
@@ -146,7 +151,8 @@
                     @csrf
 
                     <div class="mt-4 mb-2">
-                        <input type="text" name="text" class="form-control" placeholder="{{ __('comment.placeholder') }}">
+                        <input type="text" name="text" class="form-control"
+                               placeholder="{{ __('comment.placeholder') }}">
                         @if ($errors->has('text'))
                             @foreach ($errors->get('text') as $item)
                                 <p class="error">{{ $item  }}</p>

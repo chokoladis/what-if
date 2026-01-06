@@ -75,11 +75,11 @@
                     @endforeach
                 @endif
             </div>
-            
+
             <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
-            
+
             <button type="submit" class="btn btn-primary mb-3">{{ __('btn.add') }}</button>
-        
+
         </form>
     </div>
 @endsection

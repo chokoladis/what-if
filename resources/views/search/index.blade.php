@@ -1,3 +1,7 @@
+@php
+    use App\Services\FileService;
+    use Carbon\Carbon;
+@endphp
 @extends('layouts.app')
 
 @push('script')
@@ -26,8 +30,11 @@
                 </div>
                 <div>
                     <button type="submit" class="btn btn-outline-info btn-sm">
-                        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" class="DocSearch-Search-Icon">
-                            <path d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z" stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"
+                             class="DocSearch-Search-Icon">
+                            <path d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z"
+                                  stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round"
+                                  stroke-linejoin="round"></path>
                         </svg>
                     </button>
                 </div>
@@ -47,7 +54,8 @@
             @foreach($collectionCategory as $category)
                 {{--todo slider--}}
                 <button type="button" class="btn btn-primary">
-                    {{ $category['title'] }} <span class="badge text-bg-secondary">{{ $category['count_question'] }}</span>
+                    {{ $category['title'] }} <span
+                            class="badge text-bg-secondary">{{ $category['count_question'] }}</span>
                 </button>
             @endforeach
         @endif
@@ -55,52 +63,40 @@
         @foreach ($collectionQuestion as $question)
 
             @php
-                $mainClass = ''; //$question->right_comment_id ? 'border-success' : '';
+                $mainClass = !empty($question['right_comment']) ? 'border-success' : '';
             @endphp
 
             <div class="item card mb-3 {{ $mainClass }} ">
                 <a href="{{ route('questions.detail', $question['code']) }}" class="row g-0">
                     <div class="img-col col-sm-4 col-md-3">
-                        <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions/') }}" alt="" class="img-fluid rounded-start">
+                        <img src="{{ FileService::getPhotoFromIndex($question['file'], 'questions/') }}" alt=""
+                             class="img-fluid rounded-start">
                     </div>
                     <div class="col-sm-8 col-md-9">
                         <div class="card-body">
-                            <h4 class="card-title">{{ $question->title }}</h4>
+                            <h4 class="card-title">{{ $question['title'] }}</h4>
 
-                            @if ($question->right_comment_id)
-                                <div class="right-answer card-text alert alert-success">
-                                    <i uk-icon="check"></i>
-                                    <div class="content">
-                                        <div class="user">
-                                            <img src="{{ \App\Services\FileService::getPhoto($question->right_comment->user->file,'users') }}" alt="">
-                                            <p>{{ $question->right_comment->user->name }}</p>
-                                        </div>
-                                        <b class="text-success">{{ mb_strlen($question->right_comment->text) > 60 ? mb_substr($question->right_comment->text, 0, 60) : $question->right_comment->text }}</b>
-                                    </div>
-                                </div>
+                            @if (!empty($question['right_comment']))
+                                <x-right-answer :comment="$question['right_comment']"></x-right-answer>
                             @endif
-                            @if ($popularComment = $question->getPopularComment() && !$question->right_comment_id)
-                                <div class="popular-answer alert alert-warning" role="alert">
-                                    <i uk-icon="bolt"></i>
-                                    <div class="content">
-                                        <div class="user">
-                                            <img src="{{ \App\Services\FileService::getPhoto($popularComment->user->file, 'users') }}" alt="">
-                                            <p>{{ $popularComment->user->name }}</p>
-                                        </div>
-                                        <p class="mb-0">{{ $popularComment->text }}</p>
-                                    </div>
-                                </div>
+                            @if (!empty($question['popular_comment']))
+                                <x-comment.popular-comment
+                                        :comment="$question['popular_comment']"></x-comment.popular-comment>
                             @endif
 
                             <div class="date">
                                 <p class="card-text">
                                     <i uk-icon="calendar"></i>
-                                    <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
+                                    <small class="text-body-secondary">{{
+                                        Carbon::parse($question['created_at'])->diffForHumans()
+                                        }}</small>
                                 </p>
-                                @if ($question->created_at != $question->updated_at)
+                                @if ($question['created_at'] != $question['updated_at'])
                                     <p class="card-text">
                                         <i uk-icon="pencil"></i>
-                                        <small class="text-body-secondary">{{ $question->updated_at->diffForHumans() }}</small>
+                                        <small class="text-body-secondary">{{
+                                            Carbon::parse($question['updated_at'])->diffForHumans()
+                                            }}</small>
                                     </p>
                                 @endif
                             </div>
@@ -109,7 +105,7 @@
                 </a>
             </div>
             {{ $questions->links() }}
-{{--            total --}}
+            {{--            total --}}
         @endforeach
 
         @if ($questions->isEmpty())

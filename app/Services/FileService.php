@@ -118,8 +118,21 @@ class FileService implements FileProxyRedisInterface
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
-        if ($file) {
-            return $file->path ? Storage::url($subdir . '/' . $file->path) : $nophoto_src;
+        if ($file && $file->path) {
+            $filePath = Storage::url($subdir . '/' . $file->path);
+            return file_exists($_SERVER['DOCUMENT_ROOT'].$filePath) ? $filePath : $nophoto_src;
+        }
+
+        return $nophoto_src;
+    }
+
+    static function getPhotoFromIndex(?array $file, string $subdir)
+    {
+        $nophoto_src = Storage::url('main/nophoto.jpg');
+
+        if ($file && $file['path']) {
+            $filePath = Storage::url($subdir . '/' . $file['path']);
+            return file_exists($_SERVER['DOCUMENT_ROOT'].$filePath) ? $filePath : $nophoto_src;
         }
 
         return $nophoto_src;

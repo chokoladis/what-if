@@ -1,10 +1,10 @@
 import './bootstrap';
 import '../../node_modules/jquery/dist/jquery.min.js';
 import '../../node_modules/jquery-mask-plugin/src/jquery.mask.js';
- 
+
 $('.js-phone-mask').mask('+9 999 9999 999');
 
-async function sendAjax(route, method, data = null){
+async function sendAjax(route, method, data = null) {
 
     let settings = {
         method: method,
@@ -12,7 +12,7 @@ async function sendAjax(route, method, data = null){
             'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
         },
     };
-    if (data){
+    if (data) {
         settings.data = data;
     }
 
@@ -23,7 +23,7 @@ async function sendAjax(route, method, data = null){
     return [query.status, result];
 }
 
-$(function(){
+$(function () {
 
     // $('#modal-feedback [type="submit"]').on('click', function(){
     //     let form = $('#modal-feedback form');
@@ -52,7 +52,7 @@ $(function(){
     // });
 
 
-    $('.js-change-lang .dropdown-item').on('click', function(){
+    $('.js-change-lang .dropdown-item').on('click', function () {
         // let sendData = new FormData();
         // sendData.append('lang', $(this).data('lang'));
         //
@@ -73,10 +73,10 @@ $(function(){
                 "_token": $('[name="csrf-token"]').attr('content'),
                 lang: $(this).data('lang')
             },
-            success: function (json){
+            success: function (json) {
                 // console.log(data);
 
-                if (json.success){
+                if (json.success) {
                     location.reload();
                 } else {
                     // $('')
@@ -85,19 +85,18 @@ $(function(){
         });
     });
 
-    $('.js-change-theme').on('click', function(){
+    $('.js-change-theme').on('click', function () {
 
         let data = sendAjax('/setting/theme', 'POST');
 
-        data.then(function(result) {
+        data.then(function (result) {
             let status = result[0];
             let json = result[1];
-            if (status === 200 && json.result){
+            if (status === 200 && json.result) {
                 $('html').attr('data-bs-theme', json.result)
             }
         });
     });
-
 
 
 });

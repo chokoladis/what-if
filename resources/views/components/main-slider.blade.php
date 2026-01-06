@@ -14,13 +14,13 @@
     @foreach ($slides as $slide)
         <div class="slide">
             @php
-//                $fileRawData = FileService::getFromRedis($slide->file, 'questions');
-//
-//                if ($fileRawData) {
-//                    $fileDataBase64 = sprintf('data:%s;base64,%s', 'image/'.$slide?->file?->expansion ?? 'jpg', base64_encode($fileRawData));
-//                } else {
-                    $fileSrc = FileService::getPhoto($slide->file, 'questions');
-//                }
+                //                $fileRawData = FileService::getFromRedis($slide->file, 'questions');
+                //
+                //                if ($fileRawData) {
+                //                    $fileDataBase64 = sprintf('data:%s;base64,%s', 'image/'.$slide?->file?->expansion ?? 'jpg', base64_encode($fileRawData));
+                //                } else {
+                                    $fileSrc = FileService::getPhoto($slide->file, 'questions');
+                //                }
             @endphp
             <a href="{{ route('questions.detail', $slide->code) }}" class="card">
                 <div class="bg">

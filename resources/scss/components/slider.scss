@@ -1,33 +1,34 @@
-.slide{
+.slide {
 
   .bg {
     height: 200px;
 
-    img{
+    img {
       object-fit: cover;
       width: 100%;
       height: 100%;
     }
   }
 
-  .main{
+  .main {
     background: #433e63;
     color: white;
-    padding: 5px 10px ;
+    padding: 5px 10px;
 
-    .question{
+    .question {
       display: flex;
       align-items: center;
 
-      img{
+      img {
         width: 40px;
         height: 40px;
         object-fit: cover;
         margin-right: 10px;
       }
-      .content{
 
-        .user-name{
+      .content {
+
+        .user-name {
           text-overflow: ellipsis;
           font-size: 13px;
           color: #83b3fa;
@@ -35,7 +36,8 @@
           width: 220px;
           overflow: hidden;
         }
-        .text{
+
+        .text {
           margin: 0;
           font-size: 16px;
           text-transform: capitalize;
@@ -44,34 +46,36 @@
 
     }
 
-    .answer{
+    .answer {
       display: flex;
       align-items: center;
       margin: 0;
       margin-top: 10px;
 
-      img{
+      img {
         width: 40px;
         height: 40px;
         margin-right: 10px;
       }
 
-      .content{
-        .user-name{
+      .content {
+        .user-name {
           margin: 0;
           margin-bottom: 5px;
           font-width: 600;
           font-size: 12px;
         }
-        .comment-text{
+
+        .comment-text {
           font-size: 14px;
         }
       }
     }
   }
 }
-.category_slider{
-  .slick-track{
+
+.category_slider {
+  .slick-track {
     display: flex;
   }
 
