@@ -6,7 +6,6 @@
     <i uk-icon="check"></i>
     <div class="content">
         <div class="user">
-            <img src="{{ $imgSrc }}" alt="">
             <p>{{ '@'.$userName }}</p>
         </div>
         <b class="text-success">{{ $text }}</b>

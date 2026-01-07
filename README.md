@@ -3,8 +3,12 @@
 ### Концепция
 > Вопросы - ответы
 
-### Особенности
-> Встроен gemini.ai для проверки картинок на запрещенку
+### Используемые технологии/инструменты
+> - Laravel + Vite, JS, Scss
+> - Filament
+> - Meilisearch
+> - Docker
+> - Встроен gemini.ai (проверка картинок на запрещенку)
 
 ## Техническая часть
 Admin
@@ -20,17 +24,27 @@ Admin
 
 ### Скрины работы сайта
 - Создание вопроса
-<br>
+<br><br>
 <p align="center">
     <img src="/readme/img1.png" alt="example 1" style="width: 100%; max-width: 800px;" />
 </p>
-- Детальная страница вопроса и комментарии
-<br>
+- Страница списка вопросов
+<br><br>
 <p align="center">
-    <img src="/readme/img2.png" alt="example 2" style="width: 100%; max-width: 800px;" />
+    <img src="/readme/question_list.png" alt="question list" style="width: 100%; max-width: 800px;" />
+</p>
+- Детальная страница вопроса + комментарии
+<br><br>
+<p align="center">
+    <img src="/readme/question_detail.png" alt="question detail" style="width: 100%; max-width: 800px;" />
+</p>
+- Детальная страница категории
+<br><br>
+<p align="center">
+    <img src="/readme/category_detail.png" alt="example 3" style="width: 100%; max-width: 800px;" />
 </p>
 - Настройки в админ панели
-<br>
+<br><br>
 <p align="center">
     <img src="/readme/dashboard_settings.png" alt="admin dashboard" style="width: 100%; max-width: 800px;" />
 </p>

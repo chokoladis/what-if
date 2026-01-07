@@ -5,7 +5,6 @@
     <i uk-icon="bolt"></i>
     <div class="content">
         <div class="user">
-            <img src="{{ $imgSrc }}" alt="">
             <p>{{ '@'.$userName }}</p>
         </div>
         <p class="mb-0 fst-italic">{{ $text }}</p>
