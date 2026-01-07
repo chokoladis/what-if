@@ -3,27 +3,31 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\QuestionResource\Pages;
-use App\Filament\Admin\Resources\QuestionResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class QuestionResource extends Resource
 {
+    protected static string | UnitEnum | null $navigationGroup = 'Данные';
     protected static ?string $modelLabel = 'Вопросы';
     protected static ?string $navigationLabel = 'Вопросы';
 
     protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $model = Question::class;
 
-    protected static null|string|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string|\BackedEnum $navigationIcon = Heroicon::Megaphone;
 
     public static function form(Schema $schema): Schema
     {
@@ -47,7 +51,7 @@ class QuestionResource extends Resource
                     ->options(
                         QuestionComments::query()
                             ->join('comments', 'comments.id', '=', 'question_comments.comment_id')
-                            ->where('question_id', $form->model->id)
+                            ->where('question_id', $schema->model->id)
                             ->pluck('comments.text', 'comment_id')
 //                        todo обрезать могуть быть слишком длинные данные
                     ),
@@ -78,11 +82,11 @@ class QuestionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

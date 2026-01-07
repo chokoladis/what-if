@@ -7,22 +7,28 @@ use App\Models\Category;
 use App\Models\File;
 use App\Services\FileService;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use UnitEnum;
 
 class QuestionCategoryResource extends Resource
 {
+    protected static string | UnitEnum | null $navigationGroup = 'Данные';
+
     protected static ?string $modelLabel = 'Категории';
     protected static ?string $navigationLabel = 'Категории';
     protected static ?string $pluralModelLabel = 'Категории';
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $model = Category::class;
 
-    protected static null|string|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string|\BackedEnum $navigationIcon = Heroicon::Squares2x2;
 
     const DIR = 'categories';
 
@@ -119,11 +125,11 @@ class QuestionCategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

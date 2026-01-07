@@ -3,13 +3,15 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\SettingResource\Pages;
-use App\Filament\Admin\Resources\SettingResource\RelationManagers;
 use App\Models\Setting;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -20,7 +22,7 @@ class SettingResource extends Resource
     protected static ?string $pluralModelLabel = 'Настройки';
     protected static ?string $model = Setting::class;
 
-    protected static null|string|BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static null|string|BackedEnum $navigationIcon = Heroicon::WrenchScrewdriver;
 
     protected static null|string|BackedEnum $activeNavigationIcon = 'heroicon-o-document-text';
 
@@ -56,11 +58,11 @@ class SettingResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

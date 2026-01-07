@@ -10,10 +10,12 @@
 
 @section('content')
     <div class="questions-page container">
-        {{--            todo поля фильтры - теги --}}
-
         @foreach ($questions as $question)
 
+            {{--            фильтры - --}}
+            {{--            решенные--}}
+            {{--            по категории--}}
+            {{--            теги--}}
             @php
                 $mainClass = $question->right_comment_id ? 'border-success' : '';
             @endphp

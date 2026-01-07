@@ -11,20 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('question_votes', function (Blueprint $table) {
-            $table->id();
-            
-            $table->unsignedBigInteger('question_id');
-            $table->index('question_id', 'question_user_votes_question_idx');
-            $table->foreign('question_id', 'question_user_votes_question_fk')->references('id')->on('questions')->cascadeOnDelete();
+        if (!Schema::hasTable('question_votes')) {
+            Schema::create('question_votes', function (Blueprint $table) {
+                $table->id();
 
-            $table->unsignedBigInteger('user_id');
-            $table->index('user_id', 'question_user_votes_user_idx');
-            $table->foreign('user_id', 'question_user_votes_user_fk')->references('id')->on('users')->cascadeOnDelete();
+                $table->unsignedBigInteger('question_id');
+                $table->index('question_id', 'question_votes_question_idx');
+                $table->foreign('question_id', 'question_votes_question_fk')->references('id')->on('questions')->cascadeOnDelete();
 
-            $table->tinyInteger('vote');
-            $table->timestamps();
-        });
+                $table->unsignedBigInteger('user_id');
+                $table->index('user_id', 'question_votes_user_idx');
+                $table->foreign('user_id', 'question_votes_user_fk')->references('id')->on('users')->cascadeOnDelete();
+
+                $table->tinyInteger('vote');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
