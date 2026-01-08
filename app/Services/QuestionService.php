@@ -8,6 +8,8 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
+use App\Models\QuestionTags;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +95,25 @@ class QuestionService
             return [false, $error];
         }
 
-        return [Question::create($data), null];
+        $tags = $data['tags'];
+        unset($data['tags']);
+
+        $res = Question::create($data);
+
+        if (!empty($res)) {
+            $tags = Tag::query()->whereIn('name', $tags)->get('id');
+
+            foreach ($tags as $tag) {
+                QuestionTags::create([
+                    'question_id' => $res->id,
+                    'tag_id' => $tag->id
+                ]);
+            }
+
+            return [$res, null];
+        } else {
+            return [false, new CommonError('Не удалось создать вопрос')];
+        }
     }
 
     private function prepareStoreData(StoreRequest $request)
@@ -131,10 +151,17 @@ class QuestionService
 
     public static function getActive(Request $request)
     {
+        $builder = Question::query()
+            ->where('active', true);
+
+        if ($request->tags){
+            $builder->whereHas('tags', function ($query) use ($request) {
+                return $query->whereIn('tags.name', $request->tags);
+            });
+        }
         // todo css pagination
         //cache
-        return Question::where('active', true)
-            ->paginate(10)
+        return $builder->paginate(10)
             ->withQueryString();
     }
 

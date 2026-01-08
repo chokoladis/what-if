@@ -282,7 +282,16 @@ footer {
   }
 }
 
-#system-alert {
+#system-alert-error, #system-alert {
+  //position: fixed;
+  //top: 0;
+  //bottom: 0;
+  //right: 0;
+  //margin: auto;
+  //left: 0;
+  //width: fit-content;
+  //height: fit-content;
+  //
   position: fixed;
   bottom: 80px;
   left: 0;

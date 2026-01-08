@@ -1,5 +1,15 @@
 .questions-page {
 
+  .filters{
+    > button{
+      margin-top: 10px;
+    }
+  }
+
+  .items {
+    margin-top: 15px;
+  }
+
   .item {
 
     .card-body {
@@ -413,5 +423,12 @@ html[data-bs-theme="light"] {
       -webkit-text-stroke: 1px rgba(6, 140, 223, 0.9);
       text-stroke: 1px rgba(6, 140, 223, 0.9);
     }
+  }
+}
+
+.question-page-create {
+  .tags .checkboxes{
+    max-height: 200px;
+    overflow: auto;
   }
 }

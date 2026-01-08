@@ -44,12 +44,12 @@ class SettingService
         }
     }
 
-    public function isCaptchaSetOn()
+    public static function isCaptchaSetOn()
     {
         $result = Setting::query()->where('name', 'captcha_set_on')->first();
 
         if (!empty($result)) {
-            return (bool)$result->value;
+            return filter_var($result->value, FILTER_VALIDATE_BOOLEAN);
         }
 
         return false;

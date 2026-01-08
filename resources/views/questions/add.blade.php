@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@push('style')
+    @vite(['resources/scss/questions.scss'])
+@endpush
 @push('script')
     @vite(['resources/js/question.js'])
 @endpush
@@ -38,7 +41,7 @@
     }
 @endphp
 @section('content')
-    <div class="container">
+    <div class="question-page-create container">
         <form action="{{ route('questions.store') }}" method="POST" enctype="multipart/form-data">
 
             <h1>Мой вопрос - <b>...</b></h1>
@@ -56,6 +59,27 @@
                     @endif
                 </select>
             </div>
+            @if(!empty($tags))
+                <div class="tags mb-3">
+                    <label class="form-label">{{ __('crud.questions.fields.tag') }}</label>
+                    <div class="checkboxes">
+                        @foreach($tags as $tag)
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{ $tag->name }}" name="tags[]" id="{{ $tag->name }}">
+                                <label class="form-check-label" for="{{ $tag->name }}">
+                                    {{ $tag->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    @if ($errors->has('tags'))
+                        @foreach ($errors->get('tags') as $item)
+                            <p class="error">{{ $item  }}</p>
+                        @endforeach
+                    @endif
+                </div>
+            @endif
+
             <div class="mb-3">
                 <label class="form-label">{{ __('crud.questions.fields.title') }}</label>
                 <input type="text" name="title" class="form-control"
@@ -76,7 +100,9 @@
                 @endif
             </div>
 
-            <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
+            @if(\App\Services\SettingService::isCaptchaSetOn()))
+                <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
+            @endif
 
             <button type="submit" class="btn btn-primary mb-3">{{ __('btn.add') }}</button>
 

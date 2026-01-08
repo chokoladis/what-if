@@ -105,7 +105,7 @@
 
     @if (\Session::has('message'))
         <div id="system-alert" class="alert alert-info" role="alert">
-            {!! \Session::get('message') !!}
+            <b>{!! \Session::get('message') !!}</b>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <script>
@@ -118,7 +118,7 @@
     @endif
     @if (\Session::has('error'))
         <div id="system-alert-error" class="alert alert-danger" role="alert">
-            {!! \Session::get('error') !!}
+            <b>{!! \Session::get('error') !!}</b>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <script>

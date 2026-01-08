@@ -229,4 +229,9 @@ class Question extends BaseModel
 
         return $arIds;
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'question_tags', 'question_id', 'tag_id');
+    }
 }

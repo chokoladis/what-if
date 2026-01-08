@@ -8,6 +8,7 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionVotes;
+use App\Models\Tag;
 use App\Services\QuestionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -23,21 +24,24 @@ class QuestionController extends Controller
 
     public function index(Request $request)
     {
+        $tags = Tag::all();
+
         $key = json_encode($request->all());
 
         $questions = Cache::remember('questions_' . $key, 3600, function () use ($request) {
             return QuestionService::getActive($request);
         });
-//        todo paginate
 
-        return view('questions.index', compact('questions'));
+        return view('questions.index', compact('questions', 'tags'));
     }
 
     public function add()
     {
         $categories = Category::getDaughtersCategories();
+        //cache
+        $tags = Tag::all();
 
-        return view('questions.add', compact('categories'));
+        return view('questions.add', compact('categories', 'tags'));
     }
 
     public function store(StoreRequest $request)
@@ -57,7 +61,6 @@ class QuestionController extends Controller
 
     public function detail($question)
     {
-
         [$question, $error] = Question::getElement($question);
 
         if ($error) {

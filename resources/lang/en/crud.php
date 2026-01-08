@@ -6,6 +6,7 @@ return [
             'category' => 'Category',
             'title' => 'Title',
             'img' => 'Picture',
+            'tag' => 'Tags',
         ],
         'placeholders' => [
             'title' => 'Why do gypsies wash themselves but still smell?'
