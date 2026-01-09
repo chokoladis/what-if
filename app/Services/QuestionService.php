@@ -149,7 +149,7 @@ class QuestionService
         return [$data, null];
     }
 
-    public static function getActive(Request $request)
+    public static function paginateWithFilter(Request $request)
     {
         $builder = Question::query()
             ->where('active', true);
@@ -159,7 +159,18 @@ class QuestionService
                 return $query->whereIn('tags.name', $request->tags);
             });
         }
-        // todo css pagination
+
+        if ($request->resolved) {
+            $builder->whereNotNull('right_comment_id');
+        }
+
+        if ($request->categories) {
+            // todo
+            $builder->whereHas('category', function ($query) use ($request) {
+               return $query->whereIn('categories.title', $request->categories);
+            });
+        }
+
         //cache
         return $builder->paginate(10)
             ->withQueryString();

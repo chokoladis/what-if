@@ -24,15 +24,18 @@ class QuestionController extends Controller
 
     public function index(Request $request)
     {
+        // need cache
         $tags = Tag::all();
+        $categories = Category::query()->where('active', 1)->get();
 
         $key = json_encode($request->all());
 
+        // todo rework to search index
         $questions = Cache::remember('questions_' . $key, 3600, function () use ($request) {
-            return QuestionService::getActive($request);
+            return QuestionService::paginateWithFilter($request);
         });
 
-        return view('questions.index', compact('questions', 'tags'));
+        return view('questions.index', compact('questions', 'tags', 'categories'));
     }
 
     public function add()

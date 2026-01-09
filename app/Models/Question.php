@@ -138,6 +138,11 @@ class Question extends BaseModel
         return $this->HasOne(Comment::class, 'id', 'right_comment_id');
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'question_tags', 'question_id', 'tag_id');
+    }
+
 
     public static function boot()
     {
@@ -228,10 +233,5 @@ class Question extends BaseModel
         }
 
         return $arIds;
-    }
-
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class, 'question_tags', 'question_id', 'tag_id');
     }
 }

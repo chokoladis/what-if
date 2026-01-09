@@ -1,8 +1,37 @@
 .questions-page {
 
   .filters{
-    > button{
+    display: flex;
+    flex-direction: column;
+
+    .checkboxes {
+      max-height: 200px;
+      overflow: auto;
+    }
+
+    .filter-items{
+      display: flex;
+      width: 100%;
+
+      .collapse{
+        margin-top: 5px;
+      }
+
+      > div{
+        margin-right: 10px;
+
+        &:last-child{
+          margin: 0;
+        }
+      }
+    }
+
+    .btns {
       margin-top: 10px;
+
+      button{
+        width: fit-content;
+      }
     }
   }
 
@@ -12,8 +41,22 @@
 
   .item {
 
+    > a {
+      text-decoration: none;
+    }
+
     .card-body {
       padding: 12px 16px;
+
+      .card-title {
+        text-decoration: underline;
+      }
+
+      .tags {
+        font-size: 12px;
+
+        margin-bottom: 5px;
+      }
     }
 
     .alert {
@@ -22,6 +65,23 @@
 
     .date {
       display: flex;
+      cursor: pointer;
+      text-decoration: none;
+      border: 0;
+      font-size: 12px;
+
+      * {
+        text-decoration: none;
+      }
+
+      .views{
+        display: flex;
+        align-items: center;
+
+        i{
+          margin-right: 5px;
+        }
+      }
 
       p {
         display: flex;
@@ -30,10 +90,6 @@
 
         i {
           margin-right: 10px;
-
-          //*{
-          //    stroke: white;
-          //}
         }
 
         &:nth-child(2) {

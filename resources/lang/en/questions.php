@@ -8,5 +8,6 @@ return [
         'already_exists' => 'Like question already exists',
     ],
     'all_questions' => 'All questions in',
-    'comments' => 'Comments'
+    'comments' => 'Comments',
+    'resolved' => 'Resolved',
 ];
