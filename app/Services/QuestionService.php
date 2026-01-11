@@ -10,6 +10,7 @@ use App\Models\Question;
 use App\Models\QuestionComments;
 use App\Models\QuestionTags;
 use App\Models\Tag;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,11 @@ use Illuminate\Support\Facades\Log;
 class QuestionService
 {
     const POPULAR_VIEW_RATIO = 0.2;
+    const SORTS = [
+        'id_desc' => 'new',
+        'id_asc' => 'old',
+        'popular' => 'popular'
+    ];
 
     private static $model = Question::class;
 
@@ -151,8 +157,7 @@ class QuestionService
 
     public static function paginateWithFilter(Request $request)
     {
-        $builder = Question::query()
-            ->where('active', true);
+        $builder = Question::active();
 
         if ($request->tags){
             $builder->whereHas('tags', function ($query) use ($request) {
@@ -171,9 +176,29 @@ class QuestionService
             });
         }
 
+        if ($request->sort) {
+            $builder = QuestionService::sortBuilder($builder, $request);
+        }
+
         //cache
         return $builder->paginate(10)
             ->withQueryString();
+    }
+
+    private static function sortBuilder(Builder $builder, Request $request)
+    {
+        if ($request->sort === 'popular') {
+            $builder = Question::getPopular($builder);
+        } else {
+            try {
+                [$sortBy, $order] = explode('_', $request->sort);
+                $builder->orderBy($sortBy, $order);
+            } catch (Throwable $err) {
+                $builder->orderBy('id', 'desc');
+            }
+        }
+
+        return $builder;
     }
 
     public function getPopularForWeek()
@@ -183,18 +208,15 @@ class QuestionService
 
     public static function getPopular()
     {
-//        $time = microtime(true);
         $collection = self::getRawDataForPopular('1 YEAR'); //todo
-//        dump('first',microtime(true) - $time);
 
         if ($collection->isEmpty())
             return new Collection([]);
 
         $questionIds = array_column($collection->toArray(), 'id');
 
-        $data = self::$model::query()
+        $data = Question::active()
             ->whereIn('id', $questionIds)
-            ->where('active', true)
             ->orderBy(DB::raw("FIELD(id, " . implode(',', $questionIds) . ")"))
             ->get();
 

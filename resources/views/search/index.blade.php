@@ -21,11 +21,15 @@
             <form action="{{ route('search.index') }}" method="GET" class="d-flex" id="search-page-form">
                 {{--                todo liwewire--}}
                 <input type="hidden" name="query" value="{{ request('q') }}">
-                <div>
-                    <select class="form-select form-select-sm" name="sort">
-                        <option value="id,desc" selected>{{ __('system.sort.new') }}</option>
-                        <option value="id,asc">{{ __('system.sort.old') }}</option>
-                        <option value="popular">{{ __('system.sort.popular') }}</option>
+                <div class="sort">
+                    @php
+                        $sorts = \App\Services\QuestionService::SORTS;
+                        $currentSort = request('sort') ? request('sort') : array_key_first($sorts);
+                    @endphp
+                    <select class="form-select form-select" name="sort">
+                        @foreach($sorts as $key => $sortName)
+                            <option value="{{ $key }}" @if($currentSort === $key) selected @endif>{{ __('system.sort.'.$sortName) }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div>

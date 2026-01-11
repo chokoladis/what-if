@@ -5,6 +5,7 @@ namespace App\Models;
 use App\DTO\Indexing\CommentDTO;
 use App\DTO\Indexing\UserDTO;
 use App\Models\Errors\CommonError;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -233,5 +234,17 @@ class Question extends BaseModel
         }
 
         return $arIds;
+    }
+
+    public static function getPopular(Builder $builder)
+    {
+        // todo with likes
+        return $builder->join('question_statistics', 'questions.id', '=', 'question_id')
+            ->orderBy('views', 'desc');
+    }
+
+    public static function scopeActive()
+    {
+        return Question::query()->where('active', true);
     }
 }

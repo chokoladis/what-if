@@ -32,6 +32,7 @@ class QuestionController extends Controller
 
         // todo rework to search index
         $questions = Cache::remember('questions_' . $key, 3600, function () use ($request) {
+//            $questions = QuestionService::paginateWithFilter($request);
             return QuestionService::paginateWithFilter($request);
         });
 
