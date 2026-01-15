@@ -54,4 +54,15 @@ class SettingService
 
         return false;
     }
+
+    public function setTypeOutput(string $type)
+    {
+        if (in_array($type, QuestionService::ITEMS_TYPE_OUTPUT)) {
+            Cookie::queue('items-type-output', $type, 36000000);
+
+            return [true, null];
+        } else {
+            return [false, new CommonError(__('services.options.lang_not_support'), 'lang_not_support')];
+        }
+    }
 }

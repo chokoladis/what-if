@@ -25,6 +25,10 @@ class QuestionService
         'popular' => 'popular'
     ];
 
+    const ITEMS_TYPE_OUTPUT = [
+        'simple', 'compact'
+    ];
+
     private static $model = Question::class;
 
     public static function getList(

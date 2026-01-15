@@ -13,13 +13,15 @@ class SettingController extends Controller
     function __construct()
     {
         $this->settingService = new SettingService();
+
+        $this->middleware('throttle:9,60');
     }
 
     public function setLang(Request $request)
     {
         $lang = $request->get('lang');
         if (!$lang)
-            return responseJson(false, new CommonError(__('services.options.lang_not_set'), 'lang_not_set'));
+            return responseJson(false, new CommonError(__('validation.required', 'lang'), 'value_not_set'));
 
         [$success, $error] = $this->settingService->setLang($lang);
 
@@ -31,5 +33,15 @@ class SettingController extends Controller
         [$newTheme, $error] = $this->settingService->setTheme();
 
         return $newTheme ? responseJson(result: $newTheme) : responseJson(false, $error);
+    }
+
+    public function setTypeOutput(Request $request)
+    {
+        $type = $request->get('type');
+        if (!$type)
+            return responseJson(false, new CommonError(__('validation.required', 'type'), 'value_not_set'));
+
+        [$result, $error] = $this->settingService->setTypeOutput($type);
+        return $result ? responseJson() : responseJson(false, $error);
     }
 }

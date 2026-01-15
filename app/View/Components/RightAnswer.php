@@ -19,6 +19,7 @@ class RightAnswer extends Component
      */
     public function __construct(
         public Comment|array $comment,
+        public bool $compact = false,
     )
     {
         if (is_array($comment)){

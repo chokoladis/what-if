@@ -355,3 +355,23 @@ footer {
     }
   }
 }
+
+.header-search {
+  display: flex;
+  margin-top: 20px;
+  align-items: end;
+
+  .total{
+    font-size: 12px;
+  }
+  .sort{
+    margin-left: auto;
+  }
+  .items-type-output{
+    margin-left: 10px;
+  }
+}
+
+.items-output-compact {
+
+}

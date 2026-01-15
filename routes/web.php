@@ -28,6 +28,7 @@ Route::middleware(['locale'])->group(function () {
 
         Route::post('/setting/lang', 'SettingController@setLang')->name('setting.set.lang');
         Route::post('/setting/theme', 'SettingController@setTheme')->name('setting.set.theme');
+        Route::post('/setting/type-output', 'SettingController@setTypeOutput')->name('setting.set.typeOutput');
 
         Route::middleware(['auth'])->group(function () {
 

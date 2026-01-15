@@ -90,5 +90,19 @@ $(function () {
         });
     });
 
+    $('.items-type-output input').on('change', function () {
 
+        const sendData = new FormData();
+        sendData.append("type", this.id);
+
+        let data = sendAjax('/setting/type-output', 'POST', sendData);
+
+        data.then(function (result) {
+            let status = result[0];
+            let json = result[1];
+            if (status === 200 && json.success) {
+                location.reload()
+            }
+        });
+    })
 });

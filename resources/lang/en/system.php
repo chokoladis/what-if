@@ -25,6 +25,10 @@ return [
     'search' => [
         'title' => 'Search by site',
         'not_found' => 'No results found by query',
+    ],
+    'items_type_out' => [
+        'simple' => 'Simple',
+        'compact' => 'Compact'
     ]
 ];
 ?>
