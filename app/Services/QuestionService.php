@@ -181,7 +181,7 @@ class QuestionService
         }
 
         if ($request->sort) {
-            $builder = QuestionService::sortBuilder($builder, $request);
+            $builder = self::sortBuilder($builder, $request);
         }
 
         //cache

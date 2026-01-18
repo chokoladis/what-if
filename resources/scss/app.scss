@@ -369,9 +369,30 @@ footer {
   }
   .items-type-output{
     margin-left: 10px;
+
+    label{
+      display: flex;
+      align-items: center;
+
+      svg{
+        margin-right: 5px;
+        width: 15px;
+        height: 15px;
+      }
+    }
   }
 }
 
 .items-output-compact {
 
+}
+ul.dropdown-menu{
+  max-height: 400px;
+  overflow: auto;
+
+  .sub-dropdown:hover {
+    .dropdown-menu{
+      display: block;
+    }
+  }
 }

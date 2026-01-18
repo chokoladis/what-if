@@ -28,15 +28,6 @@ class CategoryController extends Controller
         return view('categories.detail', compact('category', 'childs', 'questions'));
     }
 
-    public function add()
-    {
-
-        // cache and function resource activeWithParents
-        $categories = Category::getDaughtersCategories();
-
-        return view('categories.add', compact('categories'));
-    }
-
     static function getCurrCategoryChilds(Category $category)
     {
 

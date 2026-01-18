@@ -37,20 +37,42 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('questions.index') }}">{{ __('menu.main.questions') }}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('categories.index') }}">{{ __('menu.main.categories') }}</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        >{{ __('menu.main.categories') }}</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ route('categories.index') }}">Все категории</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {{--todo все остальные с подразделами--}}
+                            @foreach(\App\Models\Category::getCategoriesLevel0() as $category)
+                                @if(!$category->subcategories->isEmpty())
+                                    {{--todo recurse--}}
+                                    <li class="nav-item sub-dropdown">
+                                        <a class="nav-link dropdown-item dropdown-toggle" href="#"
+                                           role="button" data-bs-toggle="sub-dropdown" aria-expanded="false"
+                                        >{{ $category->title }}</a>
+                                        <ul class="dropdown-menu">
+                                            @foreach($category->subcategories as $subcategory)
+                                                <li><a class="dropdown-item" href="{{ route('categories.detail', $subcategory->code) }}">{{ $subcategory->title }}</a></li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @else
+                                    <li><a class="dropdown-item" href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a></li>
+                                @endif
+                            @endforeach
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-link" href="{{ route('questions.add') }}">{{ __('menu.main.ask') }}</a>
                     </li>
                 </ul>
 
-                {{--                todo--}}
                 <ul class="navbar-nav ms-auto search">
                     <form action="{{ route('search.index') }}" method="GET" class="d-flex">
                         <li>

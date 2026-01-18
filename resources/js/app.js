@@ -105,4 +105,12 @@ $(function () {
             }
         });
     })
+
+    $('.header-search [name="sort"]').on('change', function (){
+
+        const url = new URL(location.href)
+        url.searchParams.set('sort', $(this).val())
+        location.href = url.href
+
+    })
 });

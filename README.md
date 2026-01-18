@@ -28,7 +28,13 @@ Admin
 <p align="center">
     <img src="/readme/img1.png" alt="example 1" style="width: 100%; max-width: 800px;" />
 </p>
+
 - Страница списка вопросов
+<br>
+``
+Желтым отмечен наиболее популрный комментарий,
+Зеленым отмечен комментарий который выбрал автор как ответ на свой вопрос
+``
 <br><br>
 <p align="center">
     <img src="/readme/question_list.png" alt="question list" style="width: 100%; max-width: 800px;" />

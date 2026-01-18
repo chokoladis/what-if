@@ -94,20 +94,19 @@
             <div class="header-search">
                 <b class="total">{{ __('Всего найдено - ').$questions->total() }}</b>
                 <div class="sort">
-{{--                    todo save , icons--}}
+                    {{--todo icons--}}
                     <select class="form-select form-select" name="sort">
                         @foreach($sorts as $key => $sortName)
                             <option value="{{ $key }}" @if($currentSort === $key) selected @endif>{{ __('system.sort.'.$sortName) }}</option>
                         @endforeach
                     </select>
-{{--                    todo сообщение - сделать для последующих запросов ?--}}
                 </div>
-                <div class="items-type-output btn-group" role="group" aria-label="Группа переключателей радио">
-{{--                    todo icons--}}
+                <div class="items-type-output btn-group" role="group" aria-label="Переключение типа вывода элементов">
                     @foreach($itemsTypeOut as $type)
                         <input type="radio" class="btn-check" name="items-type-output" id="{{ $type }}" autocomplete="off"
                                @if($currentItemsTypeOutput === $type) checked @endif>
-                        <label class="btn btn-outline-primary" for="{{ $type }}">{{ __('system.items_type_out.'.$type) }}</label>
+                        <label class="btn btn-outline-primary" for="{{ $type }}">
+                            {!! __('system.items_type_out.'.$type) !!}</label>
                     @endforeach
                 </div>
             </div>

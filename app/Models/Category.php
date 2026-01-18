@@ -11,17 +11,22 @@ class Category extends BaseModel
 {
     use Searchable;
 
+    const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
+
     public function getRouteKeyName()
     {
         return 'code';
     }
 
+    public function scopeActive()
+    {
+        return Category::query()->where('active', true);
+    }
+
     public static function getCategoriesLevel0()
     {
-
         // use cache
-        $categories = Category::query()
-            ->where('active', true)
+        $categories = Category::active()
             ->where('level', 0)
             ->get();
 
@@ -30,8 +35,8 @@ class Category extends BaseModel
 
     public static function getDaughtersCategories()
     {
-//    cache
-        $categories = Category::query()->where('active', true)->orderBy('level', 'desc')->get();
+        // todo rework,    cache
+        $categories = Category::active()->orderBy('level', 'desc')->get();
 
         $arr = $res = [];
 
@@ -198,5 +203,10 @@ class Category extends BaseModel
             ->where('category_id', $this->id)
             ->whereIn('category_list', $this->id)
             ->get()->count();
+    }
+
+    public function subcategories()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
     }
 }
