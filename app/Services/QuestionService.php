@@ -105,19 +105,23 @@ class QuestionService
             return [false, $error];
         }
 
-        $tags = $data['tags'];
-        unset($data['tags']);
+        if (isset($data['tags'])){
+            $tags = $data['tags'];
+            unset($data['tags']);
+        }
 
         $res = Question::create($data);
 
         if (!empty($res)) {
-            $tags = Tag::query()->whereIn('name', $tags)->get('id');
+            if (!empty($tags)) {
+                $tags = Tag::query()->whereIn('name', $tags)->get('id');
 
-            foreach ($tags as $tag) {
-                QuestionTags::create([
-                    'question_id' => $res->id,
-                    'tag_id' => $tag->id
-                ]);
+                foreach ($tags as $tag) {
+                    QuestionTags::create([
+                        'question_id' => $res->id,
+                        'tag_id' => $tag->id
+                    ]);
+                }
             }
 
             return [$res, null];
@@ -239,7 +243,7 @@ class QuestionService
         $statistics = DB::table('question_statistics')
             ->select(['question_id', 'views']);
 
-        $votes = DB::table('question_user_votes')
+        $votes = DB::table('question_votes')
             ->groupBy('question_id')
             ->select(['question_id', DB::raw('SUM(vote) as total_votes')]);
 

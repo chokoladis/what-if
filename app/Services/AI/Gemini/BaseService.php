@@ -61,6 +61,12 @@ class BaseService extends BaseAI
     {
         $responseContent = json_decode($response, true);
 
+        if ($responseContent['error']){
+            Log::error(__CLASS__, [$responseContent['error']]);
+
+            return [false, new CommonError( 'Ошибка работы '.__CLASS__ ,$responseContent['error']['status'])];
+        }
+
         $content = current($responseContent['candidates'])['content'];
         $firstPart = current($content['parts']);
         $jsonResult = $firstPart['text'];

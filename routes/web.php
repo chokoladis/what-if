@@ -49,6 +49,7 @@ Route::middleware(['locale'])->group(function () {
             Route::group(['prefix' => 'profile', 'controller' => 'UserController'], function () {
                 Route::name('profile.')->group(function () {
                     Route::get('/', 'index')->name('index');
+                    Route::get('/edit', 'edit')->name('edit');
                     Route::post('/', 'update')->name('update');
                     Route::post('/photo', 'setPhoto')->name('setPhoto');
                 });

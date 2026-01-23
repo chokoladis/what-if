@@ -14,7 +14,7 @@ class QuestionVotes extends Model
 
     public function getTable()
     {
-        return 'question_user_votes';
+        return 'question_votes';
     }
 
     public static function getByQuestionId(int $id)
@@ -22,8 +22,8 @@ class QuestionVotes extends Model
 //        cache , to service
         return self::query()
             ->select(
-                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
-                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = -1 && `question_id` =' . $id . ') as dislikes')
+                DB::raw('(SELECT COUNT(vote) from `question_votes` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
+                DB::raw('(SELECT COUNT(vote) from `question_votes` WHERE vote = -1 && `question_id` =' . $id . ') as dislikes')
             )
             ->first();
     }
@@ -33,8 +33,8 @@ class QuestionVotes extends Model
 //        cache , to service
         return self::query()
             ->select(
-                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
-                DB::raw('(SELECT COUNT(vote) from `question_user_votes` WHERE vote = -1 && `question_id` =' . $id . ') as dislikes')
+                DB::raw('(SELECT COUNT(vote) from `question_votes` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
+                DB::raw('(SELECT COUNT(vote) from `question_votes` WHERE vote = -1 && `question_id` =' . $id . ') as dislikes')
             )
             ->first();
     }

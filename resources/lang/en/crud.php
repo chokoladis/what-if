@@ -40,8 +40,10 @@ return [
     ],
     'users' => [
         'fields' => [
+            'email' => 'Email',
             'name' => 'Name',
             'photo' => 'Photo',
+
         ]
     ]
 ];

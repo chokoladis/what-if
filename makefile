@@ -14,3 +14,9 @@ install-composer:
 
 update-composer:
 	docker exec -w /var/www/what_if what-if_php composer update --no-interaction
+
+fix-right:
+	sudo chmod -R 777 storage
+
+clear-cache:
+	docker exec -it what-if_php php artisan optimize

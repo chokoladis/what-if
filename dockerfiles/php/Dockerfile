@@ -1,3 +1,18 @@
+FROM node:25.2.1-alpine AS node_build
+MAINTAINER Chokoladis
+
+WORKDIR /var/www/what_if
+
+COPY package*.json vite.config.js* ./
+
+RUN npm install npm@11.6.2 -g && npm install npm@11.6.2
+# RUN npm install --production
+
+RUN npm ci
+
+COPY . .
+RUN npm run build #--verbose
+
 FROM php:8.3.13-fpm-alpine
 MAINTAINER Chokoladis
 
@@ -7,8 +22,11 @@ RUN docker-php-ext-install pdo pdo_mysql
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV PATH="$PATH:/usr/local/bin"
 
+COPY --from=node_build /var/www/what_if .
+#RUN npm run build
+
 RUN set -eux; \
-    apk add --no-cache --virtual .build-deps \
+    apk add --virtual .build-deps \
         autoconf \
         build-base \
         linux-headers \
@@ -21,7 +39,7 @@ RUN set -eux; \
         icu-dev \
         libxml2-dev \
         curl-dev; \
-    apk add --no-cache \
+    apk add \
         git \
         unzip \
         zip \
