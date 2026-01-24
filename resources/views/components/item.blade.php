@@ -1,6 +1,8 @@
-@push('style')
-    @vite(['resources/scss/components/item.scss'])
-@endpush
+@once
+    @push('style')
+        @vite(['resources/scss/components/item.scss'])
+    @endpush
+@endonce
 @php
     /**
     * @var \App\Models\Question $question

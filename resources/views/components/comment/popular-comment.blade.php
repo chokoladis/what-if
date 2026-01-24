@@ -1,6 +1,8 @@
-@push('style')
-    @vite(['resources/scss/components/popular-comment.scss'])
-@endpush
+@once
+    @push('style')
+        @vite(['resources/scss/components/popular-comment.scss'])
+    @endpush
+@endonce
 
 @if($compact)
     <div class="popular-comment alert alert-warning" role="alert">

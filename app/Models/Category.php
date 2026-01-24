@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
@@ -25,12 +26,11 @@ class Category extends BaseModel
 
     public static function getCategoriesLevel0()
     {
-        // use cache
-        $categories = Category::active()
-            ->where('level', 0)
-            ->get();
-
-        return $categories;
+        return Cache::remember('category_level_0', now()->addDay(), function () {
+            return $categories = Category::active()
+                ->where('level', 0)
+                ->get();
+        });
     }
 
     public static function getDaughtersCategories()

@@ -14,9 +14,11 @@ class SliderPopular extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct(
+        int $count = 10
+    )
     {
-        $this->slides = \App\Services\QuestionService::getPopular();
+        $this->slides = \App\Services\QuestionService::getPopular($count);
     }
 
     /**

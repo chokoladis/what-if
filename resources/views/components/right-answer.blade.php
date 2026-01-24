@@ -1,6 +1,8 @@
-@push('style')
-    @vite(['resources/scss/components/right-answer.scss'])
-@endpush
+@once
+    @push('style')
+        @vite(['resources/scss/components/right-answer.scss'])
+    @endpush
+@endonce
 
 @if($compact)
     <div class="right-answer alert alert-success">

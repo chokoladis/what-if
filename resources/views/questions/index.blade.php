@@ -90,7 +90,7 @@
             </div>
         </form>
 
-        @if(!$questions->isEmpty())
+        @if(!empty($questions) && !$questions->isEmpty())
             <div class="header-search">
                 <b class="total">{{ __('Всего найдено - ').$questions->total() }}</b>
                 <div class="sort">

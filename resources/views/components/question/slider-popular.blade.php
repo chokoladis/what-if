@@ -1,12 +1,14 @@
 @php
     use App\Services\FileService;
 @endphp
-@push('style')
-    @vite(['resources/scss/components/question/slider-popular.scss'])
-@endpush
-@push('script')
-    @vite(['resources/js/components/slider.js'])
-@endpush
+@once
+    @push('style')
+        @vite(['resources/scss/components/question/slider-popular.scss'])
+    @endpush
+    @push('script')
+        @vite(['resources/js/components/slider.js'])
+    @endpush
+@endonce
 
 <div class="slider-popular">
     @foreach ($slides as $slide)

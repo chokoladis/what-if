@@ -11,7 +11,7 @@ RUN npm install npm@11.6.2 -g && npm install npm@11.6.2
 RUN npm ci
 
 COPY . .
-RUN npm run build #--verbose
+RUN npm run build
 
 FROM php:8.3.13-fpm-alpine
 MAINTAINER Chokoladis
@@ -23,24 +23,23 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ENV PATH="$PATH:/usr/local/bin"
 
 COPY --from=node_build /var/www/what_if .
-#RUN npm run build
 
 RUN set -eux; \
     apk add --virtual .build-deps \
-        autoconf \
-        build-base \
-        linux-headers \
-        zlib-dev \
-        libzip-dev \
-        libpng-dev \
-        libjpeg-turbo-dev \
-        freetype-dev \
-        oniguruma-dev \
-        icu-dev \
-        libxml2-dev \
-        curl-dev; \
-    apk add \
-        git \
+            autoconf \
+            build-base \
+            linux-headers \
+            zlib-dev \
+            libzip-dev \
+            libpng-dev \
+            libjpeg-turbo-dev \
+            freetype-dev \
+            oniguruma-dev \
+            icu-dev \
+            libxml2-dev \
+            curl-dev
+
+RUN apk add git \
         unzip \
         zip \
         bash \
@@ -66,5 +65,5 @@ RUN set -eux; \
         pcntl \
         curl; \
     pecl install redis && docker-php-ext-enable redis; \
-    apk del .build-deps \
-RUN apk add --no-cache ca-certificates && update-ca-certificates
+    apk del .build-deps; \
+    apk add --no-cache ca-certificates && update-ca-certificates

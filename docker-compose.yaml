@@ -5,7 +5,8 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./dockerfiles/nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./dockerfiles/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./dockerfiles/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
       - .:/var/www/what_if
     container_name: what-if_nginx
 
@@ -15,7 +16,13 @@ services:
       dockerfile: dockerfiles/php/Dockerfile
     volumes:
       - .:/var/www/what_if
+      - ./dockerfiles/php/fpm.conf:/etc/php/8.3.13/fpm/pool.d/www.conf
     container_name: what-if_php
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 1G
 
   mysql:
     image: mysql:8.0
@@ -26,6 +33,11 @@ services:
       MYSQL_DATABASE: '${DB_DATABASE}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
 
   redis:
     build: ./dockerfiles/redis
@@ -34,3 +46,8 @@ services:
     container_name: what-if_redis
     ports:
       - "6379:6379"
+    deploy:
+      resources:
+        limits:
+#          cpus: '2.0'
+          memory: 400MB

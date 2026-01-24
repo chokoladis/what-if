@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ViewEvent;
+use App\Http\Requests\Question\IndexRequest;
 use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
@@ -10,7 +11,6 @@ use App\Models\Question;
 use App\Models\QuestionVotes;
 use App\Models\Tag;
 use App\Services\QuestionService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class QuestionController extends Controller
@@ -22,19 +22,26 @@ class QuestionController extends Controller
         $this->questionService = new QuestionService();
     }
 
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
-        // need cache
-        $tags = Tag::all();
-        $categories = Category::query()->where('active', 1)->get();
+        $tags = Cache::remember('tags_all', 3600, function () {
+            return Tag::all();
+        });
+        $categories = Cache::remember('categories_active', 3600, function () {
+            return Category::query()->where('active', 1)->get();
+        });
 
-        $key = json_encode($request->all());
+        $key = serialize('questions_' . json_encode($request->validated()));
 
         // todo rework to search index
-        $questions = Cache::remember('questions_' . $key, 3600, function () use ($request) {
-//            $questions = QuestionService::paginateWithFilter($request);
-            return QuestionService::paginateWithFilter($request);
-        });
+        $questions = Cache::get($key);
+        if (!$questions) {
+            $questionPaginator = QuestionService::paginateWithFilter($request);
+            if ($questionPaginator->count()) {
+                Cache::set($key,$questionPaginator, 3600);
+                $questions = $questionPaginator;
+            }
+        }
 
         return view('questions.index', compact('questions', 'tags', 'categories'));
     }

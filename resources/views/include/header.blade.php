@@ -26,10 +26,7 @@
 <div id="app">
     <nav class="header navbar navbar-expand-md shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.logo') }}
-                {{-- // можно анимировать появление двух слов из лого (strange question) --}}
-            </a>
+            <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.logo') }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">

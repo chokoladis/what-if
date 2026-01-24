@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Search;
+namespace App\Http\Requests\Question;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,11 +22,11 @@ class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'limit' => ['integer', 'min:1', 'max:100'],
             'page' => ['integer', 'min:1'],
-            'sort' => [],
-            'q' => ['required', 'string'],
-            'filters' => ['array', 'nullable'],
+            'tags' => ['array'], //todo
+            'resolved' => ['boolean'], //todo check
+            'categories' => ['array'],
+            'sort' => ['string'],
         ];
     }
 }
