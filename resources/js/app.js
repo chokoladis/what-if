@@ -1,6 +1,10 @@
 import './bootstrap';
-import '../../node_modules/jquery/dist/jquery.min.js';
-import '../../node_modules/jquery-mask-plugin/src/jquery.mask.js';
+// import '../../node_modules/jquery/dist/jquery.min.js';
+// import 'jquery.min.js';
+import $ from 'jquery';
+window.jQuery = window.$ = $;
+
+import 'jquery-mask-plugin';
 
 $('.js-phone-mask').mask('+9 999 9999 999');
 

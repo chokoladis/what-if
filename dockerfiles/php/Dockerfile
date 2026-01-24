@@ -66,4 +66,5 @@ RUN set -eux; \
         pcntl \
         curl; \
     pecl install redis && docker-php-ext-enable redis; \
-    apk del .build-deps
+    apk del .build-deps \
+RUN apk add --no-cache ca-certificates && update-ca-certificates

@@ -7,7 +7,6 @@ use App\Http\Controllers\ServicesAuthController;
 
 Route::get('/api/google_auth.php', [ServicesAuthController::class, 'googleAuth'])->name('google_auth');
 Route::get('/api/yandex_auth.php', [ServicesAuthController::class, 'yandexAuth'])->name('yandex_auth');
-//Route::get('/api/telegram_auth.php', [ServicesAuthController::class, 'telegramAuth'])->name('telegram_auth');
 
 
 Route::middleware(['locale'])->group(function () {

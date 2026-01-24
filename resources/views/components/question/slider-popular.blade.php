@@ -5,7 +5,7 @@
     @vite(['resources/scss/components/question/slider-popular.scss'])
 @endpush
 @push('script')
-    @vite(['resources/js/slick.min.js', 'resources/js/components/slider.js'])
+    @vite(['resources/js/components/slider.js'])
 @endpush
 
 <div class="slider-popular">

@@ -9,7 +9,7 @@ use Laravel\Scout\Searchable;
 
 class Category extends BaseModel
 {
-    use Searchable;
+//    use Searchable;
 
     const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
 

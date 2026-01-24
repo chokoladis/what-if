@@ -106,18 +106,7 @@ class Comment extends Model
          */
 
         static::created(function ($item) {
-            try {
-                $userComment = UserComments::create([
-                    'user_id' => $item->user_id, // auth()->id(), //for factory - $item->user_id
-                    'comment_id' => $item->id
-                ]);
 
-                if (!$userComment || !$userComment->wasRecentlyCreated) {
-                    Log::debug(__('Не удалось создать связь комментария - ' . $item->id . ', пользователя - ' . auth()->id));
-                }
-            } catch (\Throwable $th) {
-                Log::debug(__('Исключение при создании связи комментария - ' . $item->id . ', пользователя - ' . auth()->id . ' --- ' . $th));
-            }
         });
 
     }

@@ -1,4 +1,8 @@
+import 'slick-slider';
+
 $(function () {
+
+
     $('.category_slider').slick({
         infinite: true,
         slidesToShow: 3,

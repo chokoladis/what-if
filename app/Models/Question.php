@@ -13,7 +13,7 @@ use Laravel\Scout\Searchable;
 
 class Question extends BaseModel
 {
-    use Searchable;
+//    use Searchable;
 
     public $guarded = [];
 

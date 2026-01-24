@@ -1,3 +1,5 @@
+include .env
+
 build:
 	docker-compose up --build -d
 up:
@@ -15,6 +17,8 @@ install-composer:
 update-composer:
 	docker exec -w /var/www/what_if what-if_php composer update --no-interaction
 
+db-restore:
+	gunzip -c dumps/what_if.sql.gz | docker exec -i what-if_mysql mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) $(DB_DATABASE);
 fix-right:
 	sudo chmod -R 777 storage
 

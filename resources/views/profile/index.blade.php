@@ -34,22 +34,47 @@
                     </form>
                 </div>
             </div>
-            <form action="{{ route('profile.update') }}" class="info" method="POST" enctype="multipart/form-data">
+            <div class="preview">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab"
+                                data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                                type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                            {{ __('Профиль') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab"
+                                data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                                type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+                            {{ __('Избранные теги') }}</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                        <div class="mt-3">
+                            <span class="text-info">{{ __('crud.users.fields.email') }}</span>
+                            <h5>{{ $user->email  }}</h5>
+                        </div>
 
-                @csrf
+                        <div class="mt-3">
+                            <span class="text-info">{{ __('crud.users.fields.name') }}</span>
+                            <h5>{{ $user->name }}</h5>
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label">{{ __('crud.users.fields.name') }}</label>
-                    <input type="text" name="name" class="form-control" value="{{$user->name}}">
-                    @if ($errors->has('name'))
-                        @foreach ($errors->get('name') as $item)
-                            <p class="error">{{ $item  }}</p>
-                        @endforeach
-                    @endif
+                        <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary">Редактировать</a>
+                    </div>
+                    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                        @if(!$userTags->isEmpty())
+                            @foreach($userTags as $tag)
+
+                            @endforeach
+                        @else
+                            <h5 class="mt-3 text-warning">{{ __('Не найдено') }}</h5>
+                        @endif
+                        <a class="btn btn-outline-primary">{{ __('Добавить теги') }}</a>
+                    </div>
                 </div>
-
-                <button type="submit" class="btn btn-outline-success mb-3">{{ __('btn.change') }}</button>
-            </form>
+            </div>
         </div>
     </div>
 @endsection

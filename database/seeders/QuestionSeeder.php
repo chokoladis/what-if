@@ -14,8 +14,8 @@ class QuestionSeeder extends Seeder
      */
     public function run(): void
     {
-//        Question::factory(10)->create();
-        QuestionComments::factory(10)->create();
-        QuestionVotes::factory(10)->create();
+        Question::factory(10)->create();
+        QuestionComments::factory(20)->create();
+        QuestionVotes::factory(30)->create();
     }
 }
