@@ -1,4 +1,4 @@
 FROM nginx:1.29.4-alpine
-MAINTAINER Chokoladis
+LABEL org.opencontainers.image.authors="github@chokoladis"
 
 WORKDIR /var/www/what_if

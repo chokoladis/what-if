@@ -16,7 +16,6 @@ services:
       dockerfile: dockerfiles/php/Dockerfile
     volumes:
       - .:/var/www/what_if
-      - ./dockerfiles/php/fpm.conf:/etc/php/8.3.13/fpm/pool.d/www.conf
     container_name: what-if_php
     deploy:
       resources:

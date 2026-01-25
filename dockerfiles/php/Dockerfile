@@ -1,5 +1,5 @@
 FROM node:25.2.1-alpine AS node_build
-MAINTAINER Chokoladis
+LABEL org.opencontainers.image.authors="github@chokoladis"
 
 WORKDIR /var/www/what_if
 
@@ -14,11 +14,12 @@ COPY . .
 RUN npm run build
 
 FROM php:8.3.13-fpm-alpine
-MAINTAINER Chokoladis
+LABEL org.opencontainers.image.authors="github@chokoladis"
 
 WORKDIR /var/www/what_if
 
-RUN docker-php-ext-install pdo pdo_mysql
+COPY ./dockerfiles/php/conf/fpm.conf /usr/local/etc/php-fpm.d/www.conf
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV PATH="$PATH:/usr/local/bin"
 
@@ -39,10 +40,7 @@ RUN set -eux; \
             libxml2-dev \
             curl-dev
 
-RUN apk add git \
-        unzip \
-        zip \
-        bash \
+RUN apk add bash \
         libzip \
         zlib \
         libpng \
@@ -53,10 +51,9 @@ RUN apk add git \
         curl; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
     docker-php-ext-install \
+        pdo \
         pdo_mysql \
         mbstring \
-        xml \
-        zip \
         bcmath \
         intl \
         gd \

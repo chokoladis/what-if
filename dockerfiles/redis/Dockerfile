@@ -1,5 +1,5 @@
 FROM redis:8.4.0
-MAINTAINER Chokoladis
+LABEL org.opencontainers.image.authors="github@chokoladis"
 
 #/etc/redis
 RUN mkdir /var/lib/redis && mkdir /var/log/redis

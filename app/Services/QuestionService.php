@@ -193,7 +193,7 @@ class QuestionService
         }
 
         //cache
-        return $builder->paginate(perPage: 10, page: $request->page)
+        return $builder->paginate(perPage: 10, page: $request->page ?? 1)
             ->withQueryString();
     }
 

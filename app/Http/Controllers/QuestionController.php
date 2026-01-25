@@ -40,6 +40,8 @@ class QuestionController extends Controller
             if ($questionPaginator->count()) {
                 Cache::set($key,$questionPaginator, 3600);
                 $questions = $questionPaginator;
+            } else {
+                Cache::set($key,null, 3600);
             }
         }
 
