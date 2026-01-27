@@ -12,7 +12,7 @@
     $itemsTypeOutCookie = \Illuminate\Support\Facades\Cookie::get('items-type-output', 'simple');
     $currentItemsTypeOutput = in_array($itemsTypeOutCookie, $itemsTypeOut) ? $itemsTypeOutCookie : current($itemsTypeOut);
 
-    $res = \App\Models\QuestionVotes::GetById((int)$question->id);
+    $res = \App\Services\QuestionService::getVotes($question->id);
     $mainClass = $question->right_comment_id ? 'border-success' : '';
 
 @endphp
@@ -61,6 +61,10 @@
                 @endif
 
                 <div class="date">
+                    <div class="author">
+                        <i uk-icon="microphone"></i>
+                        <span>{{ '@'.$question->user->getShortName() }}</span>
+                    </div>
                     @if($question->statistics)
                         <div class="views">
                             <i uk-icon="eye"></i>
@@ -100,6 +104,10 @@
                 </div>
 
                 <div class="date">
+                    <div class="author">
+                        <i uk-icon="microphone"></i>
+                        <span>{{ '@'.$question->user->getShortName() }}</span>
+                    </div>
                     @if($question->statistics)
                         <div class="views">
                             <i uk-icon="eye"></i>

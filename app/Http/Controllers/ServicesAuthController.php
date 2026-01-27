@@ -11,14 +11,12 @@ class ServicesAuthController extends Controller
 {
     public function googleAuth(Request $request)
     {
-        $code = urldecode($request->get('code'));
-
-        if (!empty($code)) {
+        if ($code = $request->get('code')) {
 
             $result = (new GoogleAuthService())->authorize($code);
 
             if ($result === true){
-                return redirect()->back()->with('message', __('user.login_success'));
+                return redirect('/')->with('message', __('user.login_success'));
             } else {
                 return $result;
             }
@@ -30,9 +28,7 @@ class ServicesAuthController extends Controller
 
     public function yandexAuth(Request $request)
     {
-        $code = urldecode($request->get('code'));
-
-        if (!empty($code)) {
+        if ($code = $request->get('code')) {
 
             $result = (new YandexAuthService())->authorize($code);
 

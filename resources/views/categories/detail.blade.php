@@ -61,17 +61,17 @@
                 <div class="list-group">
                     @foreach($questions as $question)
                         @php
-                            $userReaction = QuestionVotes::getByQuestionId($question->id)
+                            $votes = \App\Services\QuestionService::getVotes($question->id)
                         @endphp
                         <li class="list-group-item @if($question->right_comment_id) list-group-item-success @endif">
                             <div class="reaction">
                                 <div class="badge text-bg-success">
                                     <span class="uk-icon" uk-icon="chevron-up"></span>
-                                    <b>{{ $userReaction['likes'] }}</b>
+                                    <b>{{ $votes['likes'] }}</b>
                                 </div>
                                 <div class="badge text-bg-danger">
                                     <span class="uk-icon" uk-icon="chevron-down"></span>
-                                    <b>{{ $userReaction['dislikes'] }}</b>
+                                    <b>{{ $votes['dislikes'] }}</b>
                                 </div>
                             </div>
                             <a href="{{ route('questions.detail', $question->code) }}">

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Http\Requests\Question\IndexRequest;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements FilamentUser
@@ -86,5 +89,30 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function getShortName()
+    {
+        return mb_strlen($this->name) > 8 ? mb_substr($this->name,0, 8).'...' : $this->name;
+    }
+
+    //    paginate
+    public function questions() : HasMany
+    {
+        return $this->hasMany(Question::class); //->latest()
+    }
+
+    public function getQuestionsWithPages(Request $request)
+    {
+        $data = $request->validate([
+            'perPage' => 'integer|min:1|max:30',
+        ]);
+
+        return $this->hasMany(Question::class)->latest()->paginate($data['perPage'] ?? 5);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'user_tags');
     }
 }

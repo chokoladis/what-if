@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\SetPhotoRequest;
+use App\Http\Requests\User\SetTagsRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Models\Tag;
 use App\Models\User;
 use App\Services\AI\Gemini\UserService;
 use App\Services\FileService;
@@ -17,7 +19,15 @@ class UserController extends Controller
 
     public function index()
     {
-        return view('profile.index');
+        $userTags = auth()->user()->tags()->get();
+        $tags = Tag::query()->whereNotIn('id', $userTags->pluck('id'))->get();
+
+        return view('profile.index', compact('tags', 'userTags'));
+    }
+
+    public function edit()
+    {
+        return view('profile.edit');
     }
 
     public function update(UpdateRequest $request)
@@ -42,8 +52,9 @@ class UserController extends Controller
 
         $photo = FileService::save($file, 'users');
 
-//        todo on stack
+//        todo on stack redis
         [$isLegal, $error] = (new UserService())->isContentFileLegal($photo);
+//        dd($isLegal, $error);
 
         if (!$isLegal) {
             return redirect()->route('profile.index')->with('error', $error);
@@ -54,5 +65,17 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
+    }
+
+    public function setTags(SetTagsRequest $request)
+    {
+        $data = $request->validated();
+        $res = auth()->user()->tags()->sync(isset($data['tags']) ? $data['tags'] : []);
+
+        if (!empty($res)) {
+            return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
+        }
+
+        return redirect()->route('profile.index')->with('error', __('system.alerts.error'));
     }
 }

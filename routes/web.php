@@ -50,6 +50,7 @@ Route::middleware(['locale'])->group(function () {
                     Route::get('/', 'index')->name('index');
                     Route::get('/edit', 'edit')->name('edit');
                     Route::post('/', 'update')->name('update');
+                    Route::post('/tags', 'setTags')->name('tags.set');
                     Route::post('/photo', 'setPhoto')->name('setPhoto');
                 });
             });

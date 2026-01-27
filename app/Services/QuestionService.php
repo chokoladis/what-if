@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionComments;
 use App\Models\QuestionTags;
+use App\Models\QuestionVotes;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -264,6 +265,19 @@ class QuestionService
                 ->limit($limit)
                 ->orderBy('popularity', 'desc')
                 ->get();
+        });
+    }
+
+    static function getVotes(int $id)
+    {
+        return Cache::remember('question_votes_'.$id, 3600*3, function () use ($id) {
+            $tableName = (new QuestionVotes)->getTable();
+            return QuestionVotes::query()
+                ->select(
+                    DB::raw('(SELECT COUNT(vote) from `'.$tableName.'` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
+                    DB::raw('(SELECT COUNT(vote) from `'.$tableName.'` WHERE vote = -1 && `question_id` =' . $id . ') as dislikes')
+                )
+                ->first();
         });
     }
 }

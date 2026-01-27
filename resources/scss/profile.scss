@@ -1,14 +1,11 @@
 .profile-page {
 
   .main {
-    display: flex;
 
     .photo {
-      width: fit-content;
-      max-width: 400px;
-      margin-right: 10px;
       position: relative;
       overflow: hidden;
+      max-height: max-content;
 
       .card-body {
         position: relative;
@@ -54,6 +51,13 @@
         min-width: 100px;
         max-width: 100%;
         max-height: 400px;
+
+        @media (max-width:992px) {
+          max-height: 250px;
+        }
+        @media (max-width: 768px) {
+          max-height: 350px;
+        }
       }
 
       &:hover {
@@ -61,6 +65,29 @@
         .card-body:not(.active) {
           height: auto;
           padding: 16px;
+        }
+      }
+    }
+
+    .tab-pane{
+      .content-padding{
+        padding: 10px;
+      }
+      .questions-table{
+        overflow: auto;
+
+        table img {
+            max-width: 200px;
+        }
+      }
+
+      .user-tags{
+        &-items{
+          max-height: 300px;
+          overflow: auto;
+        }
+        button {
+          margin-top: 10px;
         }
       }
     }

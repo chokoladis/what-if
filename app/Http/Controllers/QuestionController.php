@@ -82,8 +82,8 @@ class QuestionController extends Controller
 
         Event(new ViewEvent($question));
 
-//            service and cache
-        $arVotes = QuestionVotes::getByQuestionId($question['id']);
+        $arVotes = QuestionService::getVotes($question['id']);
+        //        todo
         $questionCurrentUserVote = QuestionVotes::getByQuestionIdForUser($question['id']);
 
         $arComments = [];

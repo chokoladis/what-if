@@ -78,10 +78,10 @@
                                     'client_id'     => config('auth.socials.google.client_id'),
                                     'redirect_uri'  => config('auth.socials.google.redirect_uri'),
                                     'response_type' => 'code',
-                                    'scope'         => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+                                    'scope'         => 'email profile',
                                 );
 
-                                $gUrl = 'https://accounts.google.com/o/oauth2/auth?' . urldecode(http_build_query($gData));
+                                $gUrl = 'https://accounts.google.com/o/oauth2/auth?' . http_build_query($gData);
 
                                 $yData = array(
                                     'client_id'     => config('auth.socials.yandex.client_id'),
