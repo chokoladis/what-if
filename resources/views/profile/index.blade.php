@@ -36,42 +36,85 @@
                     </form>
                 </div>
             </div>
-            <div class="preview col-lg-8 col-md-9 col-12 mt-sm-5 mt-md-0">
+            <div class="profile-main-data col-lg-8 col-md-9 col-12 mt-sm-5 mt-md-0">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link {{ $isActiveQuestions ? '' : 'active' }}" id="home-tab"
                                 data-bs-toggle="tab" data-bs-target="#home-tab-pane"
                                 type="button" role="tab" aria-controls="home-tab-pane" aria-selected="{{ $isActiveQuestions ? 'true' : 'false' }}">
-                            {{ __('Профиль') }}</button>
+                            {{ __('user.profile') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link {{ $isActiveQuestions ? 'active' : '' }}" id="my-questions-tab"
                                 data-bs-toggle="tab" data-bs-target="#my-questions-tab-pane"
                                 type="button" role="tab" aria-controls="my-questions-tab-pane" aria-selected="{{ $isActiveQuestions ? 'true' : 'false' }}">
-                            {{ __('Мои вопросы') }}</button>
+                            {{ __('user.my_questions') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="profile-tab"
                                 data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
                                 type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
-                            {{ __('Избранные теги') }}</button>
+                            {{ __('user.favorite_tags') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="notifications"
+                                data-bs-toggle="tab" data-bs-target="#notifications-tab-pane"
+                                type="button" role="tab" aria-controls="notifications-tab-pane" aria-selected="false">
+                            {{ __('user.notifications') }}</button>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade {{ $isActiveQuestions ? '' : 'show active' }}" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
                         <div class="content-padding">
 
-                            <div class="mt-3">
-                                <span class="text-info">{{ __('crud.users.fields.email') }}</span>
-                                <h5>{{ $user->email  }}</h5>
-                            </div>
+                            @php
+                                $showEditForm = $errors->has('name') || $errors->has('email');
+                            @endphp
 
-                            <div class="mt-3">
-                                <span class="text-info">{{ __('crud.users.fields.name') }}</span>
-                                <h5>{{ $user->name }}</h5>
-                            </div>
+                            <div class="profile-data-preview {{ $showEditForm ? 'd-none': '' }}">
+                                <div class="mt-3">
+                                    <span class="text-info">{{ __('crud.users.fields.email') }}</span>
+                                    <h5>{{ $user->email  }}</h5>
+                                </div>
 
-                            <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary">Редактировать</a>
+                                <div class="mt-3">
+                                    <span class="text-info">{{ __('crud.users.fields.name') }}</span>
+                                    <h5>{{ $user->name }}</h5>
+                                </div>
+
+                                <a class="btn btn-outline-primary mt-4" data-bs-toggle="collapse" href="#profile-data-update"
+                                   role="button" aria-expanded="false" aria-controls="profile-data-update">
+                                    {{ __('btn.edit') }}
+                                </a>
+                            </div>
+                            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data"
+                                  id="profile-data-update" class="profile-data-update collapse collapse-horizontal {{ $showEditForm ? 'show': '' }}">
+
+                                @csrf
+
+                                <div class="mb-3">
+                                    <label class="form-label">{{ __('crud.users.fields.email') }}</label>
+                                    <input type="text" name="email" class="form-control" value="{{ old('email') ?? $user->email}}">
+                                    @if ($errors->has('email'))
+                                        @foreach ($errors->get('email') as $item)
+                                            <p class="error">{{ $item  }}</p>
+                                        @endforeach
+                                    @endif
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">{{ __('crud.users.fields.name') }}</label>
+                                    <input type="text" name="name" class="form-control" value="{{old('name') ?? $user->name}}">
+                                    @if ($errors->has('name'))
+                                        @foreach ($errors->get('name') as $item)
+                                            <p class="error">{{ $item  }}</p>
+                                        @endforeach
+                                    @endif
+                                </div>
+
+                                <button type="submit" class="btn btn-outline-success mb-4">{{ __('btn.change') }}</button>
+                            </form>
+
                         </div>
                     </div>
                     <div class="tab-pane fade {{ $isActiveQuestions ? 'show active' : '' }}" id="my-questions-tab-pane" role="tabpanel" aria-labelledby="my-questions-tab" tabindex="0">
@@ -100,7 +143,7 @@
                                             @endphp
                                             <tr>
                                                 <td>
-                                                    <b>{{ $question->title }}</b>
+                                                    <a href="{{ route('questions.detail', $question->code) }}"><b>{{ $question->title }}</b></a>
                                                 </td>
                                                 <td>
                                                     <i>{{ $question->category?->title ?? '' }}</i>
@@ -165,6 +208,12 @@
 
                                 <button type="submit" class="btn btn-outline-primary">{{ __('Применить') }}</button>
                             </form>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="notifications-tab-pane" role="tabpanel" aria-labelledby="notifications" tabindex="0">
+                        <div class="content-padding">
+                            {{ __('В разработке') }}
                         </div>
                     </div>
                 </div>

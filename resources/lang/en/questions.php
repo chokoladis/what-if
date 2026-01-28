@@ -3,6 +3,7 @@
 return [
     'right_answer' => 'Right answer',
     'not_found' => 'No one has asked any questions yet -_-',
+    'total_found' => 'Total found - ',
     'alerts' => [
         'store' => 'Question saved and will public late',
         'already_exists' => 'Like question already exists',

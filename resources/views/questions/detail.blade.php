@@ -50,14 +50,28 @@
                             <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
                     @endif
-                    {{--текущий юзер -статус --}}
                 </div>
                 <div class="description">
                     <img src="{{ FileService::getPhoto($question->file, 'questions') }}"
                          alt="...">
                     {{--во весь экран --}}
                     <div class="shadow"></div>
-                    <h1 class="h1">{{ $title }}</h1>
+                    <div class="bottom">
+                        <h1 class="h1">{{ $title }}</h1>
+                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#question-img-popup">
+                            <span uk-icon="image"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="question-img-popup" class="modal fade modal-xl" tabindex="-1" role="dialog" data-bs-keyboard="false" tabindex="-2"
+                 aria-labelledby="imgModal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <img src="{{ FileService::getPhoto($question->file, 'questions') }}" class="img-responsive">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="info">

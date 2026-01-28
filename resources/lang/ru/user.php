@@ -21,4 +21,9 @@ return [
     'login_success' => 'Вы успешно авторизовались!',
     //    profile
     'change_photo' => 'Изменить фото',
+
+    'profile' => 'Профиль',
+    'my_questions' => 'Мои вопросы',
+    'favorite_tags' => 'Избранные теги',
+    'notifications' => 'Уведомления',
 ];

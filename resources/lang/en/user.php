@@ -21,4 +21,10 @@ return [
     'login_success' => 'You are success logged in!',
     //    profile
     'change_photo' => 'Change photo',
+
+
+    'profile' => 'Profile',
+    'my_questions' => 'My questions',
+    'favorite_tags' => 'Favorite tags',
+    'notifications' => 'Notifications',
 ];

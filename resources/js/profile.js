@@ -5,3 +5,8 @@ $('.profile-page form.update-photo input').on('change', function () {
         $(this).parents('.card-body').removeClass('active');
     }
 });
+
+const formProfileUpdate = document.getElementById('profile-data-update')
+formProfileUpdate.addEventListener('show.bs.collapse', event => {
+    $('.profile-data-preview').addClass('d-none');
+})

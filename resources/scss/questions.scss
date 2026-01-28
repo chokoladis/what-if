@@ -144,13 +144,17 @@
         background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
       }
 
-      h1 {
+      .bottom {
+        display: flex;
+        justify-content: space-between;
         z-index: 10;
         position: absolute;
-        left: 10px;
         bottom: 10px;
+        padding: 0 10px;
+        width: 100%;
         margin: 0;
       }
+
     }
   }
 
