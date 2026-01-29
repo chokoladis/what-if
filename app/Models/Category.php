@@ -154,6 +154,7 @@ class Category extends BaseModel
 //                $category->file_id = $file->id;
 //            }
             $category->code = Str::slug(Str::lower($category->title), '-');
+            $category->level = !$category->parent ? 0 : $category->parent->level + 1;
         });
 
         static::updating(function ($category) {
@@ -208,5 +209,10 @@ class Category extends BaseModel
     public function subcategories()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function parent()
+    {
+        return $this->hasOne(Category::class, 'id', 'parent_id');
     }
 }

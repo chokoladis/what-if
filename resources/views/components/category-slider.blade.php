@@ -2,7 +2,7 @@
     @vite(['resources/scss/components/slider.scss'])
 @endpush
 @push('script')
-    @vite(['resources/js/slick.min.js', 'resources/js/components/slider.js'])
+    @vite(['resources/js/components/slider.js'])
 @endpush
 
 <div class="category_slider">

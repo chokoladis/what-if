@@ -48,7 +48,6 @@ class QuestionCategoryResource extends Resource
                     ->string()
                     ->label('Заголовок'),
                 Forms\Components\TextInput::make('code')
-                    ->required()
                     ->string()
                     ->label('Символьный код'),
                 Forms\Components\TextInput::make('sort')

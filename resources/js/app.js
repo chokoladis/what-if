@@ -1,6 +1,4 @@
 import './bootstrap';
-// import '../../node_modules/jquery/dist/jquery.min.js';
-// import 'jquery.min.js';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
 
