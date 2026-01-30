@@ -16,6 +16,7 @@
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ \Illuminate\Support\Facades\Storage::url('main/favicon.png') }}" type="image/x-png">
 
     @vite(['resources/scss/app.scss'])
     @stack('style')

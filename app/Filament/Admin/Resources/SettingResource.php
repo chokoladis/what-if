@@ -17,9 +17,10 @@ use Filament\Tables\Table;
 
 class SettingResource extends Resource
 {
+    protected static string | \UnitEnum | null $navigationGroup = 'Настройки';
     protected static ?string $modelLabel = 'Настройки';
-    protected static ?string $navigationLabel = 'Настройки';
-    protected static ?string $pluralModelLabel = 'Настройки';
+    protected static ?string $navigationLabel = 'Общие настройки';
+    protected static ?string $pluralModelLabel = 'Общие настройки';
     protected static ?string $model = Setting::class;
 
     protected static null|string|BackedEnum $navigationIcon = Heroicon::WrenchScrewdriver;
