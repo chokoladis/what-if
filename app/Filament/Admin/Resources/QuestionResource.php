@@ -4,8 +4,10 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\QuestionResource\Pages;
 use App\Models\Category;
+use App\Models\File;
 use App\Models\Question;
 use App\Models\QuestionComments;
+use App\Models\Tag;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Actions\BulkActionGroup;
@@ -55,6 +57,10 @@ class QuestionResource extends Resource
                             ->pluck('comments.text', 'comment_id')
 //                        todo обрезать могуть быть слишком длинные данные
                     ),
+                Forms\Components\CheckboxList::make('tags')
+                    ->relationship('tags', 'name') //todo в других местах
+                    ->searchable()
+                    ->columns(2),
                 Forms\Components\TextInput::make('created_at')
                     ->disabled(),
                 Forms\Components\TextInput::make('updated_at')

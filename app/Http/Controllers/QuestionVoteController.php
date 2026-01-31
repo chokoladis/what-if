@@ -18,10 +18,17 @@ class QuestionVoteController extends Controller
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
-            $status = QuestionVotes::updateOrCreate(
-                ['question_id' => $question->id, 'user_id' => $data['user_id']],
-                ['vote' => $data['vote']]
-            );
+            $model = QuestionVotes::query()
+                ->where('question_id', $question->id)
+                ->where('vote', $data['vote'])
+                ->first();
+            if (!$model) {
+                $status = QuestionVotes::create([
+                    'question_id' => $question->id, 'user_id' => $data['user_id'], 'vote' => $data['vote']
+                ]);
+            } else {
+                $status = $model->delete();
+            }
         } else {
             $status = false;
         }

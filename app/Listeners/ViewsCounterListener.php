@@ -24,6 +24,7 @@ class ViewsCounterListener
         $user_id = auth()->id() ?? request()->ip();
         $user_id = str_replace('.', '_', $user_id);
 
+        // todo save to db for recommendations
         $name_session = 'view_user_' . $user_id . '_model_' . $model->getTable() . '_' . $model->id;
         $session_user_view = session($name_session);
         if (!$session_user_view) {

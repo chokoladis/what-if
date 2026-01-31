@@ -38,6 +38,18 @@ services:
           cpus: '2.0'
           memory: 2G
 
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    container_name: what-if_phpmyadmin
+    ports:
+      - "8001:80"
+    environment:
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USERNAME: '${DB_USERNAME}'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      PMA_HOST: mysql
+
   redis:
     build: ./dockerfiles/redis
     volumes:

@@ -1,10 +1,12 @@
 <!doctype html>
 @php
-    $lang = \Illuminate\Support\Facades\Cookie::get('lang') ?? app()->getLocale();
-    \Illuminate\Support\Facades\App::setLocale($lang);
+    use \Illuminate\Support\Facades;
 
-    $flagSrc = \Illuminate\Support\Facades\Storage::url('main/flag-'.$lang.'.svg');
-    $theme = \Illuminate\Support\Facades\Cookie::get('theme', 'dark');
+    $lang = Facades\Cookie::get('lang') ?? app()->getLocale();
+    Facades\App::setLocale($lang);
+
+    $flagSrc = Facades\Storage::url('main/flag-'.$lang.'.svg');
+    $theme = Facades\Cookie::get('theme', 'dark');
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>
@@ -16,7 +18,7 @@
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ \Illuminate\Support\Facades\Storage::url('main/favicon.png') }}" type="image/x-png">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-png">
 
     @vite(['resources/scss/app.scss'])
     @stack('style')
@@ -36,16 +38,30 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('questions.index') }}">{{ __('menu.main.questions') }}</a>
-                    </li>
+                    @if(auth()->id())
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#"
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            >{{ __('menu.main.questions') }}</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('questions.index') }}">{{ __('menu.main.all_questions') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('questions.recommend') }}">{{ __('menu.main.recommendations') }}</a></li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('questions.index') }}">{{ __('menu.main.questions') }}</a>
+                        </li>
+                    @endif
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         >{{ __('menu.main.categories') }}</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('categories.index') }}">Все категории</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('categories.index') }}">{{__('menu.main.all_categories')}}</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             {{--todo все остальные с подразделами--}}
                             @foreach(\App\Models\Category::getCategoriesLevel0() as $category)
                                 @if(!$category->subcategories->isEmpty())
@@ -56,12 +72,16 @@
                                         >{{ $category->title }}</a>
                                         <ul class="dropdown-menu">
                                             @foreach($category->subcategories as $subcategory)
-                                                <li><a class="dropdown-item" href="{{ route('categories.detail', $subcategory->code) }}">{{ $subcategory->title }}</a></li>
+                                                <li><a class="dropdown-item"
+                                                       href="{{ route('categories.detail', $subcategory->code) }}">{{ $subcategory->title }}</a>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     </li>
                                 @else
-                                    <li><a class="dropdown-item" href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a>
+                                    </li>
                                 @endif
                             @endforeach
                         </ul>

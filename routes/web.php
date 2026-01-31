@@ -32,6 +32,7 @@ Route::middleware(['locale'])->group(function () {
         Route::middleware(['auth'])->group(function () {
 
             Route::prefix('questions')->name('questions.')->group(function () {
+                Route::get('/recommend', 'QuestionController@recommendations')->name('recommend');
                 Route::get('/add', 'QuestionController@add')->name('add');
                 Route::post('/', 'QuestionController@store')->middleware(['captcha'])->name('store');
                 Route::post('/right_comment', 'QuestionController@setRightComment')->name('setRightComment');

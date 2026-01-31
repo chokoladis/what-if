@@ -76,15 +76,7 @@ class QuestionCategoryResource extends Resource
                         if (!file_exists($path)) {
                             return;
                         }
-//
-//                        // Создаём временную копию для предпросмотра
-////                        $tempPath = tempnam(sys_get_temp_dir(), 'filament_preview_') . '.' . pathinfo($file->path, PATHINFO_EXTENSION);
-////                        copy($path, $tempPath);
-//
-////                        $arPath = explode('/', $path);
-////                        unset($arPath[array_key_last($arPath)]);
-////                        $arPath = implode('/', $arPath).'/';
-//
+
                         $component->state(new \Illuminate\Http\UploadedFile(
                             $path,
                             $file->name,

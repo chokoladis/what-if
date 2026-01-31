@@ -11,6 +11,7 @@ use App\Models\Question;
 use App\Models\QuestionVotes;
 use App\Models\Tag;
 use App\Services\QuestionService;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Cache;
 
 class QuestionController extends Controller
@@ -143,5 +144,20 @@ class QuestionController extends Controller
         return responseJson(false, [
             new \Error('Ошибка при задании верного комментария', 'error_in_set_right_comment')
         ]);
+    }
+
+    public function recommendations(IndexRequest $request)
+    {
+        $tags = Cache::remember('tags_all', 3600, function () {
+            return Tag::all();
+        });
+        $categories = Cache::remember('categories_active', 3600, function () {
+            return Category::query()->where('active', 1)->get();
+        });
+
+        // todo rework to search index
+        $questions = UserService::getRecommendations();
+
+        return view('questions.index', compact('questions', 'tags', 'categories'));
     }
 }
