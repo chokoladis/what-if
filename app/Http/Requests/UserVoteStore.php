@@ -23,7 +23,7 @@ class UserVoteStore extends FormRequest
     {
         return [
             'entity_id' => ['required', 'integer'],
-            'vote' => ['required', 'between:-1,1'],
+            'vote' => ['required', 'in:-1,1'],
         ];
     }
 }

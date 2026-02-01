@@ -16,9 +16,7 @@ class CaptchaMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $service = new SettingService;
-
-        if ($service->isCaptchaSetOn()) {
+        if (\App\Tools\Option::isCaptchaSetOn()) {
 
             $captcha = new CaptchaService();
             [$success,] = $captcha->verify($request->get('h-captcha-response') ?? '');

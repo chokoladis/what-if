@@ -19,6 +19,7 @@ class CommentController extends Controller
 
         $comment_main_id = $data['comment_main_id'];
         unset($data['comment_main_id']);
+        $data['active'] = auth()->user()->role === 'admin';
 
         $question = QuestionController::findByUrl(url()->previous());
         $comment = Comment::firstOrCreate(['text' => $data['text'], 'user_id' => $data['user_id']], $data);

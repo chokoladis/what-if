@@ -100,7 +100,7 @@
                 @endif
             </div>
 
-            @if(\App\Services\SettingService::isCaptchaSetOn()))
+            @if(\App\Tools\Option::isCaptchaSetOn())
                 <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
             @endif
 

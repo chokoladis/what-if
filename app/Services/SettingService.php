@@ -44,17 +44,6 @@ class SettingService
         }
     }
 
-    public static function isCaptchaSetOn()
-    {
-        $result = Setting::query()->where('name', 'captcha_set_on')->first();
-
-        if (!empty($result)) {
-            return filter_var($result->value, FILTER_VALIDATE_BOOLEAN);
-        }
-
-        return false;
-    }
-
     public function setTypeOutput(string $type)
     {
         if (in_array($type, QuestionService::ITEMS_TYPE_OUTPUT)) {
