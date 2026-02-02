@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('photo_id')->nullable()->after('active');
-            $table->index('photo_id', 'users_photo_idx');
-            $table->foreign('photo_id', 'users_files_fk')->references('id')->on('files');
-        });
+        if (!Schema::hasColumn('users', 'photo_id')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->unsignedBigInteger('photo_id')
+                    ->nullable()->after('active')
+                    ->index('users_photo_idx');
+                $table->foreign('photo_id', 'users_files_fk')->references('id')->on('files');
+            });
+        }
     }
 
     /**
@@ -23,8 +26,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('users', 'photo_id')) {
+            Schema::dropForeign('users_files_fk');
+            Schema::dropColumns('users', 'photo_id');
+        }
     }
 };

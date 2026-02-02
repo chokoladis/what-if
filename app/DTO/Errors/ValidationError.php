@@ -2,7 +2,7 @@
 
 namespace App\DTO\Errors;
 
-class ValidationError
+readonly class ValidationError
 {
     function __construct(
         string  $message,

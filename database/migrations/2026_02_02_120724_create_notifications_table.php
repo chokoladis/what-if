@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('user_tags')) {
-            Schema::create('user_tags', function (Blueprint $table) {
+        if (!Schema::hasTable('notifications')) {
+            Schema::create('notifications', function (Blueprint $table) {
                 $table->id();
-                $table->unsignedBigInteger('user_id');
-                $table->index('user_id');
+
+                $table->unsignedBigInteger('user_id')->index('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-                $table->unsignedBigInteger('tag_id');
-                $table->index('tag_id');
-                $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+                $table->string('entity', 15);
+                $table->unsignedBigInteger('entity_id')->index('entity_id');
+                $table->string('type', 30)->default('system');
+                $table->boolean('viewed')->default(0);
 
                 $table->timestamps();
             });
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_tags');
+        Schema::dropIfExists('notifications');
     }
 };

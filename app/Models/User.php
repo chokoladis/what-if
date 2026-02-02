@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Requests\Question\IndexRequest;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -114,5 +113,15 @@ class User extends Authenticatable implements FilamentUser
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'user_tags');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
+    public function newNotify()
+    {
+        return $this->notifications()->where('viewed', false)->latest();
     }
 }

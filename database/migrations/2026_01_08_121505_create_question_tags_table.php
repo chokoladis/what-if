@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('question_tags', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('question_tags')) {
+            Schema::create('question_tags', function (Blueprint $table) {
+                $table->id();
 
-            $table->unsignedBigInteger('question_id');
-            $table->index('question_id');
-            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
+                $table->unsignedBigInteger('question_id');
+                $table->index('question_id');
+                $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
 
-            $table->unsignedBigInteger('tag_id');
-            $table->index('tag_id');
-            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+                $table->unsignedBigInteger('tag_id');
+                $table->index('tag_id');
+                $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**

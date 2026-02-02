@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 
 class Comment extends Model
 {
@@ -30,7 +30,7 @@ class Comment extends Model
 
     public function isReply(): bool
     {
-        return $this->HasOne(CommentsReply::class, 'comment_reply_id', 'id')->exists();
+        return $this->parent->exists();
     }
 
     public function replies(): HasMany
@@ -106,7 +106,12 @@ class Comment extends Model
          */
 
         static::created(function ($item) {
-
+            Notification::create([
+                'user_id' => $item->user_id,
+                'entity_id' => $item->id,
+                'entity' => __CLASS__,
+                'type' => $this->isReply() ? NotificationType::RESPONDED_TO_COMMENT : NotificationType::QUESTION_COMMENTED,
+            ]);
         });
 
     }

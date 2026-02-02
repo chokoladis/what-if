@@ -2,7 +2,7 @@
 
 namespace App\DTO\Errors;
 
-class CommonError
+readonly class CommonError
 {
     function __construct(
         string  $message,

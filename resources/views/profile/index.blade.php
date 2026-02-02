@@ -213,7 +213,13 @@
 
                     <div class="tab-pane fade" id="notifications-tab-pane" role="tabpanel" aria-labelledby="notifications" tabindex="0">
                         <div class="content-padding">
-                            {{ __('В разработке') }}
+                            @if($notifications->isEmpty())
+                                {{ __('Нету уведомлений') }}
+                            @else
+                                @foreach($notifications as $notification)
+                                    <x-profile-notification :notification="$notification"/>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>

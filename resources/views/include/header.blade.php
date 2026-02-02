@@ -24,6 +24,8 @@
     @stack('style')
 
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -125,6 +127,23 @@
                             </li>
                         @endif
                     @else
+                        <li class="nav-item dropdown">
+                            {{--                            todo другую иконку --}}
+                            <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <i class="uk-icon" uk-icon="bell"></i>
+                                @if(!auth()->user()?->newNotify->isEmpty())
+                                    <span class="position-absolute bottom-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {{ auth()->user()?->newNotify->count }}<span class="visually-hidden">unread messages</span>
+                                    </span>
+                                @endif
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
+                                <a class="dropdown-item" href="{{ route('profile.index') }}">
+
+                                </a>
+                            </div>
+                        </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
