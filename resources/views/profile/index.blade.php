@@ -213,7 +213,7 @@
 
                     <div class="tab-pane fade" id="notifications-tab-pane" role="tabpanel" aria-labelledby="notifications" tabindex="0">
                         <div class="content-padding">
-                            @if($notifications->isEmpty())
+                            @if(!$notifications || $notifications->isEmpty())
                                 {{ __('Нету уведомлений') }}
                             @else
                                 @foreach($notifications as $notification)

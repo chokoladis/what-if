@@ -21,8 +21,9 @@ class UserController extends Controller
     {
         $userTags = auth()->user()->tags()->get();
         $tags = Tag::query()->whereNotIn('id', $userTags->pluck('id'))->get();
+        $notifications = \App\Services\UserService::getLastNotifications();
 
-        return view('profile.index', compact('tags', 'userTags'));
+        return view('profile.index', compact('tags', 'userTags', 'notifications'));
     }
 
     public function edit()

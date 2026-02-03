@@ -30,7 +30,7 @@ class Comment extends Model
 
     public function isReply(): bool
     {
-        return $this->parent->exists();
+        return $this->parent && $this->parent->exists();
     }
 
     public function replies(): HasMany

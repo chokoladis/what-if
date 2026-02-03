@@ -7,6 +7,8 @@
 
     $flagSrc = Facades\Storage::url('main/flag-'.$lang.'.svg');
     $theme = Facades\Cookie::get('theme', 'dark');
+
+    $notifications = auth()->id() ? \App\Services\UserService::getLastNotifications() : null;
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>

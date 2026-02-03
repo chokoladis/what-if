@@ -63,4 +63,13 @@ class UserService
                 ->paginate();
         });
     }
+
+    public static function getLastNotifications()
+    {
+        // todo foreget
+        return Cache::remember('notify_'.auth()->id(), 86400, function () {
+            return auth()->user()->notifications()
+                ->limit(5)->latest()->get();
+        });
+    }
 }
