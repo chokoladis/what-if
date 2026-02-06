@@ -5,7 +5,6 @@ namespace App\Events\Broadcast\Question;
 use App\Models\QuestionVotes;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,7 +14,7 @@ class Vote implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public QuestionVotes $vote;
+//    public QuestionVotes $vote;
 
     /**
      * Create a new event instance.
@@ -33,7 +32,8 @@ class Vote implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('question.vote.'.$this->vote->id),
+            new Channel('question.vote'), //$this->vote->id
+//            new PrivateChannel('question.vote'), //$this->vote->id
         ];
     }
 }

@@ -115,4 +115,9 @@ $(function () {
         location.href = url.href
 
     })
+
+    // window.Echo.private('question.vote.${voteId}')
+    //     .listen('Vote', function (e){
+    //         console.log(e)
+    //     })
 });

@@ -36,6 +36,9 @@ class QuestionVotes extends Model
              * @return response()
              */
             static::updated(function ($item) use ($smartCache) {
+
+//                Vote::dispatch();
+
                 if ($smartCache){
                     Cache::forget('question_votes_'.$item->question_id);
                 }

@@ -12,3 +12,13 @@ window.Echo = new Echo({
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
 });
+
+window.Echo.channel('question.vote')
+    .listen('Broadcast\\Question\\Vote', function (e){
+        console.log(e)
+    })
+
+// Echo.private(`question.vote.${voteId}`)
+//     .listen('Vote', (e) => {
+//         console.log(e.order);
+//     });
