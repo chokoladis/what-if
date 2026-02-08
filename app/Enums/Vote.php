@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum Vote
+enum Vote:int
 {
-    const LIKE = 1;
-    const DISLIKE = -1;
+    case LIKE = 1;
+    case DISLIKE = -1;
+
+    public function isLike()
+    {
+        return $this === self::LIKE;
+    }
 }

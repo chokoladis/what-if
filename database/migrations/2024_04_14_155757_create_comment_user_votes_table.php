@@ -11,19 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comment_user_votes', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('comment_id');
-            $table->index('comment_id', 'comment_user_votes_comment_idx');
-            $table->foreign('comment_id', 'comment_user_votes_comments_fk')->references('id')->on('comments')->cascadeOnDelete();
+        if (!Schema::hasTable('comment_votes')) {
+            Schema::create('comment_votes', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('comment_id');
+                $table->index('comment_id', 'comment_user_votes_comment_idx');
+                $table->foreign('comment_id', 'comment_user_votes_comments_fk')->references('id')->on('comments')->cascadeOnDelete();
 
-            $table->unsignedBigInteger('user_id');
-            $table->index('user_id', 'comment_user_votes_user_idx');
-            $table->foreign('user_id', 'comment_user_votes_user_fk')->references('id')->on('users')->cascadeOnDelete();
+                $table->unsignedBigInteger('user_id');
+                $table->index('user_id', 'comment_user_votes_user_idx');
+                $table->foreign('user_id', 'comment_user_votes_user_fk')->references('id')->on('users')->cascadeOnDelete();
 
-            $table->tinyInteger('votes');
-            $table->timestamps();
-        });
+                $table->tinyInteger('vote');
+                $table->timestamps();
+
+                $table->primary(['comment_id', 'user_id']);
+            });
+        }
     }
 
     /**
@@ -31,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comment_user_votes');
+        Schema::dropIfExists('comment_votes');
     }
 };

@@ -44,3 +44,10 @@ if (!function_exists('getIPAddress')) {
         return $ip ?? $_SERVER['REMOTE_ADDR'];
     }
 }
+
+if (!function_exists('secureVal')) {
+    function safeVal(string $var)
+    {
+        return addslashes(strip_tags(trim($var)));
+    }
+}

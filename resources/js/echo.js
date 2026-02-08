@@ -15,10 +15,15 @@ window.Echo = new Echo({
 
 window.Echo.channel('question.vote')
     .listen('Broadcast\\Question\\Vote', function (e){
-        console.log(e)
+        console.log('question', e)
     })
 
-// Echo.private(`question.vote.${voteId}`)
-//     .listen('Vote', (e) => {
-//         console.log(e.order);
-//     });
+// window.Echo.channel('comment.vote')
+//     .listen('Broadcast\\Comment\\Vote', function (e){
+//         console.log('comment', e)
+//     })
+
+window.Echo.private(`comment.vote.${window.App.userId}`)
+    .notification( (e) => {
+        console.log('comment', e)
+    })

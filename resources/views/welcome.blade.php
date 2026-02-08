@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('style')
-    @vite(['resources/css/slick.css', 'resources/css/slick-theme.css'])
+    @vite(['resources/scss/components/slider.scss'])
 @endpush
 
 @section('content')

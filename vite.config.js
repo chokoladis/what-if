@@ -18,8 +18,6 @@ export default defineConfig({
                 'resources/js/profile.js',
                 'resources/js/question.js',
                 'resources/js/components/slider.js',
-                'resources/css/slick.css',
-                'resources/css/slick-theme.css',
             ],
             refresh: true,
         }),

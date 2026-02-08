@@ -122,6 +122,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function newNotify()
     {
-        return $this->notifications()->where('viewed', false)->latest();
+        return $this->notifications()->where('viewed', false)->latest()->get();
+    }
+
+    public function getPhotoIdAttribute()
+    {
+        return $this->photo_id ?? null;
     }
 }

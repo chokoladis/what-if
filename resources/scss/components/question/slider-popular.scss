@@ -82,4 +82,8 @@
       overflow: hidden;
     }
   }
+
+  & + .banner {
+    margin-top: 20px;
+  }
 }

@@ -134,16 +134,18 @@
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 <i class="uk-icon" uk-icon="bell"></i>
-                                @if(!auth()->user()?->newNotify->isEmpty())
-                                    <span class="position-absolute bottom-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ auth()->user()?->newNotify->count }}<span class="visually-hidden">unread messages</span>
+                                @if(!auth()->user()?->newNotify()->isEmpty())
+                                    <span class="position-absolute bottom-10 start-0 translate-middle badge rounded-pill bg-danger">
+                                        {{ auth()->user()?->newNotify()->count() }}<span class="visually-hidden">unread messages</span>
                                     </span>
                                 @endif
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
-                                <a class="dropdown-item" href="{{ route('profile.index') }}">
-
-                                </a>
+                                @foreach(auth()->user()?->newNotify() as $notify)
+                                    <div class="dropdown-item">
+                                        {!! $notify->toMessage() !!}
+                                    </div>
+                                @endforeach
                             </div>
                         </li>
                         <li class="nav-item dropdown">

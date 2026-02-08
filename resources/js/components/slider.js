@@ -1,4 +1,5 @@
-import 'slick-slider';
+import 'slick-carousel/slick/slick.min.js';
+
 $(function () {
     $('.category_slider').slick({
         infinite: true,
@@ -9,7 +10,7 @@ $(function () {
         autoplay: true,
         autoplaySpeed: 3500,
         infinite: true,
-        dots: true,
+        dots: false,
         slidesToShow: 3,
         slidesToScroll: 1,
         responsive: [

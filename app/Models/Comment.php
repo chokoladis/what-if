@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\NotificationType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -87,10 +88,12 @@ class Comment extends Model
 
     public function getRating()
     {
+        $commentVotes = new CommentVotes;
+
         return $this->newQuery()
             ->where('comments.id', $this->id)
-            ->join('comment_user_votes as t_statuses', 'comments.id', '=', 'comment_id')
-            ->selectRaw('SUM(t_statuses.votes) as rating')
+            ->join($commentVotes->getTable().' as t_statuses', 'comments.id', '=', 'comment_id')
+            ->selectRaw('SUM(t_statuses.vote) as rating')
             ->first();
     }
 
@@ -114,5 +117,15 @@ class Comment extends Model
             ]);
         });
 
+    }
+
+    public function getShortText()
+    {
+        return mb_strlen($this->text) > 20 ? mb_substr($this->text,0, 20).'...' : $this->text;
+    }
+
+    public function question(): BelongsTo
+    {
+        return $this->belongsTo(Question::class);
     }
 }

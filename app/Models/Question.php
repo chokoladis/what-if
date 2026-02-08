@@ -74,7 +74,7 @@ class Question extends BaseModel
             // todo deficlt sql
             $query = QuestionComments::where('question_id', $this->id)
                 ->join('comment_user_votes as comment_votes', 'question_comments.comment_id', '=', 'comment_votes.comment_id')
-                ->select(['comment_votes.votes', 'comment_votes.comment_id'])
+                ->select(['comment_votes.vote', 'comment_votes.comment_id'])
                 ->get();
 
             $comments = [];
@@ -86,7 +86,7 @@ class Question extends BaseModel
                     if (!isset($comments[$comment->comment_id]))
                         $comments[$comment->comment_id] = 0;
 
-                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $comment->votes;
+                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $comment->vote;
                 }
 
                 $popularCommentId = array_search(max($comments), $comments);
@@ -107,6 +107,7 @@ class Question extends BaseModel
         return $this->HasOne(Category::class, 'id', 'category_id');
     }
 
+    //    todo
     public function question_comment(): HasMany
     {
         return $this->HasMany(QuestionComments::class, 'question_id', 'id')
@@ -246,5 +247,10 @@ class Question extends BaseModel
     public static function scopeActive()
     {
         return Question::query()->where('active', true);
+    }
+
+    public function getShortTitle()
+    {
+        return mb_strlen($this->title) > 15 ? mb_substr($this->title,0, 15).'...' : $this->title;
     }
 }

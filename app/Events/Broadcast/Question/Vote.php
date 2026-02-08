@@ -2,6 +2,7 @@
 
 namespace App\Events\Broadcast\Question;
 
+use App\Models\Notification;
 use App\Models\QuestionVotes;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -14,14 +15,14 @@ class Vote implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-//    public QuestionVotes $vote;
-
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(
+        public Notification $notification,
+        public string $message,
+    )
     {
-        //
     }
 
     /**

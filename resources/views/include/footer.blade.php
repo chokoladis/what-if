@@ -129,6 +129,12 @@
         </script>
     @endif
 
+    <script>
+        window.App = {
+            userId: {{ auth()->id() ?? 'null' }}
+        }
+    </script>
+
     @vite(['resources/js/app.js'])
     @stack('script')
 
