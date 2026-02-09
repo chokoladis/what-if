@@ -23,7 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'text' => 'required|string|max:2000',
-            'comment_main_id' => 'nullable|int|min:1',
+            'comment_main_id' => 'nullable|int|exists:comments,id',
         ];
     }
 }

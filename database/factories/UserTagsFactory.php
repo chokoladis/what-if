@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Question;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\QuestionComments>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class CommentFactory extends Factory
+class UserTagsFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,10 +19,8 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'question_id' => Question::query()->select('id')->inRandomOrder()->first()->id,
             'user_id' => User::query()->inRandomOrder()->select('id')->first()->id,
-            'text' => $this->faker->realText(),
-            'active' => $this->faker->boolean(),
+            'tag_is' => Tag::query()->inRandomOrder()->select('id')->first()->id,
         ];
     }
 }

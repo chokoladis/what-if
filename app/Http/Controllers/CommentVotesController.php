@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Comment\UserStatusStoreRequest;
+use App\Http\Requests\VoteStoreRequest;
 use App\Models\CommentVotes;
 
 class CommentVotesController extends Controller
 {
-    public function vote(UserStatusStoreRequest $request)
+    public function vote(VoteStoreRequest $request)
     {
         $data = $request->validated();
-        $comment_id = intval($data['comment_id']);
-        $vote = intval($data['action']);
+        $comment_id = $data['entity_id'];
+        $vote = $data['vote'];
 
         $commentVote = CommentVotes::query()
             ->where('comment_id', $comment_id)

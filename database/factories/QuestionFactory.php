@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\File;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,7 @@ class QuestionFactory extends Factory
             'title' => $this->faker->sentence(),
             'category_id' => Category::factory(),
             'file_id' => File::factory()->forQuestion(),
-            'user_id' => $this->faker->numberBetween(1, 3),
+            'user_id' => User::query()->inRandomOrder()->select('id')->first()->id,
             'active' => $this->faker->boolean(),
         ];
     }

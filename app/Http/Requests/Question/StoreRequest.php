@@ -23,7 +23,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => ['nullable', 'string'],
+            'category' => ['nullable', 'string'], //todo id categories
             'title' => ['required', 'string', 'min:3'],
             'tags' => ['nullable', 'array'],
             'img' => ['nullable', 'image', 'mimes:' . implode(',', FileService::ALLOW_IMG_EXT), 'max:' . FileService::MAX_FILE_SIZE_KB]

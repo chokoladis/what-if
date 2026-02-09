@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Comment;
+namespace App\Http\Requests;
 
+use App\Enums\Vote;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
-class UserStatusStoreRequest extends FormRequest
+class VoteStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +24,8 @@ class UserStatusStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment_id' => ['required', 'integer', 'exists:comments,id'],
-            'action' => ['required', 'integer', 'min:-1', 'max:1'],
+            'entity_id' => ['required', 'integer', 'min:1'],
+            'vote' => ['required', new Enum(Vote::class)],
         ];
     }
 }

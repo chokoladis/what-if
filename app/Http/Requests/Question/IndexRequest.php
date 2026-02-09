@@ -23,7 +23,7 @@ class IndexRequest extends FormRequest
     {
         return [
             'page' => ['integer', 'min:1'],
-            'perPage' => ['integer', 'min:1', 'max:30'],
+            'perPage' => ['integer', 'min:5', 'max:30'],
             'tags' => ['array'], //todo
             'resolved' => ['boolean'], //todo check
             'categories' => ['array'],

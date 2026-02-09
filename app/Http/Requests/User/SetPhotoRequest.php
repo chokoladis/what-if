@@ -30,9 +30,7 @@ class SetPhotoRequest extends FormRequest
     public function messages(): array
     {
         return [
-
             //The photo field must be an image.
-            //
             //The photo field must be a file of type: jpeg, png, jpg, gif.
         ];
     }

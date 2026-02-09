@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Vote;
 use App\Models\Question;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,13 +18,10 @@ class QuestionVotesFactory extends Factory
      */
     public function definition(): array
     {
-        $id = Question::query()->select('id')->inRandomOrder()->first()->id;
-        $userId = \App\Models\User::query()->select('id')->inRandomOrder()->first()->id;
-
         return [
-            'question_id' => $id,
-            'user_id' => $userId,
-            'vote' => $this->faker->randomElement([-1, 1]),
+            'question_id' => Question::query()->select('id')->inRandomOrder()->first()->id,
+            'user_id' => \App\Models\User::query()->select('id')->inRandomOrder()->first()->id,
+            'vote' => Vote::cases()[rand(0, 1)],
         ];
     }
 }
