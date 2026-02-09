@@ -20,7 +20,7 @@ class UserTagsFactory extends Factory
     {
         return [
             'user_id' => User::query()->inRandomOrder()->select('id')->first()->id,
-            'tag_is' => Tag::query()->inRandomOrder()->select('id')->first()->id,
+            'tag_id' => Tag::query()->inRandomOrder()->select('id')->first()->id,
         ];
     }
 }

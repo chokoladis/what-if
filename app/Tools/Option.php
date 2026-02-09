@@ -31,6 +31,6 @@ class Option
             return filter_var($result->value, FILTER_VALIDATE_BOOLEAN);
         }
 
-        return false;
+        return config('cache.smart_cache') ?? false;
     }
 }

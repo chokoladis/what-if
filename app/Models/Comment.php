@@ -109,12 +109,15 @@ class Comment extends Model
          */
 
         static::created(function ($item) {
-            Notification::create([
-                'user_id' => $item->user_id,
-                'entity_id' => $item->id,
-                'entity' => __CLASS__,
-                'type' => $this->isReply() ? NotificationType::RESPONDED_TO_COMMENT : NotificationType::QUESTION_COMMENTED,
-            ]);
+
+            if (strtolower(config('notification.status')) !== 'off'){
+                Notification::create([
+                    'user_id' => $item->user_id,
+                    'entity_id' => $item->id,
+                    'entity' => __CLASS__,
+                    'type' => $this->isReply() ? NotificationType::RESPONDED_TO_COMMENT : NotificationType::QUESTION_COMMENTED,
+                ]);
+            }
         });
 
     }

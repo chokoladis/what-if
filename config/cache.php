@@ -104,4 +104,5 @@ return [
 
     'prefix' => env('CACHE_PREFIX', 'cache').'_',
 
+    'smart_cache' => env('CACHE_SMART', false),
 ];

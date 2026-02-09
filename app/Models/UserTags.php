@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserTag extends Model
+//todo search where used old name
+class UserTags extends Model
 {
     use HasFactory;
 
@@ -18,6 +19,6 @@ class UserTag extends Model
 
     public function tag()
     {
-        return $this->hasOne(Tag::class, 'id', 'user_id');
+        return $this->hasOne(Tag::class, 'id', 'tag_id');
     }
 }

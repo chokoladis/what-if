@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Question;
 use App\Models\QuestionComments;
 use App\Models\QuestionVotes;
@@ -15,7 +16,8 @@ class QuestionSeeder extends Seeder
     public function run(): void
     {
         Question::factory(10)->create();
-        QuestionComments::factory(20)->create();
         QuestionVotes::factory(30)->create();
+        Comment::factory(30)->create();
+        //        todo commentVotes
     }
 }

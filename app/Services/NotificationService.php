@@ -13,6 +13,11 @@ final class NotificationService
 {
     public function vote(NotificationType $type, Model $modelVote)
     {
+//        todo middleware or base service / magic method ?
+        if (strtolower(config('notification.status')) === 'off') {
+            return;
+        }
+
         if ($type === NotificationType::QUESTION_LIKED) {
             $entity = 'question';
         } else if ($type === NotificationType::COMMENT_LIKED) {

@@ -23,8 +23,12 @@ return new class extends Migration
             $table->foreign('question_id', 'comments_question_fk')->references('id')->on('questions')->cascadeOnDelete();
 
             $table->string('text', 1000);
-            $table->boolean('active')->default(false)->nullable();
-            
+            $table->boolean('active')->nullable()->default(false);
+
+            $table->boolean('is_answer')->nullable()->default(false);
+//            $table->index('right_comment_id', 'questions_right_comment_idx');
+//            $table->foreign('right_comment_id', 'questions_comment_fk')->references('id')->on('comments')->cascadeOnDelete();
+
             $table->timestamps();
             $table->softDeletes();
         });

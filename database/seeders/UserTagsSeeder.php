@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\UserTag;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\UserTags;
 use Illuminate\Database\Seeder;
 
 class UserTagsSeeder extends Seeder
@@ -13,6 +12,6 @@ class UserTagsSeeder extends Seeder
      */
     public function run(): void
     {
-        UserTag::query(20)->create();
+        UserTags::factory(20)->create();
     }
 }

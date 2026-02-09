@@ -21,7 +21,7 @@ class QuestionVotesFactory extends Factory
         return [
             'question_id' => Question::query()->select('id')->inRandomOrder()->first()->id,
             'user_id' => \App\Models\User::query()->select('id')->inRandomOrder()->first()->id,
-            'vote' => Vote::cases()[rand(0, 1)],
+            'vote' => Vote::cases()[rand(0, 1)]->value,
         ];
     }
 }

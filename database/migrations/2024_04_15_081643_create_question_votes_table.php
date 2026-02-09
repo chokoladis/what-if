@@ -28,8 +28,6 @@ return new class extends Migration
                 $table->tinyInteger('vote');
 
                 $table->timestamps();
-
-                $table->primary(['question_id', 'user_id']);
             });
         }
     }

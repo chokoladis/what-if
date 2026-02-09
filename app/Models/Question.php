@@ -69,11 +69,10 @@ class Question extends BaseModel
 
     public function getPopularComment()
     {
-        if (!$this->question_comment->isEmpty()) {
+        if (!$this->comments->isEmpty()) {
 
-            // todo deficlt sql
-            $query = QuestionComments::where('question_id', $this->id)
-                ->join('comment_user_votes as comment_votes', 'question_comments.comment_id', '=', 'comment_votes.comment_id')
+            // todo
+            $query = $this->comments->join('comment_user_votes as comment_votes', 'question_comments.comment_id', '=', 'comment_votes.comment_id')
                 ->select(['comment_votes.vote', 'comment_votes.comment_id'])
                 ->get();
 
@@ -108,11 +107,10 @@ class Question extends BaseModel
     }
 
     //    todo
-    public function question_comment(): HasMany
+    public function comments() : HasMany
     {
-        return $this->HasMany(QuestionComments::class, 'question_id', 'id')
-            ->join('comments', 'question_comments.comment_id', '=', 'comments.id')
-            ->where('comments.active', true);
+        return $this->hasMany(Comment::class, 'question_id', 'id')
+            ->where('active', true);
     }
 
     public function file(): HasOne
@@ -137,6 +135,7 @@ class Question extends BaseModel
 
     public function right_comment(): hasOne
     {
+//        todo rework
         return $this->HasOne(Comment::class, 'id', 'right_comment_id');
     }
 

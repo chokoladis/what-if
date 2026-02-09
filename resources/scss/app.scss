@@ -389,10 +389,4 @@ footer {
 ul.dropdown-menu{
   max-height: 400px;
   overflow: auto;
-
-  .sub-dropdown:hover {
-    .dropdown-menu{
-      display: block;
-    }
-  }
 }

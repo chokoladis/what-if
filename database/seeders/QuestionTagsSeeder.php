@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\QuestionTags;
 use Illuminate\Database\Seeder;
 
-class QuestionTagSeeder extends Seeder
+class QuestionTagsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

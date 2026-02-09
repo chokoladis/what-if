@@ -27,9 +27,7 @@ class Category extends BaseModel
     public static function getCategoriesLevel0()
     {
         return Cache::remember('category_level_0', now()->addDay(), function () {
-            return $categories = Category::active()
-                ->where('level', 0)
-                ->get();
+            return Category::active()->where('level', 0)->get();
         });
     }
 

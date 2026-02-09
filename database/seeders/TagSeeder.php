@@ -18,7 +18,7 @@ class TagSeeder extends Seeder
         ];
 
         foreach ($collection as $tag) {
-            Tag::factory()->create([ 'name' => $tag ]);
+            Tag::create([ 'name' => $tag ]);
         }
     }
 }

@@ -66,27 +66,10 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            {{--todo все остальные с подразделами--}}
                             @foreach(\App\Models\Category::getCategoriesLevel0() as $category)
-                                @if(!$category->subcategories->isEmpty())
-                                    {{--todo recurse--}}
-                                    <li class="nav-item sub-dropdown">
-                                        <a class="nav-link dropdown-item dropdown-toggle" href="#"
-                                           role="button" data-bs-toggle="sub-dropdown" aria-expanded="false"
-                                        >{{ $category->title }}</a>
-                                        <ul class="dropdown-menu">
-                                            @foreach($category->subcategories as $subcategory)
-                                                <li><a class="dropdown-item"
-                                                       href="{{ route('categories.detail', $subcategory->code) }}">{{ $subcategory->title }}</a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </li>
-                                @else
-                                    <li><a class="dropdown-item"
-                                           href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a>
-                                    </li>
-                                @endif
+                                <li><a class="dropdown-item"
+                                       href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a>
+                                </li>
                             @endforeach
                         </ul>
                     </li>

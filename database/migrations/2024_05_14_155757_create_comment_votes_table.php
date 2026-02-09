@@ -24,8 +24,6 @@ return new class extends Migration
 
                 $table->tinyInteger('vote');
                 $table->timestamps();
-
-                $table->primary(['comment_id', 'user_id']);
             });
         }
     }

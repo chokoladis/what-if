@@ -11,6 +11,11 @@ reload:
 	make down
 	make up
 
+db-start:
+	docker exec -w /var/www/what_if what-if_php php artisan migrate
+	docker exec -w /var/www/what_if what-if_php sh -c "php artisan db:seed DatabaseSeeder && php artisan db:seed QuestionSeeder"
+	docker exec -w /var/www/what_if what-if_php sh -c "php artisan db:seed TagSeeder && php artisan db:seed QuestionTagsSeeder && php artisan db:seed UserTagsSeeder"
+
 db-restore:
 	gunzip -c dumps/what_if.sql.gz | docker exec -i what-if_mysql mysql -u$(DB_USERNAME) -p$(DB_PASSWORD) $(DB_DATABASE);
 db-export:
