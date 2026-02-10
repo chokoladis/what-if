@@ -89,8 +89,8 @@ class QuestionController extends Controller
 
         $arComments = [];
 //            mb use algoritm
-        foreach ($question->question_comment as $questionComment) {
-            $comment = $questionComment->comment;
+        /* @var \App\Models\Comment $comment */
+        foreach ($question->comments as $comment) {
 
             if ($comment->isReply()) {
                 continue;

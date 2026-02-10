@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserVoteStore;
+use App\Http\Requests\VoteStoreRequest;
 use App\Models\Question;
 use App\Models\QuestionVotes;
 
 class QuestionVoteController extends Controller
 {
-    public function set(UserVoteStore $request)
+    public function set(VoteStoreRequest $request)
     {
         $strPath = $request->server('REQUEST_URI');
         $arPath = explode('/', $strPath);

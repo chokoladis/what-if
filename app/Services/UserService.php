@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Question;
 use App\Models\QuestionTags;
-use App\Models\UserTag;
+use App\Models\UserTags;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -40,7 +40,7 @@ class UserService
             ->distinct()
             ->get(['tag_id']);
 
-        $userTags = UserTag::query()
+        $userTags = UserTags::query()
             ->where('user_id', auth()->id())
             ->whereNotIn('tag_id', $tags)
             ->select('tag_id')

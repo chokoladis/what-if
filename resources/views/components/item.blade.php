@@ -55,9 +55,8 @@
                 @if ($question->right_comment_id)
                     <x-right-answer :comment="$question->right_comment"></x-right-answer>
                 @endif
-                @if ($question->getPopularComment())
-                    <x-comment.popular-comment
-                            :comment="$question->getPopularComment()"></x-comment.popular-comment>
+                @if ($popularComment = $question->getPopularComment())
+                    <x-comment.popular-comment :comment="$popularComment"></x-comment.popular-comment>
                 @endif
 
                 <div class="date">

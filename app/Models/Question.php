@@ -8,6 +8,8 @@ use App\Models\Errors\CommonError;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
@@ -71,14 +73,18 @@ class Question extends BaseModel
     {
         if (!$this->comments->isEmpty()) {
 
-            // todo
-            $query = $this->comments->join('comment_user_votes as comment_votes', 'question_comments.comment_id', '=', 'comment_votes.comment_id')
-                ->select(['comment_votes.vote', 'comment_votes.comment_id'])
+            $query = DB::table('comments')
+                ->join('questions', 'questions.id', '=', 'comments.question_id')
+                ->join('comment_votes', 'comments.id', '=', 'comment_votes.comment_id')
+                ->where('comments.question_id', $this->id)
+                ->where('comments.active', true)
+                ->select('comment_votes.vote', 'comment_votes.comment_id')
                 ->get();
 
             $comments = [];
 
             if ($query->isNotEmpty()) {
+//                dump($query);
                 foreach ($query as $comment) {
 
                     // todo check
@@ -90,9 +96,7 @@ class Question extends BaseModel
 
                 $popularCommentId = array_search(max($comments), $comments);
 
-                $popularComment = Comment::query()->where('id', $popularCommentId)->first();
-
-                return $popularComment;
+                return Comment::query()->find($popularCommentId);
             }
 
             return false;

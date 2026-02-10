@@ -7,8 +7,6 @@
 
     $flagSrc = Facades\Storage::url('main/flag-'.$lang.'.svg');
     $theme = Facades\Cookie::get('theme', 'dark');
-
-    $notifications = auth()->id() ? \App\Services\UserService::getLastNotifications() : null;
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>
@@ -117,18 +115,28 @@
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 <i class="uk-icon" uk-icon="bell"></i>
-                                @if(!auth()->user()?->newNotify()->isEmpty())
+                                @php
+                                    $notifications = auth()->user()?->lastNoViewedNotifications();
+                                @endphp
+
+                                @if(!$notifications->isEmpty()) {
                                     <span class="position-absolute bottom-10 start-0 translate-middle badge rounded-pill bg-danger">
-                                        {{ auth()->user()?->newNotify()->count() }}<span class="visually-hidden">unread messages</span>
+                                        {{ $notifications->count() }}<span class="visually-hidden">unread messages</span>
                                     </span>
                                 @endif
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
-                                @foreach(auth()->user()?->newNotify() as $notify)
+                                @if(!$notifications->isEmpty())
+                                    @foreach($notifications as $notify)
+                                        <div class="dropdown-item">
+                                            {!! $notify->toMessage() !!}
+                                        </div>
+                                    @endforeach
+                                @else
                                     <div class="dropdown-item">
-                                        {!! $notify->toMessage() !!}
+                                        {{ __('notifications not found') }}
                                     </div>
-                                @endforeach
+                                @endif
                             </div>
                         </li>
                         <li class="nav-item dropdown">

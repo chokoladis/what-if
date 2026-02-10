@@ -18,7 +18,7 @@ class CommentVotes extends Model
 
     public function getTable()
     {
-        return 'comment_user_votes';
+        return 'comment_votes';
     }
 
     public static function getForCurrentUser($commentId)

@@ -95,6 +95,7 @@ class QuestionCategoryResource extends Resource
 
     public static function table(Table $table): Table
     {
+//        todo tags
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),

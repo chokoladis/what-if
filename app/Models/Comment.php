@@ -90,11 +90,15 @@ class Comment extends Model
     {
         $commentVotes = new CommentVotes;
 
-        return $this->newQuery()
-            ->where('comments.id', $this->id)
-            ->join($commentVotes->getTable().' as t_statuses', 'comments.id', '=', 'comment_id')
-            ->selectRaw('SUM(t_statuses.vote) as rating')
+        return $this->votes()
+//            ->join($commentVotes->getTable().' as votes', 'comments.id', '=', 'comment_id')
+            ->selectRaw('SUM('.$commentVotes->getTable().'.vote) as total_rating')
             ->first();
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(CommentVotes::class, 'comment_id', 'id');
     }
 
     public static function boot()
@@ -110,6 +114,7 @@ class Comment extends Model
 
         static::created(function ($item) {
 
+//            todo setting
             if (strtolower(config('notification.status')) !== 'off'){
                 Notification::create([
                     'user_id' => $item->user_id,

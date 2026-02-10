@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -120,9 +121,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Notification::class, 'user_id');
     }
 
-    public function newNotify()
+    public function lastNoViewedNotifications()
     {
-        return $this->notifications()->where('viewed', false)->latest()->get();
+        return Cache::remember('notify_'.auth()->id(), 86400, function () {
+            return $this->notifications()->where('viewed', false)->limit(5)->latest()->get();
+        });
     }
 
     public function getPhotoIdAttribute()

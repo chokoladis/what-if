@@ -30,4 +30,4 @@ fix-right:
 	sudo chmod -R 777 storage
 
 clear-cache:
-	docker exec -it what-if_php php artisan optimize
+	docker exec -it what-if_php php artisan optimize:clear

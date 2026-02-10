@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\QuestionResource\Pages;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\File;
 use App\Models\Question;
 use App\Models\QuestionComments;
@@ -51,10 +52,9 @@ class QuestionResource extends Resource
                     ->default(false),
                 Forms\Components\Select::make('right_comment_id')
                     ->options(
-                        QuestionComments::query()
-                            ->join('comments', 'comments.id', '=', 'question_comments.comment_id')
+                        Comment::query()
                             ->where('question_id', $schema->model->id)
-                            ->pluck('comments.text', 'comment_id')
+                            ->pluck('text', 'id')
 //                        todo обрезать могуть быть слишком длинные данные
                     ),
                 Forms\Components\CheckboxList::make('tags')

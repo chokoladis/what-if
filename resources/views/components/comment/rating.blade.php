@@ -3,10 +3,10 @@
     use App\Models\CommentVotes;
 
     $queryRating = $comment->getRating();
-    
+    $totalRating = intval($queryRating['total_rating']);
+
     $commentStatus = CommentVotes::getForCurrentUser($comment->id);
-    
-    $rating = intval($queryRating['rating']);
+
     $userRating = !empty($commentStatus) ? \App\Enums\Vote::tryFrom($commentStatus['status']) : null;
 @endphp
 @if(auth()->id())
@@ -19,7 +19,7 @@
             <span class="uk-icon" uk-icon="plus"></span>
         </div>
         <div class="rating">
-            <b>{{ $rating }}</b>
+            <b>{{ $totalRating }}</b>
         </div>
         <div class="icon icon-circle minus {{ $userRating?->isLike() ? '' : 'active'}}" data-action="{{ \App\Enums\Vote::DISLIKE }}">
             <span class="uk-icon" uk-icon="minus"></span>
@@ -31,7 +31,7 @@
             <span class="uk-icon" uk-icon="plus"></span>
         </div>
         <div class="rating">
-            <b>{{ $rating }}</b>
+            <b>{{ $totalRating }}</b>
         </div>
         <div class="icon icon-circle minus">
             <span class="uk-icon" uk-icon="minus"></span>

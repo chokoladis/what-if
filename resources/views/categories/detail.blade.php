@@ -80,8 +80,8 @@
                                     <small>{{ $question->created_at }}</small>
                                 </div>
                             </a>
-                            <span class="comments-count badge rounded-pill {{ count($question->question_comment) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">
-                                {{ sprintf(__('questions.comments') . ' (%u)', count($question->question_comment) ?? 0) }}</span>
+                            <span class="comments-count badge rounded-pill {{ count($question->comments) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">
+                                {{ sprintf(__('questions.comments') . ' (%u)', count($question->comments) ?? 0) }}</span>
                         </li>
                     @endforeach
                 </div>
