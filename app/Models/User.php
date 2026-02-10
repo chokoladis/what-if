@@ -105,7 +105,7 @@ class User extends Authenticatable implements FilamentUser
     public function getQuestionsWithPages(Request $request)
     {
         $data = $request->validate([
-            'perPage' => 'integer|min:1|max:30',
+            'perPage' => 'integer|min:5|max:30',
         ]);
 
         return $this->hasMany(Question::class)->latest()->paginate($data['perPage'] ?? 5);
@@ -114,18 +114,6 @@ class User extends Authenticatable implements FilamentUser
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'user_tags');
-    }
-
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class, 'user_id');
-    }
-
-    public function lastNoViewedNotifications()
-    {
-        return Cache::remember('notify_'.auth()->id(), 86400, function () {
-            return $this->notifications()->where('viewed', false)->limit(5)->latest()->get();
-        });
     }
 
     public function getPhotoIdAttribute()

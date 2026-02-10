@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\NotificationType;
+use App\Notifications\Question\VoteNotification;
 use App\Services\NotificationService;
 use App\Tools\Option;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +31,11 @@ class QuestionVotes extends Model
         return $this->belongsTo(Question::class, 'question_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
     public static function boot()
     {
         $notifyService = new NotificationService();
@@ -46,7 +52,7 @@ class QuestionVotes extends Model
         static::updated(function ($item) use ($smartCache, $notifyService) {
 
             if (\App\Enums\Vote::from($item->vote) === \App\Enums\Vote::LIKE) {
-                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
+//                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
             }
 
             if ($smartCache){
@@ -57,7 +63,9 @@ class QuestionVotes extends Model
         static::created(function ($item) use ($smartCache, $notifyService) {
 
             if (\App\Enums\Vote::from($item->vote) === \App\Enums\Vote::LIKE) {
-                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
+
+                $item->question->user->notify(new VoteNotification($item->user, $item->question));
+//                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
             }
 
             if ($smartCache){

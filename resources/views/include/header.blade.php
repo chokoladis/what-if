@@ -116,7 +116,7 @@
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 <i class="uk-icon" uk-icon="bell"></i>
                                 @php
-                                    $notifications = auth()->user()?->lastNoViewedNotifications();
+                                    $notifications = auth()->user()?->notifications()->get();
                                 @endphp
 
                                 @if(!$notifications->isEmpty()) {
@@ -129,7 +129,7 @@
                                 @if(!$notifications->isEmpty())
                                     @foreach($notifications as $notify)
                                         <div class="dropdown-item">
-                                            {!! $notify->toMessage() !!}
+                                            {!! $notify->data['message'] !!}
                                         </div>
                                     @endforeach
                                 @else
