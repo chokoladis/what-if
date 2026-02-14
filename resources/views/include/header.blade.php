@@ -116,12 +116,17 @@
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 <i class="uk-icon" uk-icon="bell"></i>
                                 @php
-                                    $notifications = auth()->user()?->notifications()->get();
+                                    $notificationsCount = auth()->user()?->notifications()->select('id')->get()->count();
+                                    $notifications = auth()->user()?->notifications()->limit(5)->get();
+                                    //                                    todo посмотреть все
                                 @endphp
 
                                 @if(!$notifications->isEmpty()) {
                                     <span class="position-absolute bottom-10 start-0 translate-middle badge rounded-pill bg-danger">
-                                        {{ $notifications->count() }}<span class="visually-hidden">unread messages</span>
+                                        <b class="count">
+                                            {{ $notificationsCount }}
+                                        </b>
+                                        <span class="visually-hidden">unread messages</span>
                                     </span>
                                 @endif
                             </a>

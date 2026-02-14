@@ -6,6 +6,7 @@ use App\Enums\NotificationType;
 use App\Events\Broadcast\Comment\Vote as CommentVote;
 use App\Events\Broadcast\Question\Vote as QuestionVote;
 use App\Models\Notification;
+use App\Notifications\Question\VoteNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -13,6 +14,8 @@ final class NotificationService
 {
     public function vote(NotificationType $type, Model $modelVote)
     {
+//        $item->question->user->notify(new VoteNotification($item->user, $item->question));
+
 //        todo middleware or base service / magic method ?
         if (strtolower(config('notification.status')) === 'off') {
             return;

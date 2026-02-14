@@ -58,42 +58,29 @@ class FileService implements FileProxyRedisInterface
 
     public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
     {
-
+//        сделать сохранение по папкам-юзерам и названиям файлов ?
         $root = public_path("storage/{$mainDir}");
         $subDir = substr($img->hashName(), 0, 3);
         $folder = "{$root}/{$subDir}";
 
-//        $root = public_path('/storage/' . $mainDir);
-//        $subDir = substr($img->hashName(), 0, 3 );
-
-        try {
-            if (!is_dir($folder)) {
-                mkdir($folder, recursive: TRUE);
-            }
-
-            $ext = $img->extension();
-            $name = strlen($img->hashName()) > 45 ? substr($img->hashName(), 0, 45) . '.' . $ext : $img->hashName();
-            $filePath = "{$subDir}/{$name}";
-
-            $destination = "{$folder}/{$name}";
-
-            $data = [
-                'name' => $name,
-                'expansion' => $ext,
-                'path' => $filePath,
-                'relation' => $mainDir
-            ];
-
-            \Illuminate\Support\Facades\File::copy($img->getRealPath(), $destination);
-//            $img->move($folder, $name);
-
-            $file = File::create($data);
-
-        } catch (\Throwable $th) {
-            throw $th;
+        if (!is_dir($folder)) {
+            mkdir($folder, recursive: TRUE);
         }
 
-        return $file;
+        $ext = $img->extension();
+        $name = strlen($img->hashName()) > 45 ? substr($img->hashName(), 0, 45) . '.' . $ext : $img->hashName();
+        $filePath = "{$subDir}/{$name}";
+
+        $destination = "{$folder}/{$name}";
+
+        \Illuminate\Support\Facades\File::copy($img->getRealPath(), $destination);
+
+        return File::create([
+            'name' => $name,
+            'expansion' => $ext,
+            'path' => $filePath,
+            'relation' => $mainDir
+        ]);
     }
 
     static protected function generatePhotoPath($file, $mainDir)

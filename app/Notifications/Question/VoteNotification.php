@@ -2,14 +2,11 @@
 
 namespace App\Notifications\Question;
 
-use App\Enums\NotificationType;
 use App\Models\Question;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 
 class VoteNotification extends Notification
 {
@@ -42,6 +39,7 @@ class VoteNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+//        check unique
         $url = route('questions.detail', $this->question->code);
         $message = sprintf('Ваш вопрос - <a href="%s">%s</a> лайкнул пользователь - %s',
             $url,
@@ -60,15 +58,18 @@ class VoteNotification extends Notification
 //        $notifiable - model user
 
         $url = route('questions.detail', $this->question->code);
-        $message = sprintf('Ваш вопрос - <a href="%s">%s</a> лайкнул пользователь - %s',
+        $message = sprintf(
+            'Ваш вопрос - <a href="%s">%s</a> лайкнул пользователь - %s',
             $url,
             safeVal($this->question->getShortTitle()),
-            safeVal($notifiable->name)
+            safeVal($this->voter->name)
         );
 
         return new BroadcastMessage([
-            'from' => $notifiable->id,
-            'to' => $this->question->user->id,
+            // Кто поставил лайк
+            'from' => $this->voter->id,
+            // Кому предназначено уведомление (владелец вопроса)
+            'to' => $notifiable->id,
             'message' => $message,
         ]);
     }

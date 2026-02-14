@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\NotificationType;
 use App\Notifications\Question\VoteNotification;
-use App\Services\NotificationService;
 use App\Tools\Option;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,8 +37,6 @@ class QuestionVotes extends Model
 
     public static function boot()
     {
-        $notifyService = new NotificationService();
-
         $smartCache = Option::isSmartCacheOn();
 
         parent::boot();
@@ -49,10 +46,10 @@ class QuestionVotes extends Model
          *
          * @return response()
          */
-        static::updated(function ($item) use ($smartCache, $notifyService) {
+        static::updated(function ($item) use ($smartCache) {
 
             if (\App\Enums\Vote::from($item->vote) === \App\Enums\Vote::LIKE) {
-//                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
+
             }
 
             if ($smartCache){
@@ -60,12 +57,16 @@ class QuestionVotes extends Model
             }
         });
 
-        static::created(function ($item) use ($smartCache, $notifyService) {
+        static::created(function ($item) use ($smartCache) {
 
             if (\App\Enums\Vote::from($item->vote) === \App\Enums\Vote::LIKE) {
 
+                //        todo middleware or base service / magic method ?
+                if (strtolower(config('notification.status')) === 'off') {
+                    return;
+                }
+
                 $item->question->user->notify(new VoteNotification($item->user, $item->question));
-//                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
             }
 
             if ($smartCache){

@@ -47,6 +47,12 @@ class VoteNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+//        $url = route('questions.detail', $this->comment->question->code);
+//        $message = sprintf('Ваш комментарий - <a href="%s">%s</a> лайкнул пользователь - %s',
+//            $url,
+//            safeVal($this->comment->getShortText()),
+//            safeVal($this->user->name)
+//        );
         return [
             //
         ];

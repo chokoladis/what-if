@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\NotificationType;
 use App\Enums\Vote;
-use App\Services\NotificationService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,21 +32,24 @@ class CommentVotes extends Model
 
     static function boot()
     {
-        $notifyService = new NotificationService();
-
         parent::boot();
 
-        static::updated(function ($item) use ($notifyService) {
+        static::updated(function ($item) {
 
             if (Vote::from($item->vote) === Vote::LIKE) {
-                $notifyService->vote(NotificationType::QUESTION_LIKED, $item);
             }
         });
 
-        static::created(function ($item) use ($notifyService) {
+        static::created(function ($item) {
 
             if (Vote::from($item->vote) === Vote::LIKE) {
-                $notifyService->vote(NotificationType::COMMENT_LIKED, $item);
+
+//                $url = route('questions.detail', $this->comment->question->code);
+//                $message = sprintf('Ваш комментарий - <a href="%s">%s</a> лайкнул пользователь - %s',
+//                    $url,
+//                    safeVal($this->comment->getShortText()),
+//                    safeVal($this->user->name)
+//                );
             }
         });
     }

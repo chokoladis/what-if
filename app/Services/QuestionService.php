@@ -104,9 +104,13 @@ class QuestionService
             return [$question, null];
         }
 
+        DB::beginTransaction();
+
         [$data, $error] = $this->prepareStoreData($request);
 
         if (!$data) {
+            DB::rollBack();
+
             return [false, $error];
         }
 
@@ -117,22 +121,27 @@ class QuestionService
 
         $res = Question::create($data);
 
-        if (!empty($res)) {
-            if (!empty($tags)) {
-                $tags = Tag::query()->whereIn('name', $tags)->get('id');
+        if (empty($res)) {
+            DB::rollBack();
+            return [false, new CommonError('Не удалось создать вопрос')];
+        } elseif (!empty($res) && !empty($tags)){
+            $tags = Tag::query()->whereIn('name', $tags)->get('id');
 
-                foreach ($tags as $tag) {
-                    QuestionTags::create([
-                        'question_id' => $res->id,
-                        'tag_id' => $tag->id
-                    ]);
+            foreach ($tags as $tag) {
+                $createdTag = QuestionTags::create([
+                    'question_id' => $res->id,
+                    'tag_id' => $tag->id
+                ]);
+                if (!$createdTag) {
+                    DB::rollBack();
+                    return [false, new CommonError('Не удалось задать теги для вопроса')];
                 }
             }
-
-            return [$res, null];
-        } else {
-            return [false, new CommonError('Не удалось создать вопрос')];
         }
+
+        DB::commit();
+
+        return [$res, null];
     }
 
     private function prepareStoreData(StoreRequest $request)
@@ -144,7 +153,6 @@ class QuestionService
         try {
             if ($request->has('img') && $img = $request->file('img')) {
                 if ($img->isValid()) {
-                    // todo transactions
                     $res = FileService::save($img, 'questions');
                     $data['file_id'] = $res['id'];
                     unset($data['img']);

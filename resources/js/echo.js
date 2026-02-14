@@ -13,17 +13,24 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
-window.Echo.channel('question.vote')
-    .listen('Broadcast\\Question\\Vote', function (e){
+window.Echo.private(`App.Models.User.${window.App.userId}`)
+    .notification(function (e){
+        // добавить в шапку
+        const parent = $('#navbarNotify');
+
+        let count = parent.find('b.count').text();
+        parent.find('b.count').text(count++);
+        console.log(parent.find('b.count'), count)
+        // todo check for not notify
+        const listNotify = $('#navbarNotify + .dropdown-menu');
+        console.log(listNotify)
+        listNotify.append(`
+            <div class="dropdown-item">${e.message}</div>
+        `)
         console.log('question', e)
     })
 
-// window.Echo.channel('comment.vote')
-//     .listen('Broadcast\\Comment\\Vote', function (e){
+// window.Echo.private(`comment.vote.${window.App.userId}`)
+//     .notification( (e) => {
 //         console.log('comment', e)
 //     })
-
-window.Echo.private(`comment.vote.${window.App.userId}`)
-    .notification( (e) => {
-        console.log('comment', e)
-    })
