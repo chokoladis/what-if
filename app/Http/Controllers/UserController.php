@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\FileSaveException;
 use App\Http\Requests\User\SetPhotoRequest;
 use App\Http\Requests\User\SetTagsRequest;
 use App\Http\Requests\User\UpdateRequest;
@@ -51,11 +52,15 @@ class UserController extends Controller
             return redirect()->route('profile.index')->with('error', $file->getErrorMessage());
         }
 
-        $photo = FileService::save($file, 'users');
+        try {
+            $photo = FileService::save($file, 'users');
+        } catch (FileSaveException $e) {
+            return redirect()->route('profile.index')->with('error', $e->getMessage());
+        }
 
-//        todo on stack redis
+        //        todo on stack redis
         [$isLegal, $error] = (new UserService())->isContentFileLegal($photo);
-//        dd($isLegal, $error);
+        //        dd($isLegal, $error);
 
         if (!$isLegal) {
             return redirect()->route('profile.index')->with('error', $error);

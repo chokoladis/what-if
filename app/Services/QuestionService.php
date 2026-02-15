@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTO\Errors\CommonError;
 use App\DTO\Errors\ValidationError;
+use App\Exceptions\FileSaveException;
 use App\Http\Requests\Question\IndexRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
@@ -168,6 +169,8 @@ class QuestionService
                 }
                 unset($data['category']);
             }
+        } catch (FileSaveException $e) {
+            return [null, new CommonError($e->getMessage(), $e->getCode())];
         } catch (\Throwable $th) {
             Log::error('Prepare data error: ' . $th->getMessage());
             return [null, new CommonError('Ошибка обработки данных: ' . $th->getMessage())];

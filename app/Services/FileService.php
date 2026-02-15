@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\FileSaveException;
 use App\Interfaces\Services\FileProxyRedisInterface;
 use App\Models\File;
 use Illuminate\Http\UploadedFile;
@@ -59,21 +60,23 @@ class FileService implements FileProxyRedisInterface
     public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
     {
 //        сделать сохранение по папкам-юзерам и названиям файлов ?
-        $root = public_path("storage/{$mainDir}");
-        $subDir = substr($img->hashName(), 0, 3);
-        $folder = "{$root}/{$subDir}";
+        $disk = Storage::disk('public');
 
-        if (!is_dir($folder)) {
-            mkdir($folder, recursive: TRUE);
+        $subDir = substr($img->hashName(), 0, 3);
+        $folder = "{$mainDir}/{$subDir}";
+
+        if (!$disk->exists($folder)) {
+            $disk->makeDirectory($folder);
         }
 
         $ext = $img->extension();
         $name = strlen($img->hashName()) > 45 ? substr($img->hashName(), 0, 45) . '.' . $ext : $img->hashName();
         $filePath = "{$subDir}/{$name}";
 
-        $destination = "{$folder}/{$name}";
-
-        \Illuminate\Support\Facades\File::copy($img->getRealPath(), $destination);
+        $res = $disk->putFileAs($folder, $img, $name);
+        if (false === $res) {
+            throw new FileSaveException();
+        }
 
         return File::create([
             'name' => $name,
