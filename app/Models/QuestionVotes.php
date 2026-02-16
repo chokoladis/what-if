@@ -67,7 +67,7 @@ class QuestionVotes extends Model
                 }
 
                 $notification = new VoteNotification($item->user, $item->question);
-                if (!NotificationService::isExists($notification)) {
+                if (!VoteNotification::isExists($notification)) {
                     $item->question->user->notify($notification);
                 }
             }

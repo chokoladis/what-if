@@ -2,15 +2,14 @@
 
 namespace App\Notifications\Question;
 
+use App\Interfaces\Services\UniqueDataNotifyInterface;
 use App\Models\Question;
 use App\Models\User;
-use Illuminate\Bus\Queueable;
+use App\Notifications\BaseNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\Notification;
 
-class VoteNotification extends Notification
+class VoteNotification extends BaseNotification implements UniqueDataNotifyInterface
 {
-    use Queueable;
 
     /**
      * Create a new notification instance.
@@ -22,15 +21,6 @@ class VoteNotification extends Notification
     {
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['broadcast', 'database'];
-    }
 
     /**
      * Get the array representation of the notification.
@@ -55,8 +45,6 @@ class VoteNotification extends Notification
 
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-//        $notifiable - model user
-
         $url = route('questions.detail', $this->question->code);
         $message = sprintf(
             'Ваш вопрос - <a href="%s">%s</a> лайкнул пользователь - %s',
@@ -68,5 +56,13 @@ class VoteNotification extends Notification
         return new BroadcastMessage([
             'message' => $message,
         ]);
+    }
+
+    public function getUniqueData(): array
+    {
+        return [
+            'from_user->id' => $this->voter->id,
+            'question->id' => $this->question->id
+        ];
     }
 }
