@@ -9,42 +9,47 @@ use App\Models\Notification;
 use App\Notifications\Question\VoteNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Notifications\Notification as BaseNotification;
+
 
 final class NotificationService
 {
-    public function vote(NotificationType $type, Model $modelVote)
+    public static function toMessage(\Illuminate\Notifications\DatabaseNotification $notification)
     {
-//        $item->question->user->notify(new VoteNotification($item->user, $item->question));
+        $data = $notification->data;
+        $fromUser = \App\Models\User::getNameById($data['from_user']['id']);
 
-//        todo middleware or base service / magic method ?
-        if (strtolower(config('notification.status')) === 'off') {
-            return;
-        }
-
-        if ($type === NotificationType::QUESTION_LIKED) {
-            $entity = 'question';
-        } else if ($type === NotificationType::COMMENT_LIKED) {
-            $entity = 'comment';
+        if($fromUser && $fromUser->name) {
+            $username = $fromUser->name;
         } else {
-            throw new \Exception('err type');
+            $username = $data['from_user']['name'];
         }
 
-        if ((int)$modelVote->$entity->user_id === (int)auth()->id()) {
-            return ;
-        }
+        $baseText = 'Пользователь - %s поставил лайк на <a href="%s" class="link-secondary link-offset-2 link-underline">%s</a>';
 
-//        todo fix dublicate
-        $notification = Notification::create([
-            'user_id' => auth()->id(), //todo from user_id, to user_id ?
-            'entity' => $entity,
-            'entity_id' => $modelVote->$entity->id,
-            'type' => $type->value,
-        ]);
-
-        if ($entity === 'question') {
-            QuestionVote::dispatch($notification, $notification->toMessage());
+        if (strcmp($notification->type, \App\Notifications\Question\VoteNotification::class) === 0) {
+            $title = 'Ваш вопрос лайкнули';
+            $text = sprintf($baseText, $username, $data['question']['url'], 'вопрос - '.$data['question']['title']);
+        } elseif (strcmp($notification->type, \App\Notifications\Comment\VoteNotification::class) === 0) {
+            $title = 'Ваш комментарий лайкнули';
+            $text = sprintf($baseText, $username, $data['question']['url'], 'комментарий - '.$data['comment']['text'].', в вопросе - '.$data['question']['title']);
         } else {
-            CommentVote::dispatch($notification, $notification->toMessage());
+            return null;
+            // err and skip
         }
+
+        return [
+            'title' => $title,
+            'text' => $text,
+        ];
+    }
+
+    public static function isExists($notification)
+    {
+        if ($notification instanceof BaseNotification) {
+//            todo
+        }
+
+        return false;
     }
 }

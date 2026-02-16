@@ -13,6 +13,7 @@
 > - Laravel + Vite, JS, JQuery, Html, Scss
 > - Filament
 > - Meilisearch
+> - WebSocket (reverb)
 > - Docker, Docker-compose (nginx, php-fpm, node, mysql, redis)
 > - Встроен gemini.ai (проверка картинок на запрещенку)
 ### 🔬 [Тесты](https://github.com/chokoladis/what-if/tree/main/readme/tests)
@@ -27,7 +28,7 @@
 
 ### 🔥 [Основной функционал](https://github.com/chokoladis/what-if/tree/main/readme/main)
 ### 👤 [Профиль](https://github.com/chokoladis/what-if/tree/main/readme/profile)
-### 🥸 Admin
+### ⚙ Admin
 
 - CRUD категории, вопросов, тегов, комментариев
 - Настройки: Капчи, использования gemini, умного кэширования*1

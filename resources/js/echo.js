@@ -15,22 +15,29 @@ window.Echo = new Echo({
 
 window.Echo.private(`App.Models.User.${window.App.userId}`)
     .notification(function (e){
-        // добавить в шапку
-        const parent = $('#navbarNotify');
-
-        let count = parent.find('b.count').text();
-        parent.find('b.count').text(count++);
-        console.log(parent.find('b.count'), count)
-        // todo check for not notify
-        const listNotify = $('#navbarNotify + .dropdown-menu');
-        console.log(listNotify)
-        listNotify.append(`
-            <div class="dropdown-item">${e.message}</div>
-        `)
-        console.log('question', e)
+        writeNotify(e)
+        // todo     add sound
     })
 
-// window.Echo.private(`comment.vote.${window.App.userId}`)
-//     .notification( (e) => {
-//         console.log('comment', e)
-//     })
+function writeNotify(eventNotify)
+{
+    const parent = $('#navbarNotify');
+
+    if (!parent.find('b.count').length) {
+        parent.append(`<span class="position-absolute bottom-10 start-0 translate-middle badge rounded-pill bg-danger">
+           <b class="count">1</b>
+            </span>`)
+    } else {
+        let count = parent.find('b.count').text();
+        parent.find('b.count').text(++count);
+    }
+
+    let navItemParent = parent.parent('.nav-item')
+    let listNotify = navItemParent.find('.dropdown-menu')
+
+    if (navItemParent.find('.notify-is-empty').length) {
+        listNotify.empty()
+    }
+
+    listNotify.append(`<div class="dropdown-item">${eventNotify.message}</div>`)
+}

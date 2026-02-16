@@ -40,16 +40,16 @@ class VoteNotification extends Notification
     public function toArray(object $notifiable): array
     {
 //        check unique
-        $url = route('questions.detail', $this->question->code);
-        $message = sprintf('Ваш вопрос - <a href="%s">%s</a> лайкнул пользователь - %s',
-            $url,
-            safeVal($this->question->getShortTitle()),
-            safeVal($this->voter->name)
-        );
-
         return [
-            'from_user_id' => $this->voter->id,
-            'message' => $message,
+            'from_user' => [
+                'id' => $this->voter->id,
+                'name' => safeVal($this->voter->name)
+            ],
+            'question' => [
+                'id' => $this->question->id,
+                'title' => safeVal($this->question->getShortTitle()),
+                'url' => route('questions.detail', $this->question->code),
+            ],
         ];
     }
 
@@ -66,10 +66,6 @@ class VoteNotification extends Notification
         );
 
         return new BroadcastMessage([
-            // Кто поставил лайк
-            'from' => $this->voter->id,
-            // Кому предназначено уведомление (владелец вопроса)
-            'to' => $notifiable->id,
             'message' => $message,
         ]);
     }

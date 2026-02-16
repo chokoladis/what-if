@@ -59,7 +59,7 @@ class FileService implements FileProxyRedisInterface
 
     public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
     {
-//        сделать сохранение по папкам-юзерам и названиям файлов ?
+//        сделать сохранение по папкам-юзерам и названиям файлов ? (для проверки на существование и по контрольной сумме)
         $disk = Storage::disk('public');
 
         $subDir = substr($img->hashName(), 0, 3);

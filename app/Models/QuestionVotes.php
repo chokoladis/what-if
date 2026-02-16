@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\NotificationType;
 use App\Notifications\Question\VoteNotification;
+use App\Services\NotificationService;
 use App\Tools\Option;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -66,7 +66,10 @@ class QuestionVotes extends Model
                     return;
                 }
 
-                $item->question->user->notify(new VoteNotification($item->user, $item->question));
+                $notification = new VoteNotification($item->user, $item->question);
+                if (!NotificationService::isExists($notification)) {
+                    $item->question->user->notify($notification);
+                }
             }
 
             if ($smartCache){

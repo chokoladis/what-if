@@ -120,4 +120,11 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->photo_id ?? null;
     }
+
+    public static function getNameById(int $id)
+    {
+        return Cache::remember('user_name_'.$id, 86400, function () use ($id) {
+            return self::query()->find($id, 'name');
+        });
+    }
 }

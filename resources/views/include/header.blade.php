@@ -113,7 +113,7 @@
                         <li class="nav-item dropdown">
                             {{--                            todo другую иконку --}}
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="uk-icon" uk-icon="bell"></i>
                                 @php
                                     $notificationsCount = auth()->user()?->notifications()->select('id')->get()->count();
@@ -121,7 +121,7 @@
                                     //                                    todo посмотреть все
                                 @endphp
 
-                                @if(!$notifications->isEmpty()) {
+                                @if(!$notifications->isEmpty())
                                     <span class="position-absolute bottom-10 start-0 translate-middle badge rounded-pill bg-danger">
                                         <b class="count">
                                             {{ $notificationsCount }}
@@ -129,16 +129,22 @@
                                         <span class="visually-hidden">unread messages</span>
                                     </span>
                                 @endif
+
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
                                 @if(!$notifications->isEmpty())
                                     @foreach($notifications as $notify)
-                                        <div class="dropdown-item">
-                                            {!! $notify->data['message'] !!}
-                                        </div>
+                                        @php
+                                            $arNotifyData = \App\Services\NotificationService::toMessage($notify);
+                                        @endphp
+                                        @if(!empty($arNotifyData))
+                                            <div class="dropdown-item">
+                                                {!! $arNotifyData['text'] !!}
+                                            </div>
+                                        @endif
                                     @endforeach
                                 @else
-                                    <div class="dropdown-item">
+                                    <div class="dropdown-item notify-is-empty">
                                         {{ __('notifications not found') }}
                                     </div>
                                 @endif
