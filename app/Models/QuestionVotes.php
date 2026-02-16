@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Vote;
 use App\Notifications\Question\VoteNotification;
-use App\Services\NotificationService;
 use App\Tools\Option;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,11 +47,6 @@ class QuestionVotes extends Model
          * @return response()
          */
         static::updated(function ($item) use ($smartCache) {
-
-            if (\App\Enums\Vote::from($item->vote) === \App\Enums\Vote::LIKE) {
-
-            }
-
             if ($smartCache){
                 Cache::forget('question_votes_'.$item->question_id);
             }
@@ -59,7 +54,7 @@ class QuestionVotes extends Model
 
         static::created(function ($item) use ($smartCache) {
 
-            if (\App\Enums\Vote::from($item->vote) === \App\Enums\Vote::LIKE) {
+            if (Vote::from($item->vote) === Vote::LIKE) {
 
                 //        todo middleware or base service / magic method ?
                 if (strtolower(config('notification.status')) === 'off') {

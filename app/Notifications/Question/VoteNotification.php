@@ -29,7 +29,6 @@ class VoteNotification extends BaseNotification implements UniqueDataNotifyInter
      */
     public function toArray(object $notifiable): array
     {
-//        check unique
         return [
             'from_user' => [
                 'id' => $this->voter->id,

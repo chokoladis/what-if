@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Enums\NotificationType;
 use App\Enums\Vote;
+use App\Notifications\Comment\VoteNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Cache;
 
 class CommentVotes extends Model
 {
@@ -36,20 +35,16 @@ class CommentVotes extends Model
 
         static::updated(function ($item) {
 
-            if (Vote::from($item->vote) === Vote::LIKE) {
-            }
         });
 
         static::created(function ($item) {
 
             if (Vote::from($item->vote) === Vote::LIKE) {
 
-//                $url = route('questions.detail', $this->comment->question->code);
-//                $message = sprintf('Ваш комментарий - <a href="%s">%s</a> лайкнул пользователь - %s',
-//                    $url,
-//                    safeVal($this->comment->getShortText()),
-//                    safeVal($this->user->name)
-//                );
+                $notification = new VoteNotification($item->user, $item->comment);
+                if (!VoteNotification::isExists($notification)) {
+                    $item->comment->user->notify($notification);
+                }
             }
         });
     }
@@ -57,5 +52,10 @@ class CommentVotes extends Model
     public function comment(): BelongsTo
     {
         return $this->belongsTo(Comment::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

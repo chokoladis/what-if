@@ -2,43 +2,24 @@
 
 namespace App\Notifications\Comment;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
+use App\Interfaces\Services\UniqueDataNotifyInterface;
+use App\Models\Comment;
+use App\Models\User;
+use App\Notifications\BaseNotification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class VoteNotification extends Notification
+class VoteNotification extends BaseNotification implements UniqueDataNotifyInterface
 {
-    use Queueable;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(
+        private User $voter,
+        private Comment $comment,
+    )
     {
-        //
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
-    }
 
     /**
      * Get the array representation of the notification.
@@ -47,14 +28,43 @@ class VoteNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-//        $url = route('questions.detail', $this->comment->question->code);
-//        $message = sprintf('Ваш комментарий - <a href="%s">%s</a> лайкнул пользователь - %s',
-//            $url,
-//            safeVal($this->comment->getShortText()),
-//            safeVal($this->user->name)
-//        );
         return [
-            //
+            'from_user' => [
+                'id' => $this->voter->id,
+                'name' => safeVal($this->voter->name)
+            ],
+            'question' => [
+                'title' => safeVal($this->comment->question->getShortTitle()),
+                'url' => route('questions.detail', $this->comment->question->code),
+            ],
+            'comment' => [
+                'id' => $this->comment->id,
+                'text' => $this->comment->getShortText()
+            ]
+        ];
+    }
+
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        $url = route('questions.detail', $this->comment->question->code);
+        $message = sprintf(
+            'Ваш комментарий - <b>"%s"</b> в вопросе - <a href="%s">%s</a> лайкнул пользователь - %s',
+            safeVal($this->comment->getShortText()),
+            $url,
+            safeVal($this->comment->question->getShortTitle()),
+            safeVal($this->voter->name)
+        );
+
+        return new BroadcastMessage([
+            'message' => $message,
+        ]);
+    }
+
+    public function getUniqueData(): array
+    {
+        return [
+            'from_user->id' => $this->voter->id,
+            'comment->id' => $this->comment->id
         ];
     }
 }

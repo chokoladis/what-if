@@ -62,8 +62,8 @@ $(function () {
         let comment_id = form.find('[name="comment_id"]').val();
         let sendData = new FormData();
 
-        sendData.append("comment_id", Number(comment_id));
-        sendData.append("action", Number($(this).data('action')));
+        sendData.append("entity_id", Number(comment_id));
+        sendData.append("vote", Number($(this).data('vote')));
 
         setCommentRating(action, sendData);
     });
@@ -80,7 +80,7 @@ $(function () {
 
             let query = await fetch(action, settings);
             // let json = await query.json();
-            console.log(query);
+            // console.log(query);
         } catch (error) {
             console.error(error);
         }

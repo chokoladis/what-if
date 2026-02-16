@@ -16,7 +16,9 @@ window.Echo = new Echo({
 window.Echo.private(`App.Models.User.${window.App.userId}`)
     .notification(function (e){
         writeNotify(e)
-        // todo     add sound
+
+        const notifySound = new Audio('/storage/sound/notification.mp3');
+        notifySound.play()
     })
 
 function writeNotify(eventNotify)

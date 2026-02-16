@@ -22,7 +22,7 @@ class CommentVotesController extends Controller
         if ($commentVote) {
             $commentVote->delete();
 
-            return true;
+            return responseJson();
         }
 
         CommentVotes::updateOrCreate([
@@ -31,6 +31,6 @@ class CommentVotesController extends Controller
             'vote' => $vote
         ]);
 
-        return true;
+        return responseJson();
     }
 }

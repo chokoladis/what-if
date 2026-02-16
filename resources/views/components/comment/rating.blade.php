@@ -15,13 +15,13 @@
         @csrf
 
         <input type="hidden" name="comment_id" value="{{$comment->id}}">
-        <div class="icon icon-circle plus {{ $userRating?->isLike() ? 'active' : ''}}" data-action="{{ \App\Enums\Vote::LIKE }}">
+        <div class="icon icon-circle plus {{ $userRating?->isLike() ? 'active' : ''}}" data-vote="{{ \App\Enums\Vote::LIKE }}">
             <span class="uk-icon" uk-icon="plus"></span>
         </div>
         <div class="rating">
             <b>{{ $totalRating }}</b>
         </div>
-        <div class="icon icon-circle minus {{ $userRating?->isLike() ? '' : 'active'}}" data-action="{{ \App\Enums\Vote::DISLIKE }}">
+        <div class="icon icon-circle minus {{ $userRating?->isLike() ? '' : 'active'}}" data-vote="{{ \App\Enums\Vote::DISLIKE }}">
             <span class="uk-icon" uk-icon="minus"></span>
         </div>
     </form>
