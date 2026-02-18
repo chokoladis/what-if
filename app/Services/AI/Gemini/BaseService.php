@@ -3,6 +3,7 @@
 namespace App\Services\AI\Gemini;
 
 use App\DTO\Errors\CommonError;
+use App\Exceptions\AIWorkException;
 use App\Services\AI\BaseAI;
 use Illuminate\Support\Facades\Log;
 
@@ -20,11 +21,7 @@ class BaseService extends BaseAI
 
     public function sendCurl(array $data)
     {
-        [$apiKey, $error] = $this->getApiKey();
-
-        if (!$apiKey) {
-            return [false, $error];
-        }
+        $apiKey = $this->getApiKey();
 
         $curl = curl_init('https://generativelanguage.googleapis.com/v1beta/models/' . $this->getModel() . ':generateContent?key=' . $apiKey);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -39,6 +36,7 @@ class BaseService extends BaseAI
         curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
         $response = curl_exec($curl);
         $error = curl_error($curl);
         curl_close($curl);
@@ -48,7 +46,7 @@ class BaseService extends BaseAI
         if (is_string($response)) {
             return $this->getResponse($response);
         } else {
-            return [false, $error];
+            throw new \Exception($error);
         }
     }
 
@@ -63,8 +61,7 @@ class BaseService extends BaseAI
 
         if ($responseContent['error']){
             Log::error(__CLASS__, [$responseContent['error']]);
-
-            return [false, new CommonError( 'Ошибка работы '.__CLASS__ ,$responseContent['error']['status'])];
+            throw new AIWorkException(__CLASS__.', error status - '.$responseContent['error']['status']);
         }
 
         $content = current($responseContent['candidates'])['content'];
@@ -72,7 +69,8 @@ class BaseService extends BaseAI
         $jsonResult = $firstPart['text'];
 
         if (stripos($jsonResult, ';') === false) {
-            return [false, $jsonResult];
+            Log::debug(__CLASS__.', incorrect format', [$jsonResult]);
+            throw new AIWorkException(__CLASS__.', incorrect format');
         } else {
             [$isLegal, $error] = explode(';', $jsonResult);
 

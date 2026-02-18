@@ -25,6 +25,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'photo_id',
     ];
 
     /**
@@ -77,7 +78,7 @@ class User extends Authenticatable implements FilamentUser
         static::updated(function ($user) {
 
             if ($user->getOriginal('photo_id') !== $user->photo_id) {
-                File::find($user->getOriginal('photo_id'))->delete();
+                File::find($user->getOriginal('photo_id'))?->delete();
             }
 
             // $item->path_thumbnail = FileService::createThumbWebp($item->path);
@@ -114,11 +115,6 @@ class User extends Authenticatable implements FilamentUser
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'user_tags');
-    }
-
-    public function getPhotoIdAttribute()
-    {
-        return $this->photo_id ?? null;
     }
 
     public static function getNameById(int $id)

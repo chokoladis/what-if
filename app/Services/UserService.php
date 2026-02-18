@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Exceptions\FileValidationException;
 use App\Models\Question;
 use App\Models\QuestionTags;
 use App\Models\UserTags;
+use App\Services\AI\Gemini\AvatarValidatorService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class UserService
 {
@@ -71,5 +75,24 @@ class UserService
             return auth()->user()->notifications()
                 ->limit(5)->latest()->get();
         });
+    }
+
+    public function setPhoto(UploadedFile $file)
+    {
+        DB::beginTransaction();
+
+        $photo = FileService::save($file, 'users');
+
+        //        todo on stack redis
+        [$isLegal, $error] = (new AvatarValidatorService)->isContentFileLegal($photo);
+
+        if (!$isLegal) {
+            throw new FileValidationException($error);
+        }
+
+        if (!auth()->user()->update(['photo_id' => $photo->id]))
+            DB::rollBack();
+
+        DB::commit();
     }
 }

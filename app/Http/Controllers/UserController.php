@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\FileSaveException;
+use App\Exceptions\FileValidationException;
 use App\Http\Requests\User\SetPhotoRequest;
 use App\Http\Requests\User\SetTagsRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\Tag;
 use App\Models\User;
-use App\Services\AI\Gemini\UserService;
-use App\Services\FileService;
+use App\Services\UserService;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -47,28 +48,19 @@ class UserController extends Controller
     public function setPhoto(SetPhotoRequest $request)
     {
         $file = $request->file('photo');
-
         if ($file->getError()) {
             return redirect()->route('profile.index')->with('error', $file->getErrorMessage());
         }
 
+        $service = new UserService();
         try {
-            $photo = FileService::save($file, 'users');
-        } catch (FileSaveException $e) {
+            $service->setPhoto($file);
+        } catch (FileValidationException|FileSaveException $e) {
             return redirect()->route('profile.index')->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return redirect()->route('profile.index')->with('error', 'system_error');
         }
-
-        //        todo on stack redis
-        [$isLegal, $error] = (new UserService())->isContentFileLegal($photo);
-        //        dd($isLegal, $error);
-
-        if (!$isLegal) {
-            return redirect()->route('profile.index')->with('error', $error);
-        }
-
-        $user = User::find(auth()->id());
-        $user->photo_id = $photo->id;
-        $user->save();
 
         return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
     }

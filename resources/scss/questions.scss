@@ -416,6 +416,15 @@
 }
 
 html[data-bs-theme="light"] {
+
+  .comments {
+
+    .comment {
+      padding: 10px 0;
+      display: flex;
+      border-bottom: 1px solid rgba(140,140,140,.69);
+    }
+  }
   .question-page {
     .description h1 {
       -webkit-text-stroke: 1px rgba(6, 140, 223, 0.9);

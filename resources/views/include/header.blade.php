@@ -32,6 +32,7 @@
     <nav class="header navbar navbar-expand-md shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.logo') }}</a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -42,10 +43,10 @@
                 <ul class="navbar-nav me-auto">
                     @if(auth()->id())
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#"
+                            <a class="nav-link dropdown-toggle" href="#" id="questionsDropdown"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             >{{ __('menu.main.questions') }}</a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="questionsDropdown">
                                 <li><a class="dropdown-item" href="{{ route('questions.index') }}">{{ __('menu.main.all_questions') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ route('questions.recommend') }}">{{ __('menu.main.recommendations') }}</a></li>
                             </ul>
@@ -56,10 +57,10 @@
                         </li>
                     @endif
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#"
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         >{{ __('menu.main.categories') }}</a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
                             <li><a class="dropdown-item" href="{{ route('categories.index') }}">{{__('menu.main.all_categories')}}</a></li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -71,8 +72,8 @@
                             @endforeach
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="btn btn-link" href="{{ route('questions.add') }}">{{ __('menu.main.ask') }}</a>
+                    <li class="nav-item btn-question-add">
+                        <a class="btn btn-outline-primary" href="{{ route('questions.add') }}">{{ __('menu.main.ask') }}</a>
                     </li>
                 </ul>
 
@@ -112,6 +113,8 @@
                     @else
                         <li class="nav-item dropdown">
                             {{--                            todo другую иконку --}}
+{{--                            <a class="nav-link dropdown-toggle" href="#" id="questionsDropdown"--}}
+{{--                               role="button" data-bs-toggle="dropdown" aria-expanded="false"--}}
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="uk-icon" uk-icon="bell"></i>
@@ -131,29 +134,29 @@
                                 @endif
 
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
                                 @if(!$notifications->isEmpty())
                                     @foreach($notifications as $notify)
                                         @php
                                             $arNotifyData = \App\Services\NotificationService::toMessage($notify);
                                         @endphp
                                         @if(!empty($arNotifyData))
-                                            <div class="dropdown-item">
+                                            <li class="dropdown-item">
                                                 {!! $arNotifyData['text'] !!}
-                                            </div>
+                                            </li>
                                         @endif
                                     @endforeach
                                 @else
-                                    <div class="dropdown-item notify-is-empty">
+                                    <li class="dropdown-item notify-is-empty">
                                         {{ __('notifications not found') }}
-                                    </div>
+                                    </li>
                                 @endif
-                            </div>
+                            </ul>
                         </li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown profile-dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->name }}
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="{{ \App\Services\FileService::getPhoto(auth()->user()->photo, 'users') }}" alt="">
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -166,8 +169,7 @@
                                     </a>
                                 @endcan
                                 <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault();
-                                                        document.getElementById('logout-form').submit();">
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     {{ __('menu.main.logout') }}
                                 </a>
 

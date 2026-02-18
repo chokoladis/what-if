@@ -74,6 +74,9 @@ nav.header {
     }
 
 
+    .btn-question-add {
+      margin-left: 10px;
+    }
     .js-change-lang {
       margin: auto 0;
       margin-left: 5px;
@@ -83,6 +86,7 @@ nav.header {
       .dropdown-menu {
         min-width: 0;
         padding-bottom: 0;
+        position: absolute;
       }
 
       > a {
@@ -102,6 +106,47 @@ nav.header {
         .dropdown-item {
           padding: 13px;
         }
+      }
+    }
+    .profile-dropdown{
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        object-fit: cover;
+      }
+    }
+    .dropdown-menu {
+      max-height: 350px;
+      overflow: auto;
+    }
+
+    @media (max-width:992px) {
+      &.search {
+      // todo  dnone and show modal form
+      }
+    }
+    @media (max-width:768px) {
+      //todo поделить меню на две части ?
+      align-items: unset;
+
+      &.search, .btn-question-add,
+      .js-change-lang{
+        margin: 0;
+        margin-top: 10px;
+      }
+
+      .nav-item {
+        width: 100%;
+      }
+      .js-change-theme {
+        width: fit-content;
+      }
+      .js-change-lang {
+        width: 50px;
+      }
+      .dropdown-menu {
+        max-height: 30vh;
       }
     }
   }
@@ -150,12 +195,21 @@ html[data-bs-theme="light"] {
       color: black;
     }
 
-    div:not(.actions) .uk-icon {
+    :not(.actions) .uk-icon,
+    :not(.action_rating) .uk-icon{
 
       fill: rgba(10, 30, 200, 0.55);
 
       svg *, * {
         stroke: rgba(10, 30, 200, 0.55) ; //!important
+      }
+    }
+
+    .action_rating .uk-icon {
+      fill: white;
+
+      svg *, * {
+        stroke: white;
       }
     }
   }
@@ -385,8 +439,4 @@ footer {
 
 .items-output-compact {
 
-}
-ul.dropdown-menu{
-  max-height: 400px;
-  overflow: auto;
 }

@@ -7,8 +7,7 @@ vendor
 */.DS_Store
 .vscode
 *.cache
-public/storage/users
-public/storage/categories
-public/storage/questions
 /public/build/
-/vendor/
+!storage/app/public
+storage/framework
+storage/logs

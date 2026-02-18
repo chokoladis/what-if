@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
@@ -38,9 +39,9 @@ class File extends Model
         });
 
         static::deleting(function ($file) {
-            $fullpath = $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $file->relation . '/' . $file->path;
-            if (file_exists($fullpath))
-                unlink($fullpath);
+            $disk = Storage::disk('public');
+            if ($disk->exists($file->relation . '/' . $file->path))
+                $disk->delete($file->relation . '/' . $file->path);
         });
 
     }

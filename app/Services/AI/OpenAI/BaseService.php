@@ -19,11 +19,7 @@ abstract class BaseService extends BaseAI
 
     protected function sendCurl(array $data)
     {
-        [$apiKey, $error] = $this->getApiKey();
-
-        if (!$apiKey) {
-            return [false, $error];
-        }
+        $apiKey = $this->getApiKey();
 
         $curl = curl_init('https://api.openai.com/v1/responses');
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -51,12 +47,12 @@ abstract class BaseService extends BaseAI
         if (is_string($response)) {
             $jsonResult = json_decode($response, true);
             if (!empty($jsonResult['error'])) {
-                return [false, new \Error($jsonResult['error']['message'])];
+                throw new \Exception($jsonResult['error']['message']);
             } else {
-                return [true, null];
+                return true;
             }
         } else {
-            return [false, $error];
+            throw new \Exception($error);
         }
     }
 

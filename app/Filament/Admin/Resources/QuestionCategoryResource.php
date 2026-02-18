@@ -15,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
@@ -71,14 +72,15 @@ class QuestionCategoryResource extends Resource
 
                         /** @var File $file */
                         $file = $record->file;
-                        $path = public_path('storage/categories/' . $file->path);
 
-                        if (!file_exists($path)) {
+                        $disk = Storage::disk('public');
+
+                        if (!$disk->exists('/categories/' . $file->path)) {
                             return;
                         }
 
                         $component->state(new \Illuminate\Http\UploadedFile(
-                            $path,
+                            $disk->path('/categories/' . $file->path),
                             $file->name,
                         ));
                     })

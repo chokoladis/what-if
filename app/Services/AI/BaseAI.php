@@ -2,6 +2,7 @@
 
 namespace App\Services\AI;
 
+use App\Exceptions\AIWorkException;
 use App\Interfaces\AiApiInterface;
 
 abstract class BaseAI implements AiApiInterface
@@ -33,10 +34,10 @@ abstract class BaseAI implements AiApiInterface
         $apiKey = $this->getConfigApiKey();
 
         if (empty($apiKey)) {
-            return [false, new \Error(__('entities.integrations.api_key_not_found'))];
+            throw new AIWorkException(__('entities.integrations.api_key_not_found'));
         }
 
-        return [$apiKey, null];
+        return $apiKey;
     }
 
     protected function prepareSettings()

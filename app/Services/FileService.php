@@ -23,6 +23,7 @@ class FileService implements FileProxyRedisInterface
     public static function createThumbWebp(string $filePath)
     {
 
+//        todo rework
         $imgManager = new ImageManager(new Driver());
 
         $realPath = public_path() . Storage::url($filePath);
@@ -86,31 +87,16 @@ class FileService implements FileProxyRedisInterface
         ]);
     }
 
-    static protected function generatePhotoPath($file, $mainDir)
-    {
-
-        $salt = auth()->user()->id . '_2901';
-
-        $file_name = md5($salt . '_' . $file->getClientOriginalName());
-        $file_name = mb_substr($file_name, 0, 16) . '.' . $file->extension();
-
-        $mk_name = substr($file_name, 0, 3);
-
-        $folder = public_path() . $mainDir . $mk_name . '/';
-        if (!is_dir($folder)) {
-            mkdir($folder, 0755);
-        }
-
-        return ['subdir' => $mk_name, 'file_name' => $file_name];
-    }
-
     static function getPhoto(?File $file, string $subdir)
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
         if ($file && $file->path) {
-            $filePath = Storage::url($subdir . '/' . $file->path);
-            return file_exists($_SERVER['DOCUMENT_ROOT'].$filePath) ? $filePath : $nophoto_src;
+            $disk = Storage::disk('public');
+
+            $chunkPath = $file->relation . '/' . $file->path;
+
+            return $disk->exists($chunkPath) ? $disk->url($chunkPath) : $nophoto_src;
         }
 
         return $nophoto_src;

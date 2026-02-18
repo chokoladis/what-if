@@ -10,7 +10,6 @@
 
 @php
     $user = auth()->user();
-    $photo = $user->photo;
 
     $isActiveQuestions = request()->get('page');
 @endphp
@@ -18,7 +17,7 @@
     <div class="profile-page container">
         <div class="main row">
             <div class="card photo col-lg-4 col-md-3 col-12">
-                <img src="{{ $photo ? Storage::url('users/'.$photo->path) : $SITE_NOPHOTO }}" class="card-img-top">
+                <img src="{{ \App\Services\FileService::getPhoto($user->photo, 'users') }}" class="card-img-top">
                 <div class="card-body @if($errors->has('photo')) active @endif">
                     <form action="{{ route('profile.setPhoto') }}" class="update-photo" method="POST"
                           enctype="multipart/form-data">

@@ -3,10 +3,12 @@
 namespace App\Services\AI\Gemini;
 
 use App\DTO\Errors\CommonError;
+use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
-class UserService extends BaseService
+class AvatarValidatorService extends BaseService
 {
     public function isSetOn(): bool
     {
@@ -21,15 +23,17 @@ class UserService extends BaseService
     public function isContentFileLegal(File $file)
     {
         if (!$this->isSetOn()) {
-            return [true];
+            return [true, null];
         }
 
-        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $file->relation . '/' . $file->path;
+        $disk = Storage::disk('public');
+        $chankPath = $file->relation . '/' . $file->path;
 
-        if (!file_exists($fullPath)) {
-            return [false, new CommonError(__('entities.integrations.file_not_found'), 'file_not_found')];
+        if (!$disk->exists($chankPath)) {
+            throw new FileSaveException(__('entities.integrations.file_not_found'), 'file_not_found');
         }
 
+        $fullPath = $disk->path($chankPath);
         $mimeType = mime_content_type($fullPath);
         $base64data = base64_encode(file_get_contents($fullPath));
 
