@@ -2,10 +2,10 @@
 
 namespace App\Services\AI\Gemini;
 
-use App\DTO\Errors\CommonError;
 use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\Setting;
+use App\Models\TempFile;
 use Illuminate\Support\Facades\Storage;
 
 class AvatarValidatorService extends BaseService
@@ -20,14 +20,12 @@ class AvatarValidatorService extends BaseService
         return false;
     }
 
-    public function isContentFileLegal(File $file)
+    public function isContentFileLegal(TempFile|File $file)
     {
-        if (!$this->isSetOn()) {
-            return [true, null];
-        }
-
         $disk = Storage::disk('public');
-        $chankPath = $file->relation . '/' . $file->path;
+        $chankPath = (get_class($file) === TempFile::class
+                ? 'temp'
+                : $file->relation ). '/' . $file->path;
 
         if (!$disk->exists($chankPath)) {
             throw new FileSaveException(__('entities.integrations.file_not_found'), 'file_not_found');

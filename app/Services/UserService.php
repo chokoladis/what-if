@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Exceptions\FileValidationException;
+use App\Jobs\UserAvatarVerify;
 use App\Models\Question;
 use App\Models\QuestionTags;
 use App\Models\UserTags;
-use App\Services\AI\Gemini\AvatarValidatorService;
+use App\Services\AI\Gemini\AvatarValidatorService as AIAvatarValidator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -79,20 +79,20 @@ class UserService
 
     public function setPhoto(UploadedFile $file)
     {
-        DB::beginTransaction();
+        $avatarValidator = new AIAvatarValidator;
+        if ($avatarValidator->isSetOn()) {
+            $photo = FileService::saveTemp($file);
 
-        $photo = FileService::save($file, 'users');
+            UserAvatarVerify::dispatch(auth()->user(), $photo);
+        } else {
+            DB::beginTransaction();
 
-        //        todo on stack redis
-        [$isLegal, $error] = (new AvatarValidatorService)->isContentFileLegal($photo);
+            $photo = FileService::save($file, 'users');
 
-        if (!$isLegal) {
-            throw new FileValidationException($error);
+            if (!auth()->user()->update(['photo_id' => $photo->id]))
+                DB::rollBack();
+
+            DB::commit();
         }
-
-        if (!auth()->user()->update(['photo_id' => $photo->id]))
-            DB::rollBack();
-
-        DB::commit();
     }
 }

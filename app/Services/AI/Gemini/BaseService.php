@@ -5,6 +5,7 @@ namespace App\Services\AI\Gemini;
 use App\DTO\Errors\CommonError;
 use App\Exceptions\AIWorkException;
 use App\Services\AI\BaseAI;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class BaseService extends BaseAI
@@ -23,30 +24,19 @@ class BaseService extends BaseAI
     {
         $apiKey = $this->getApiKey();
 
-        $curl = curl_init('https://generativelanguage.googleapis.com/v1beta/models/' . $this->getModel() . ':generateContent?key=' . $apiKey);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-        ]);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-
-        $jsonData = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_VERBOSE, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-        curl_close($curl);
+        $response = Http::withoutVerifying()
+            ->withHeaders([
+                'Content-Type: application/json'
+            ])
+            ->post("https://generativelanguage.googleapis.com/v1beta/models/{$this->getModel()}:generateContent?key=$apiKey", $data);
 
         Log::debug('gemini res - ' . $response);
+        Log::debug('gemini error - ', [$response->status(), $response->json(), $response->body()]);
 
-        if (is_string($response)) {
-            return $this->getResponse($response);
+        if ($response->clientError()) {
+            $response->throw();
         } else {
-            throw new \Exception($error);
+            return $this->getResponse($response->body());
         }
     }
 
