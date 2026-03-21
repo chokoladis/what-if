@@ -3,7 +3,7 @@
 namespace App\Services\AI\Gemini;
 
 use App\DTO\Errors\CommonError;
-use App\Exceptions\AIWorkException;
+use App\Exceptions\Integration\AIWorkException;
 use App\Services\AI\BaseAI;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -30,11 +30,10 @@ class BaseService extends BaseAI
             ])
             ->post("https://generativelanguage.googleapis.com/v1beta/models/{$this->getModel()}:generateContent?key=$apiKey", $data);
 
-        Log::debug('gemini res - ' . $response);
-        Log::debug('gemini error - ', [$response->status(), $response->json(), $response->body()]);
+        Log::debug('gemini error - ', $response->json()['error']);
 
         if ($response->clientError()) {
-            $response->throw();
+            throw new AIWorkException(code: $response->status());
         } else {
             return $this->getResponse($response->body());
         }

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\DTO\FileDTO;
 use App\Exceptions\FileSaveException;
-use App\Interfaces\Services\FileProxyRedisInterface;
 use App\Models\File;
 use App\Models\TempFile;
 use Illuminate\Http\UploadedFile;
@@ -14,7 +13,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class FileService implements FileProxyRedisInterface
+class FileService
 {
 
     const MAX_FILE_SIZE = 5242880; //bites
@@ -71,6 +70,7 @@ class FileService implements FileProxyRedisInterface
             'name' => $fileDTO->name,
             'expansion' => $fileDTO->ext,
             'path' => $fileDTO->filePath,
+            'original_name' => $img->getClientOriginalName()
         ]);
     }
 
@@ -111,12 +111,16 @@ class FileService implements FileProxyRedisInterface
             throw new FileSaveException();
         }
 
-        return File::create([
+        $data = [
             'name' => $file->name,
             'expansion' => $file->expansion,
             'path' => $file->path,
             'relation' => $mainDir
-        ]);
+        ];
+
+        $file->delete();
+
+        return File::create($data);
     }
 
 
@@ -130,25 +134,6 @@ class FileService implements FileProxyRedisInterface
         }
 
         return $nophoto_src;
-    }
-
-    public static function getFromRedis(?File $file, string $subdir)
-    {
-        $src = self::getPhoto($file, $subdir);
-
-//        try {
-        $fileDataRaw = Redis::get($src);
-        if (!$fileDataRaw) {
-            $fileDataRaw = file_get_contents(public_path($src));
-            $test = Redis::set($src, $fileDataRaw);
-            $exp = Redis::expire($src, 3600 * 3);
-        }
-
-//        } catch (\Throwable $th) {
-//            dd($th->getFile(), $th->getLine(), $th->getMessage());
-//        }
-
-        return $fileDataRaw ?? null;
     }
 
     public static function createThumbWebp(string $filePath)

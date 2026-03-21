@@ -64,3 +64,5 @@ services:
         limits:
 #          cpus: '2.0'
           memory: 400MB
+
+#   todo service for queue

@@ -9,6 +9,13 @@ final class NotificationService
     public static function toMessage(DatabaseNotification $notification)
     {
         $data = $notification->data;
+        if ($data['text']) {
+            return [
+                'title' => 'Системное уведомление',
+                'text' => $data['text'],
+            ];
+        }
+
         $fromUser = \App\Models\User::getNameById($data['from_user']['id']);
 
         if ($fromUser && $fromUser->name) {
@@ -26,7 +33,8 @@ final class NotificationService
             $title = 'Ваш комментарий лайкнули';
             $text = sprintf($baseText, $username, $data['question']['url'], 'комментарий - ' . $data['comment']['text'] . ', в вопросе - ' . $data['question']['title']);
         } else {
-            return null;
+            $title = 'Системное уведомление';
+            $text = 'null';
             // err and skip
         }
 

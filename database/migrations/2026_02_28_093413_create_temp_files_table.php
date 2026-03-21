@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('expansion', 5);
             $table->string('path')->unique();
+            $table->string('original_name');
 
 //            $table->string('description')->nullable(); //todo is need ?
 

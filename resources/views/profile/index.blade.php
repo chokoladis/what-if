@@ -145,6 +145,7 @@
                                                     <a href="{{ route('questions.detail', $question->code) }}"><b>{{ $question->title }}</b></a>
                                                 </td>
                                                 <td>
+{{--                                                    todo--}}
                                                     <i>{{ $question->category?->title ?? '' }}</i>
                                                 </td>
                                                 <td>

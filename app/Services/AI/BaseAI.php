@@ -2,7 +2,7 @@
 
 namespace App\Services\AI;
 
-use App\Exceptions\AIWorkException;
+use App\Exceptions\Integration\AIWorkException;
 use App\Interfaces\AiApiInterface;
 
 abstract class BaseAI implements AiApiInterface

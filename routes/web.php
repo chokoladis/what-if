@@ -19,10 +19,16 @@ Route::middleware(['locale'])->group(function () {
 
     Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
-        Route::get('/questions', 'QuestionController@index')->name('questions.index');
-        Route::get('/categories', 'CategoryController@index')->name('categories.index');
-        Route::get('/categories/detail/{category}/', 'CategoryController@detail')->name('categories.detail');
-        Route::get('/questions/detail/{question}/', 'QuestionController@detail')->name('questions.detail');
+        Route::controller('QuestionController')->prefix('/questions')->name('questions.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{question}', 'detail')->name('detail');
+        });
+
+        Route::controller('CategoryController')->prefix('/categories')->name('categories.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{category}', 'detail')->name('detail');
+        });
+
         Route::post('/comments/load-subcomments', 'CommentController@loadSubcomments')->name('comments.load.subcomments');
 
         Route::post('/setting/lang', 'SettingController@setLang')->name('setting.set.lang');
@@ -42,18 +48,15 @@ Route::middleware(['locale'])->group(function () {
 
             Route::prefix('comments')->name('comments.')->group(function () {
                 Route::post('/', 'CommentController@store')->name('store');
-
                 Route::post('/vote', 'CommentVotesController@vote')->name('vote');
             });
 
-            Route::group(['prefix' => 'profile', 'controller' => 'UserController'], function () {
-                Route::name('profile.')->group(function () {
-                    Route::get('/', 'index')->name('index');
-                    Route::get('/edit', 'edit')->name('edit');
-                    Route::post('/', 'update')->name('update');
-                    Route::post('/tags', 'setTags')->name('tags.set');
-                    Route::post('/photo', 'setPhoto')->name('setPhoto');
-                });
+            Route::controller('UserController')->prefix('profile')->name('profile.')->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/edit', 'edit')->name('edit');
+                Route::post('/', 'update')->name('update');
+                Route::post('/tags', 'setTags')->name('tags.set');
+                Route::post('/photo', 'setPhoto')->name('setPhoto');
             });
         });
 
