@@ -21,7 +21,7 @@
         @if ($category->file)
             <div class="category-img">
                 {{-- todo dual img with opacity --}}
-                <img src="{{ \App\Services\FileService::getPhoto($category->file, 'categories') }}" alt="">
+                <img src="{{ \App\Services\FileService::getPhoto($category->file) }}" alt="">
             </div>
         @endif
 

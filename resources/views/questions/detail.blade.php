@@ -1,4 +1,10 @@
-@php use App\Services\FileService; @endphp
+@php
+    use App\Services\FileService;
+
+    $currentVote = !empty($questionCurrentUserVote) ? $questionCurrentUserVote['vote'] : 0;
+    $likeVal = \App\Enums\Vote::LIKE;
+    $dislikeVal = \App\Enums\Vote::DISLIKE;
+@endphp
 @extends('layouts.app')
 
 @push('style')
@@ -18,25 +24,21 @@
                 <div class="description">
                     <img src="{{ Storage::url('404.gif') }}">
                     <div class="shadow"></div>
-                    <h1>{{ $error->message }}</h1>
+                    <h1>{{ $error }}</h1>
                 </div>
             </div>
         @else
             <div class="title">
                 <div class="actions">
-                    @php
-                        $currentVote = !empty($questionCurrentUserVote) ? $questionCurrentUserVote['vote'] : 0;
-                    @endphp
                     @if(auth()->id())
-                        {{--todo boostrap icons ?--}}
                         <input type="hidden" id="question_id" value="{{ $question->id }}">
-                        <div class="icon like btn {{ $currentVote === 1 ? 'btn-success' : 'btn-outline-success' }}"
-                             data-vote="1">
+                        <div class="icon like btn {{ $currentVote === $likeVal ? 'btn-success' : 'btn-outline-success' }}"
+                             data-vote="{{$likeVal}}">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
                             <b>{{ $arVotes['likes'] ?? 0 }}</b>
                         </div>
-                        <div class="icon dislike btn {{ $currentVote === -1 ? 'btn-danger' : 'btn-outline-danger' }}"
-                             data-vote="-1">
+                        <div class="icon dislike btn {{ $currentVote === $dislikeVal ? 'btn-danger' : 'btn-outline-danger' }}"
+                             data-vote="{{$dislikeVal}}">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
                             <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
                         </div>
@@ -52,8 +54,7 @@
                     @endif
                 </div>
                 <div class="description">
-                    <img src="{{ FileService::getPhoto($question->file, 'questions') }}"
-                         alt="...">
+                    <img src="{{ FileService::getPhoto($question->file) }}" alt="...">
                     {{--во весь экран --}}
                     <div class="shadow"></div>
                     <div class="bottom">
@@ -69,7 +70,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <img src="{{ FileService::getPhoto($question->file, 'questions') }}" class="img-responsive">
+                            <img src="{{ FileService::getPhoto($question->file) }}" class="img-responsive">
                         </div>
                     </div>
                 </div>
@@ -140,7 +141,7 @@
                                         <div class="user">
                                             <i class="comment_id text-info">{{ '#'.$comment->id }}</i>
                                             <div class="icon">
-                                                <img src="{{ FileService::getPhoto($comment->user->photo, 'users') }}"
+                                                <img src="{{ FileService::getPhoto($comment->user->photo) }}"
                                                      alt="">
                                             </div>
                                             <b>{{ $comment->user->name }}</b>

@@ -21,12 +21,12 @@ Route::middleware(['locale'])->group(function () {
 
         Route::controller('QuestionController')->prefix('/questions')->name('questions.')->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/{question}', 'detail')->name('detail');
+            Route::get('/show/{question}', 'detail')->name('detail');
         });
 
         Route::controller('CategoryController')->prefix('/categories')->name('categories.')->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/{category}', 'detail')->name('detail');
+            Route::get('/show/{category}', 'detail')->name('detail');
         });
 
         Route::post('/comments/load-subcomments', 'CommentController@loadSubcomments')->name('comments.load.subcomments');

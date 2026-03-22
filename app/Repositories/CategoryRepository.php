@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Scout\Builder;
 use Meilisearch\Endpoints\Indexes;
 
@@ -13,6 +15,15 @@ class CategoryRepository extends Repository
             $options['filter'] = $filters;
             $options['sort'] = ['count_question:desc'];
             return $meilisearch->search($query, $options);
+        });
+    }
+
+    public function getActive()
+    {
+        return Cache::remember('category_active', 86400, function () {
+            $c = Category::active()->get();
+            $c->load('file');
+            return $c;
         });
     }
 }

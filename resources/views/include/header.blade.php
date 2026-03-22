@@ -113,8 +113,6 @@
                     @else
                         <li class="nav-item dropdown">
                             {{--                            todo другую иконку --}}
-{{--                            <a class="nav-link dropdown-toggle" href="#" id="questionsDropdown"--}}
-{{--                               role="button" data-bs-toggle="dropdown" aria-expanded="false"--}}
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="uk-icon" uk-icon="bell"></i>
@@ -156,7 +154,7 @@
                         <li class="nav-item dropdown profile-dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ \App\Services\FileService::getPhoto(auth()->user()->photo, 'users') }}" alt="">
+                                <img src="{{ auth()->user()->getAvatarPath() }}" alt="">
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

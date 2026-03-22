@@ -19,7 +19,7 @@
                     <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
                         <div class="card">
                             <a href="{{ route('categories.detail', $item->code ) }}">
-                                <img src="{{ \App\Services\FileService::getPhoto($item->file, 'categories') }}"
+                                <img src="{{ \App\Services\FileService::getPhoto($item->file) }}"
                                      alt="Картинка категории не найдена">
                                 <div class="card-body">
                                     {{ $item->title }}

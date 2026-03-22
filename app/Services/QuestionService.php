@@ -47,33 +47,35 @@ class QuestionService
             return false;
         }
 
-//        $key = implode('_', $filter).'_'.implode('_', $sort).'_'.$limit;
-//        $query = Cache::remember('question_list_'.$key, 36000, function () use ($filter, $sort, $limit) {
+        $key = serialize($filter).'_'.serialize($sort).'_'.$limit;
 
-        $query = self::$model::query();
+        $res = Cache::remember('question_list_'.$key, 36000, function () use ($filter, $sort, $limit) {
+            $query = self::$model::query();
 
-        foreach ($filter as $key => $item) {
-            if (is_array($item)) {
-                [$col, $operator, $value] = $item;
-                $query->where($col, $operator, $value);
-            } else {
-                $query->where($key, $item);
+            foreach ($filter as $key => $item) {
+                if (is_array($item)) {
+                    [$col, $operator, $value] = $item;
+                    $query->where($col, $operator, $value);
+                } else {
+                    $query->where($key, $item);
+                }
             }
-        }
 
-        if (!empty($sort)) {
-            if (is_int(stripos($sort[0], 'statistics'))) {
-                $col = explode('.', $sort[0]);
-                $sortBy = $col[array_key_last($col)];
+            if (!empty($sort)) {
+                if (is_int(stripos($sort[0], 'statistics'))) {
+                    $col = explode('.', $sort[0]);
+                    $sortBy = $col[array_key_last($col)];
 
-                $query->join('question_statistics', 'questions.id', '=', 'question_id');
-                $query->orderBy($sortBy, $sort[1]);
-            } else {
-                $query->orderBy($sort[0], $sort[1]);
+                    $query->join('question_statistics', 'questions.id', '=', 'question_id');
+                    $query->orderBy($sortBy, $sort[1]);
+                } else {
+                    $query->orderBy($sort[0], $sort[1]);
+                }
             }
-        }
+            return $query->paginate($limit);
+        });
 
-        return $query->paginate($limit);
+        return $res;
     }
 
     public function getByCode(string $code)
@@ -205,7 +207,7 @@ class QuestionService
         }
 
         //cache
-        return $builder->paginate(perPage: 10, page: $request->page ?? 1)
+        return $builder->with(['file', 'category', 'tags', 'votes', 'user'])->paginate(perPage: 10, page: $request->page ?? 1)
             ->withQueryString();
     }
 

@@ -17,7 +17,7 @@
     <div class="profile-page container">
         <div class="main row">
             <div class="card photo col-lg-4 col-md-3 col-12">
-                <img src="{{ \App\Services\FileService::getPhoto($user->photo, 'users') }}" class="card-img-top">
+                <img src="{{ \App\Services\FileService::getPhoto($user->photo) }}" class="card-img-top">
                 <div class="card-body @if($errors->has('photo')) active @endif">
                     <form action="{{ route('profile.setPhoto') }}" class="update-photo" method="POST"
                           enctype="multipart/form-data">
@@ -149,7 +149,7 @@
                                                     <i>{{ $question->category?->title ?? '' }}</i>
                                                 </td>
                                                 <td>
-                                                    <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions') }}" alt="" width="200px">
+                                                    <img src="{{ \App\Services\FileService::getPhoto($question->file) }}" alt="" width="200px">
                                                 </td>
                                                 <td>
                                                     <div class="tags">

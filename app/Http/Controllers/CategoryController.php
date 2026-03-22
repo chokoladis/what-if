@@ -5,20 +5,23 @@ namespace App\Http\Controllers;
 use App\Events\ViewEvent;
 use App\Models\Category;
 use App\Services\QuestionService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
-
     public function index()
     {
-        $categories = Category::getCategoriesLevel0();
-        return view('categories.index', compact('categories'));
+        return view('categories.index', ['categories' => Category::getCategoriesLevel0()]);
     }
 
     public function detail($category)
     {
-
-        $category = Category::getElement($category);
+        try {
+            $category = Category::getByCode($category);
+        } catch (ModelNotFoundException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         Event(new ViewEvent($category));
 
@@ -30,15 +33,13 @@ class CategoryController extends Controller
 
     static function getCurrCategoryChilds(Category $category)
     {
-
-//        $category_childs = Cache::remember($category->id.'_childs', Category::$timeCache, function() use ($category){
-
-        $category_childs = Category::query()
-            ->where('active', 1)
-            ->where('parent_id', $category->id)
-            ->get();
-//        });
-
-        return $category_childs;
+        return Cache::remember('category_childs_'.$category->id, Category::$timeCache, function() use ($category){
+            $categories = Category::query()
+                ->where('active', 1)
+                ->where('parent_id', $category->id)
+                ->get();
+            $categories->load('file');
+            return $categories;
+        });
     }
 }

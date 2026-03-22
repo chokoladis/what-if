@@ -4,28 +4,27 @@ namespace App\Models;
 
 use App\DTO\Indexing\CommentDTO;
 use App\DTO\Indexing\UserDTO;
-use App\Models\Errors\CommonError;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
-class Question extends BaseModel
+class   Question extends BaseModel
 {
 //    use Searchable;
 
     public $guarded = [];
 
-    public static function getElement(string $code)
+    public static function getByCode(?string $code)
     {
         // use cache 
-        if ($question = Question::where('code', $code)->where('active', true)->first()) {
-            return [$question, null];
+        if ($question = Question::active()->where('code', $code)->first()) {
+            return $question;
         } else {
-            return [false, new CommonError(__('questions.alerts.not_available'))];
+            throw new ModelNotFoundException(__('questions.alerts.not_available'));
         }
     }
 
@@ -71,6 +70,7 @@ class Question extends BaseModel
 
     public function getPopularComment()
     {
+//        todo debug
         if (!$this->comments->isEmpty()) {
 
             $query = DB::table('comments')

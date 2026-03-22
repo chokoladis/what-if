@@ -15,12 +15,12 @@
         <div class="slide">
             <a href="{{ route('questions.detail', $slide->code) }}" class="card">
                 <div class="bg">
-                    <img src="{{ FileService::getPhoto($slide->file, 'questions') }}" alt=""
+                    <img src="{{ FileService::getPhoto($slide->file) }}" alt=""
                          class="img-fluid rounded-start">
                 </div>
                 <div class="main">
                     <div class="question">
-                        <img src="{{ FileService::getPhoto($slide->user->photo, 'users') }}" alt="Фото пользователя">
+                        <img src="{{ FileService::getPhoto($slide->user->photo) }}" alt="Фото пользователя">
                         <div class="content">
                             <p class="user-name">{{ '@'.$slide->user->name }}</p>
                             <blockquote

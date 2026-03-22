@@ -65,6 +65,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(File::class, 'id', 'photo_id');
     }
 
+    public function getAvatarPath(): string
+    {
+//        todo drop by update
+        return Cache::remember('avatar_'.auth()->id(), 86400, function () {
+            return \App\Services\FileService::getPhoto($this->photo);
+        });
+    }
+
     public static function boot()
     {
 

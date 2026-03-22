@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class BaseModel extends Model
@@ -18,7 +19,11 @@ class BaseModel extends Model
     public static function getByCode(?string $code)
     {
         // use cache
-        return static::class::where('code', $code)->first();
+        if ($res = static::class::where('code', $code)->first()){
+            return $res;
+        } else {
+            throw new ModelNotFoundException();
+        }
     }
 
     public function file(): HasOne

@@ -6,6 +6,7 @@ use App\DTO\FileDTO;
 use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\TempFile;
+use Detection\Cache\Cache;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
@@ -74,16 +75,20 @@ class FileService
         ]);
     }
 
-    static function getPhoto(?File $file, string $subdir)
+    static function getPhoto(?File $file)
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
         if ($file && $file->path) {
-            $disk = Storage::disk('public');
+            return \Illuminate\Support\Facades\Cache::remember('get_path_file_id_'.$file->id,
+                86400,
+                function () use ($file, $nophoto_src)
+                {
+                    $disk = Storage::disk('public');
+                    $chunkPath = $file->relation . '/' . $file->path;
 
-            $chunkPath = $file->relation . '/' . $file->path;
-
-            return $disk->exists($chunkPath) ? $disk->url($chunkPath) : $nophoto_src;
+                    return $disk->exists($chunkPath) ? $disk->url($chunkPath) : $nophoto_src;
+            });
         }
 
         return $nophoto_src;

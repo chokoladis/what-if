@@ -14,7 +14,9 @@
 > - Filament
 > - Meilisearch
 > - WebSocket (reverb)
+> - Queue (БД)
 > - Docker, Docker-compose (nginx, php-fpm, node, mysql, redis)
+> - Дебаг пакет - barryvdh/laravel-debugbar
 > - Встроен gemini.ai (проверка картинок на запрещенку)
 ### 🔬 [Тесты](https://github.com/chokoladis/what-if/tree/main/readme/tests)
 

@@ -27,7 +27,7 @@ class RightAnswer extends Component
             $this->userName = $comment['user']['name'];
             $this->text = mb_strlen($comment['text']) > 60 ? mb_substr($comment['text'], 0, 60) : $comment['text'];
         } else {
-            $this->imgSrc = \App\Services\FileService::getPhoto($comment->user->file,'users');
+            $this->imgSrc = \App\Services\FileService::getPhoto($comment->user->file);
             $this->userName = $comment->user->name;
             $this->text = mb_strlen($comment->text) > 60 ? mb_substr($comment->text, 0, 60) : $comment->text;
         }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
@@ -27,7 +28,9 @@ class Category extends BaseModel
     public static function getCategoriesLevel0()
     {
         return Cache::remember('category_level_0', now()->addDay(), function () {
-            return Category::active()->where('level', 0)->get();
+            $category = Category::active()->where('level', 0)->get();
+            $category->load('file');
+            return $category;
         });
     }
 
@@ -110,10 +113,18 @@ class Category extends BaseModel
             ->get()->first();
     }
 
-    public static function getElement(?string $code)
+    public static function getByCode(?string $code)
     {
-        // use cache 
-        return Category::where('code', $code)->first();
+        $category = Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
+            $category = Category::active()->where('code', $code)->first();
+            $category->load('file');
+            return $category;
+        });
+        if (!$category){
+            throw new ModelNotFoundException();
+        }
+
+        return $category;
     }
 
     public function file(): HasOne

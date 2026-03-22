@@ -10,27 +10,30 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuestionVotes;
 use App\Models\Tag;
+use App\Repositories\CategoryRepository;
+use App\Repositories\TagRepository;
 use App\Services\QuestionService;
 use App\Services\UserService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 
 class QuestionController extends Controller
 {
     private QuestionService $questionService;
+    private TagRepository $tagRepository;
+    private CategoryRepository $categoryRepository;
 
     function __construct()
     {
         $this->questionService = new QuestionService();
+        $this->tagRepository = new TagRepository();
+        $this->categoryRepository = new CategoryRepository(Category::class, true);
     }
 
     public function index(IndexRequest $request)
     {
-        $tags = Cache::remember('tags_all', 3600, function () {
-            return Tag::all();
-        });
-        $categories = Cache::remember('categories_active', 3600, function () {
-            return Category::query()->where('active', 1)->get();
-        });
+        $tags = $this->tagRepository->getAll();
+        $categories = $this->categoryRepository->getActive();
 
         $key = serialize('questions_' . json_encode($request->validated()));
 
@@ -73,12 +76,12 @@ class QuestionController extends Controller
         }
     }
 
-    public function detail($question)
+    public function detail(string $code)
     {
-        [$question, $error] = Question::getElement($question);
-
-        if ($error) {
-            return view('questions.detail', compact('error'));
+        try {
+            $question = Question::getByCode($code);
+        } catch(ModelNotFoundException $e) {
+            return view('questions.detail', ['error' => $e->getMessage()]);
         }
 
         Event(new ViewEvent($question));
