@@ -21,4 +21,8 @@
     <img src="test34.png" alt="test 3" style="width: 100%; max-width: 800px;" />
 </p>
 
-[//]: # (todo проверить снова, после рефакторинга и настройки кэширования)
+- test 50 (убран проброс папок - volumes)
+
+<p align="center">
+    <img src="test50.png" alt="test 50" style="width: 100%; max-width: 800px;" />
+</p>

@@ -40,7 +40,7 @@
     </div>
 
 
-    {{-- do like component --}}
+{{--     do like component --}}
     <div class="modal fade" id="modal-feedback" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="modalFeedbackTitle" aria-hidden="true">
         <div class="modal-dialog">
@@ -53,7 +53,7 @@
                     <form action="{{ route('feedback.store') }}" method="POST" enctype="multipart/form-data">
 
                         @method('POST')
-                        {{--todo check--}}
+{{--                        todo check--}}
                         @csrf
 
                         <div class="mb-3">
@@ -68,7 +68,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">{{ __('crud.feedback.fields.phone') }}</label>
-                            {{-- js-phone --}}
+{{--                             js-phone --}}
                             <input type="tel" name="phone"
                                    class="form-control @error('phone') is-invalid @enderror js-phone-mask"
                                    placeholder="7 901 234 5678" value="{{ old('phone') }}">

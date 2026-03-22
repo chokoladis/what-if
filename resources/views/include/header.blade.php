@@ -112,7 +112,7 @@
                         @endif
                     @else
                         <li class="nav-item dropdown">
-                            {{--                            todo другую иконку --}}
+{{--                                                        todo другую иконку --}}
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="uk-icon" uk-icon="bell"></i>
