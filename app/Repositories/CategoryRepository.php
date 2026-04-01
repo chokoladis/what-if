@@ -21,9 +21,7 @@ class CategoryRepository extends Repository
     public function getActive()
     {
         return Cache::remember('category_active', 86400, function () {
-            $c = Category::active()->get();
-            $c->load('file');
-            return $c;
+            return Category::active()->with('file')->get();
         });
     }
 }

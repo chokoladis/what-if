@@ -12,7 +12,7 @@
     $itemsTypeOutCookie = \Illuminate\Support\Facades\Cookie::get('items-type-output', 'simple');
     $currentItemsTypeOutput = in_array($itemsTypeOutCookie, $itemsTypeOut) ? $itemsTypeOutCookie : current($itemsTypeOut);
 
-    $res = \App\Services\QuestionService::getVotes($question->id);
+    $popularComment = $question->getPopularComment();
     $mainClass = $question->right_comment_id ? 'border-success' : '';
 
 @endphp
@@ -28,10 +28,10 @@
             <div class="card-body">
                 <div class="votes">
                     <div class="icon like btn btn-success">
-                        <b>{{ $res->likes ?? 0 }}</b>
+                        <b>{{ $question->likes_count ?? 0 }}</b>
                     </div>
                     <div class="icon dislike btn btn-danger">
-                        <b>{{ $res->dislikes ?? 0 }}</b>
+                        <b>{{ $question->dislikes_count ?? 0 }}</b>
                     </div>
                 </div>
                 <a href="{{ route('questions.detail', $question->code) }}" class="card-title">{{ $question->title }}</a>
@@ -55,7 +55,7 @@
                 @if ($question->right_comment_id)
                     <x-right-answer :comment="$question->right_comment"></x-right-answer>
                 @endif
-                @if ($popularComment = $question->getPopularComment())
+                @if ($popularComment)
                     <x-comment.popular-comment :comment="$popularComment"></x-comment.popular-comment>
                 @endif
 
@@ -88,17 +88,17 @@
             <div class="item-header">
                 <div class="votes">
                     <div class="icon like btn btn-success">
-                        <b>{{ $res->likes ?? 0 }}</b>
+                        <b>{{ $question->likes_count ?? 0 }}</b>
                     </div>
                     <div class="icon dislike btn btn-danger">
-                        <b>{{ $res->dislikes ?? 0 }}</b>
+                        <b>{{ $question->dislikes_count ?? 0 }}</b>
                     </div>
                     @if ($question->right_comment_id)
                         <x-right-answer :comment="$question->right_comment" :compact="true"></x-right-answer>
                     @endif
-                    @if ($question->getPopularComment())
+                    @if ($popularComment)
                         <x-comment.popular-comment
-                                :comment="$question->getPopularComment()" :compact="true"></x-comment.popular-comment>
+                                :comment="$popularComment" :compact="true"></x-comment.popular-comment>
                     @endif
                 </div>
 

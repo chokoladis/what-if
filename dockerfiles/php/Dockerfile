@@ -8,8 +8,6 @@ COPY package*.json vite.config.js* ./
 RUN npm install npm@11.6.2 -g && npm install npm@11.6.2
 # RUN npm install --production
 
-RUN npm ci
-
 COPY . .
 RUN npm run build
 
@@ -18,7 +16,7 @@ LABEL org.opencontainers.image.authors="github@chokoladis"
 
 WORKDIR /var/www/what_if
 
-COPY ./dockerfiles/php/conf/fpm.conf /usr/local/etc/php-fpm.d/www.conf
+#COPY ./dockerfiles/php/conf/fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV PATH="$PATH:/usr/local/bin"
@@ -26,7 +24,7 @@ ENV PATH="$PATH:/usr/local/bin"
 COPY --from=node_build /var/www/what_if .
 
 RUN set -eux; \
-    apk add --virtual .build-deps \
+    apk add --no-cache --virtual .build-deps \
             autoconf \
             build-base \
             linux-headers \
@@ -38,18 +36,21 @@ RUN set -eux; \
             oniguruma-dev \
             icu-dev \
             libxml2-dev \
-            curl-dev
+            curl-dev;
 
 RUN apk add bash \
         libzip \
         zlib \
+        unzip \
+        git \
+        ca-certificates \
         libpng \
         libjpeg-turbo \
         freetype \
         icu-libs \
         libxml2 \
-        curl; \
-    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+        curl && update-ca-certificates;
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg; \
     docker-php-ext-install \
         pdo \
         pdo_mysql \
@@ -60,7 +61,18 @@ RUN apk add bash \
         opcache \
         sockets \
         pcntl \
+        zip \
         curl; \
     pecl install redis && docker-php-ext-enable redis; \
-    apk del .build-deps; \
-    apk add --no-cache ca-certificates && update-ca-certificates
+    apk del .build-deps;
+
+#COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+#COPY composer*.json ./
+#ENV PATH="$PATH:/usr/local/bin"
+#
+#RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+#
+##COPY . .
+#COPY --from=node_build /var/www/what_if/public/build ./public/build
+
+#RUN composer dump-autoload --optimize --no-dev --classmap-authoritative

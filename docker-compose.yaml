@@ -16,14 +16,16 @@ services:
       dockerfile: dockerfiles/php/Dockerfile
     ports:
       - '${REVERB_PORT:-8080:}:8080'
-#    volumes:
-#      - .:/var/www/what_if
+    volumes:
+      - .:/var/www/what_if #отключить для боя/теста
+      - ./dockerfiles/php/conf/fpm.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+#      - ./dockerfiles/php/conf/php.ini:/usr/local/etc/php/php.ini
     container_name: what-if_php
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '4.0'
-#          memory: 1G
+    deploy:
+      resources:
+        limits:
+          cpus: '5.0'
+          memory: 1G
 
   mysql:
     image: mysql:8.0
@@ -34,14 +36,14 @@ services:
       MYSQL_DATABASE: '${DB_DATABASE}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '2.0'
-#          memory: 2G
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
 
   phpmyadmin:
-    image: phpmyadmin:5.2.1
+    image: phpmyadmin:5.2.1-fpm-alpine
     container_name: what-if_phpmyadmin
     ports:
       - "8001:80"
@@ -51,11 +53,11 @@ services:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
       PMA_HOST: mysql
+    depends_on:
+      - mysql
 
   redis:
     build: ./dockerfiles/redis
-    volumes:
-      - .:/var/www/what_if
     container_name: what-if_redis
     ports:
       - "6379:6379"

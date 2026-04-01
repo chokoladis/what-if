@@ -12,6 +12,7 @@ use App\Models\QuestionVotes;
 use App\Models\Tag;
 use App\Repositories\CategoryRepository;
 use App\Repositories\TagRepository;
+use App\Services\QuestionIndexService;
 use App\Services\QuestionService;
 use App\Services\UserService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,18 +21,22 @@ use Illuminate\Support\Facades\Cache;
 class QuestionController extends Controller
 {
     private QuestionService $questionService;
+
+//    private QuestionIndexService $questionIndexService;
     private TagRepository $tagRepository;
     private CategoryRepository $categoryRepository;
 
     function __construct()
     {
         $this->questionService = new QuestionService();
+//        $this->questionIndexService = new QuestionIndexService();
         $this->tagRepository = new TagRepository();
         $this->categoryRepository = new CategoryRepository(Category::class, true);
     }
 
     public function index(IndexRequest $request)
     {
+//        $data = $this->questionIndexService->getIndexPageData($request);
         $tags = $this->tagRepository->getAll();
         $categories = $this->categoryRepository->getActive();
 
@@ -151,6 +156,7 @@ class QuestionController extends Controller
 
     public function recommendations(IndexRequest $request)
     {
+//        $sidebar = $this->questionIndexService->getSidebarFilterData();
         $tags = Cache::remember('tags_all', 3600, function () {
             return Tag::all();
         });

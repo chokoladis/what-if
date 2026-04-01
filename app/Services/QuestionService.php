@@ -191,12 +191,15 @@ class QuestionService
             });
         }
 
-        if ($request->resolved) {
-            $builder->whereNotNull('right_comment_id');
+        if ($request->filled('resolved')) {
+            if (filter_var($request->resolved, FILTER_VALIDATE_BOOLEAN)){
+                $builder->whereHas('right_comment');
+            } else {
+                $builder->whereDoesntHave('right_comment');
+            }
         }
 
         if ($request->categories) {
-            // todo
             $builder->whereHas('category', function ($query) use ($request) {
                return $query->whereIn('categories.title', $request->categories);
             });
@@ -206,8 +209,18 @@ class QuestionService
             $builder = self::sortBuilder($builder, $request);
         }
 
-        //cache
-        return $builder->with(['file', 'category', 'tags', 'votes', 'user'])->paginate(perPage: 10, page: $request->page ?? 1)
+//        'right_comment.user'
+        return $builder
+            ->with(['file', 'category', 'tags', 'user', 'statistics'])
+            ->withCount([
+                'votes as likes_count' => function ($query) {
+                    $query->where('vote', 1);
+                },
+                'votes as dislikes_count' => function ($query) {
+                    $query->where('vote', -1);
+                }
+            ])
+            ->paginate(perPage: 10, page: $request->page ?? 1)
             ->withQueryString();
     }
 
@@ -243,6 +256,12 @@ class QuestionService
 
         return Cache::remember(serialize('question_popular_'.$limit.'_'.$interval), 3600*3, function () use ($questionIds, $limit) {
             return Question::active()
+//                ->selectRaw('id, code, title, file_id, user_id,
+//                (   SELECT comments.id FROM comments
+//                    WHERE comments.question_id = questions.id
+//                        AND comments.is_answer = true
+//                        AND comments.active = true) AS right_comment_id')
+                ->with(['file', 'user', 'right_comment', 'right_comment.user'])
                 ->whereIn('id', $questionIds)
                 ->limit($limit)
                 ->orderBy(DB::raw("FIELD(id, " . implode(',', $questionIds) . ")"))

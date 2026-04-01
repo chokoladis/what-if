@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
@@ -70,39 +72,35 @@ class   Question extends BaseModel
 
     public function getPopularComment()
     {
-//        todo debug
-        if (!$this->comments->isEmpty()) {
-
+        $cacheKey = 'question_popular_comment_' . $this->id;
+        $popularCommentId = Cache::remember($cacheKey, 3600, function () {
             $query = DB::table('comments')
-                ->join('questions', 'questions.id', '=', 'comments.question_id')
                 ->join('comment_votes', 'comments.id', '=', 'comment_votes.comment_id')
                 ->where('comments.question_id', $this->id)
                 ->where('comments.active', true)
                 ->select('comment_votes.vote', 'comment_votes.comment_id')
                 ->get();
 
-            $comments = [];
-
-            if ($query->isNotEmpty()) {
-//                dump($query);
-                foreach ($query as $comment) {
-
-                    // todo check
-                    if (!isset($comments[$comment->comment_id]))
-                        $comments[$comment->comment_id] = 0;
-
-                    $comments[$comment->comment_id] = $comments[$comment->comment_id] + $comment->vote;
-                }
-
-                $popularCommentId = array_search(max($comments), $comments);
-
-                return Comment::query()->find($popularCommentId);
+            if ($query->isEmpty()) {
+                return 0;
             }
 
+            $comments = [];
+            foreach ($query as $comment) {
+                if (!isset($comments[$comment->comment_id])) {
+                    $comments[$comment->comment_id] = 0;
+                }
+                $comments[$comment->comment_id] += $comment->vote;
+            }
+
+            return (int) array_search(max($comments), $comments, true);
+        });
+
+        if (!$popularCommentId) {
             return false;
         }
 
-        return false;
+        return Comment::query()->with('user')->find($popularCommentId);
     }
 
     public function category(): HasOne
@@ -134,13 +132,14 @@ class   Question extends BaseModel
 
     public function votes(): hasMany
     {
-        return $this->hasMany(QuestionVotes::class, 'id', 'question_id');
+        return $this->hasMany(QuestionVotes::class, 'question_id', 'id');
     }
 
-    public function right_comment(): hasOne
+    public function right_comment() //: HasOne
     {
-//        todo rework
-        return $this->HasOne(Comment::class, 'id', 'right_comment_id');
+        return $this->HasOne(Comment::class, 'question_id', 'id')
+            ->where('active', true)
+            ->where('is_answer', true);
     }
 
     public function tags()

@@ -2,8 +2,10 @@ include .env
 
 build:
 	docker-compose up --build -d
+	make fix-right
 up:
 	docker-compose up -d
+	make fix-right
 down:
 	docker-compose down
 
@@ -27,7 +29,11 @@ update-composer:
 	docker exec -w /var/www/what_if what-if_php composer update --no-interaction
 
 fix-right:
-	sudo chmod -R 777 storage
+	docker-compose exec php chown -R www-data:www-data /var/www/what_if/storage/app
+	docker-compose exec php chown -R www-data:www-data /var/www/what_if/storage/logs
+	docker-compose exec php chown -R www-data:www-data /var/www/what_if/bootstrap/cache
+	docker-compose exec php chmod -R 755 /var/www/what_if/storage/logs
+	docker-compose exec php chmod -R 755 /var/www/what_if/bootstrap/cache
 
 clear-cache:
 	docker exec -it what-if_php php artisan optimize:clear

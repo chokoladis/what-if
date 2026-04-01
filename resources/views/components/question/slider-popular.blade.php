@@ -27,7 +27,7 @@
                                     class="text">{{ mb_strlen($slide->title) > 60 ? mb_substr($slide->title, 0, 60) : $slide->title }}</blockquote>
                         </div>
                     </div>
-                    @if ($slide->right_comment_id)
+                    @if ($slide->right_comment)
                         <div class="answer alert alert-success">
                             <div class="content">
                                 <p class="user-name">{{ '@'.$slide->right_comment->user->name }}</p>

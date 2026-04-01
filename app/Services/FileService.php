@@ -80,15 +80,11 @@ class FileService
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
         if ($file && $file->path) {
-            return \Illuminate\Support\Facades\Cache::remember('get_path_file_id_'.$file->id,
-                86400,
-                function () use ($file, $nophoto_src)
-                {
-                    $disk = Storage::disk('public');
-                    $chunkPath = $file->relation . '/' . $file->path;
+//                todo cache ?
+            $disk = Storage::disk('public');
+            $chunkPath = $file->relation . '/' . $file->path;
 
-                    return $disk->exists($chunkPath) ? $disk->url($chunkPath) : $nophoto_src;
-            });
+            return $disk->exists($chunkPath) ? $disk->url($chunkPath) : $nophoto_src;
         }
 
         return $nophoto_src;

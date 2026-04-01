@@ -28,9 +28,7 @@ class Category extends BaseModel
     public static function getCategoriesLevel0()
     {
         return Cache::remember('category_level_0', now()->addDay(), function () {
-            $category = Category::active()->where('level', 0)->get();
-            $category->load('file');
-            return $category;
+            return Category::active()->where('level', 0)->with('file')->get();
         });
     }
 
@@ -116,9 +114,7 @@ class Category extends BaseModel
     public static function getByCode(?string $code)
     {
         $category = Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
-            $category = Category::active()->where('code', $code)->first();
-            $category->load('file');
-            return $category;
+            return Category::active()->where('code', $code)->with('file')->first();
         });
         if (!$category){
             throw new ModelNotFoundException();
