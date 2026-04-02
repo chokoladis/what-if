@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Category;
+use App\Models\Question;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -16,7 +18,7 @@ class ViewEvent
      */
 
     public function __construct(
-        public $model
+        public Category|Question $model
     )
     {
     }

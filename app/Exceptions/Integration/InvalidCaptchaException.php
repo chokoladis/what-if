@@ -6,5 +6,5 @@ use Exception;
 
 class InvalidCaptchaException extends Exception
 {
-    protected $message = (string)__('services.integrations.invalid_captcha');
+    protected $message = 'invalid_captcha';
 }

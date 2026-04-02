@@ -4,47 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Services\Auth\GoogleAuthService;
 use App\Services\Auth\YandexAuthService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class ServicesAuthController extends Controller
 {
-    public function googleAuth(Request $request)
+    public function googleAuth(Request $request) : RedirectResponse
     {
         if ($code = $request->get('code')) {
 
             $result = (new GoogleAuthService())->authorize($code);
 
-            if ($result === true){
+            if ($result === true) {
                 return redirect('/')->with('message', __('user.login_success'));
             } else {
                 return $result;
             }
 
         } else {
-            throw new InvalidParameterException("Invalid code parameter");
+//            todo commonerror ?
+            return redirect()->back()->withErrors('error', 'Invalid code parameter');
         }
     }
 
-    public function yandexAuth(Request $request)
+    public function yandexAuth(Request $request) : RedirectResponse
     {
         if ($code = $request->get('code')) {
 
             $result = (new YandexAuthService())->authorize($code);
 
-            if ($result === true){
+            if ($result === true) {
                 return redirect()->back()->with('message', __('user.login_success'));
             } else {
                 return $result;
             }
 
         } else {
-            throw new InvalidParameterException("Invalid code parameter");
+            return redirect()->back()->withErrors('error', 'Invalid code parameter');
         }
     }
 
-    public function telegramAuth($auth_data)
-    {
-        //removed
-    }
+//    todo with ngrok
+//    public function telegramAuth($auth_data)
+//    {
+//    }
 }

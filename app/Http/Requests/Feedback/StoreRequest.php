@@ -3,9 +3,7 @@
 namespace App\Http\Requests\Feedback;
 
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class StoreRequest extends ApiRequest
 {
@@ -20,7 +18,7 @@ class StoreRequest extends ApiRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -32,6 +30,9 @@ class StoreRequest extends ApiRequest
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function messages(): array
     {
         return [

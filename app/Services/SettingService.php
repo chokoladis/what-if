@@ -15,18 +15,26 @@ class SettingService
     const LANG = ['ru', 'en'];
     const THEME = ['dark', 'light'];
 
+    /**
+     * @param string $lang
+     * @return array{bool, ?CommonError}
+     */
     public function setLang(string $lang): array
     {
         if (in_array($lang, self::LANG)) {
             App::setLocale($lang);
             Cookie::queue('lang', $lang, 36000000);
 
+//            todo переделать на exception ?
             return [true, null];
         } else {
             return [false, new CommonError(__('services.options.lang_not_support'), 'lang_not_support')];
         }
     }
 
+    /**
+     * @return array{false|string, ?CommonError}
+     * */
     public function setTheme(): array
     {
         try {
@@ -46,7 +54,11 @@ class SettingService
         }
     }
 
-    public function setTypeOutput(string $type)
+    /**
+     * @param string $type
+     * @return array{bool, ?CommonError}
+     */
+    public function setTypeOutput(string $type) : array
     {
         if (in_array($type, QuestionService::ITEMS_TYPE_OUTPUT)) {
             Cookie::queue('items-type-output', $type, 36000000);

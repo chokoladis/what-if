@@ -13,11 +13,11 @@ class LocaleMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+     * @param Closure(Request): (Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $lang = $request->cookie('lang', 'en');
+        $lang = (string)$request->cookie('lang', 'en');
 
         if (in_array($lang, SettingService::LANG)) {
             App::setLocale($lang);

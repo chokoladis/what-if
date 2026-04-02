@@ -33,7 +33,7 @@ class CategoryController extends Controller
 
     static function getCurrCategoryChilds(Category $category)
     {
-        return Cache::remember('category_childs_'.$category->id, Category::$timeCache, function() use ($category){
+        return Cache::remember('category_childs_' . $category->id, Category::$timeCache, function () use ($category) {
             $categories = Category::query()
                 ->where('active', 1)
                 ->where('parent_id', $category->id)

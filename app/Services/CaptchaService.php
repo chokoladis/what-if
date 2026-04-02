@@ -25,7 +25,7 @@ class CaptchaService
         $curl_response = curl_exec($curl);
         $errors = curl_error($curl);
 
-        $result = json_decode($curl_response, 1);
+        $result = json_decode($curl_response, true);
 
         if ($result['success']) {
             if (isset($result['score']) && $result['score'] < 0.5) {

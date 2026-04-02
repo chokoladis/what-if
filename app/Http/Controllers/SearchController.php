@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Repositories\CategoryRepository;
 use App\Repositories\QuestionRepository;
+use Illuminate\View\View;
 
 class SearchController extends Controller
 {
@@ -19,7 +20,7 @@ class SearchController extends Controller
         $this->categoryRepository = new CategoryRepository(Category::class);
     }
 
-    public function index(IndexRequest $request)
+    public function index(IndexRequest $request) : View
     {
         $data = $request->validated();
         $filters = $data['filters'] ?? [];

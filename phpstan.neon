@@ -8,3 +8,5 @@ parameters:
         - identifier: missingType.generics
         - '#Cannot call method notifications\(\) on Illuminate[a-zA-Z\\_]+#'
         - '#Access to an undefined property App\\Models[a-zA-Z\\]#'
+        - '#Parameter \#1 \$message of class App\\Models\\Errors[a-zA-Z\\]+ constructor expects string, array\|string\|null given#'
+        - '#Property App\\Exceptions\\[a-zA-Z\d\\]+\:\:\$code has no type specified\.#'

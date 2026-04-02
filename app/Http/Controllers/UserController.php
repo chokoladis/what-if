@@ -10,7 +10,10 @@ use App\Http\Requests\User\UpdateRequest;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\View\View;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -19,16 +22,16 @@ class UserController extends Controller
         $this->middleware('throttle:4,1')->only('update', 'setPhoto');
     }
 
-    public function index()
+    public function index(): View
     {
-        $userTags = auth()->user()->tags()->get();
+        $userTags = Auth::user()->tags()->get();
         $tags = Tag::query()->whereNotIn('id', $userTags->pluck('id'))->get();
-        $notifications = \App\Services\UserService::getLastNotifications();
+        $notifications = UserService::getLastNotifications();
 
         return view('profile.index', compact('tags', 'userTags', 'notifications'));
     }
 
-    public function edit()
+    public function edit(): View
     {
         return view('profile.edit');
     }
@@ -57,7 +60,7 @@ class UserController extends Controller
             $service->setPhoto($file);
         } catch (FileValidationException|FileSaveException $e) {
             return redirect()->route('profile.index')->with('error', $e->getMessage());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error($e->getMessage());
             return redirect()->route('profile.index')->with('error', 'system_error');
         }
@@ -68,7 +71,7 @@ class UserController extends Controller
     public function setTags(SetTagsRequest $request)
     {
         $data = $request->validated();
-        $res = auth()->user()->tags()->sync(isset($data['tags']) ? $data['tags'] : []);
+        $res = Auth::user()->tags()->sync(isset($data['tags']) ? $data['tags'] : []);
 
         if (!empty($res)) {
             return redirect()->route('profile.index')->with('message', __('system.alerts.success'));

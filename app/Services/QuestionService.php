@@ -40,6 +40,12 @@ class QuestionService
 
     private static string $model = Question::class;
 
+    /**
+     * @param array<string, bool|string|int> $filter
+     * @param array $sort
+     * @param int $limit
+     * @return LengthAwarePaginator|false
+     */
     public static function getList(
         array $filter = [],
         array $sort = [],
@@ -81,17 +87,16 @@ class QuestionService
         return $res;
     }
 
-    public function getByCode(string $code)
-    {
-        $question = $this->model::where('code', $code)->first();
-    }
-
-    public function isCommentContains(array $data)
+    /**
+     * @param array<string, int|string> $data
+     * @return bool
+     */
+    public function isCommentContains(array $data) : bool
     {
         return QuestionComments::query()
             ->where('question_id', $data['question_id'])
             ->where('comment_id', $data['comment_id'])
-            ->first('id');
+            ->exists();
     }
 
     public function setRightComment($data)

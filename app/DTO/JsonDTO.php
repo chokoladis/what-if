@@ -28,7 +28,7 @@ class JsonDTO implements Jsonable, \JsonSerializable
         return $json;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : mixed
     {
         return get_object_vars($this);
     }

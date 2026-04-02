@@ -7,7 +7,7 @@ up:
 	docker-compose up -d
 	make fix-right
 down:
-	docker-compose down
+	docker-compose stop
 
 reload:
 	make down

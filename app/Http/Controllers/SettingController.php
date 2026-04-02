@@ -21,7 +21,10 @@ class SettingController extends Controller
     {
         $lang = $request->get('lang');
         if (!$lang)
-            return responseJson(false, new CommonError(__('validation.required', 'lang'), 'value_not_set'));
+            return responseJson(false, new CommonError(
+                    (string)__('validation.required', 'lang'),
+                    'value_not_set')
+            );
 
         [$success, $error] = $this->settingService->setLang($lang);
 

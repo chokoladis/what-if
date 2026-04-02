@@ -3,20 +3,21 @@
 namespace App\Http\Middleware;
 
 use App\Services\CaptchaService;
-use App\Services\SettingService;
+use App\Tools\Option;
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CaptchaMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+     * @param Closure(Request): (Response) $next
      */
     public function handle(Request $request, Closure $next)
     {
-        if (\App\Tools\Option::isCaptchaSetOn()) {
+        if (Option::isCaptchaSetOn()) {
 
             $captcha = new CaptchaService();
             [$success,] = $captcha->verify($request->get('h-captcha-response') ?? '');

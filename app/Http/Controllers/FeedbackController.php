@@ -7,6 +7,7 @@ use App\DTO\Errors\ValidationError;
 use App\Http\Requests\Feedback\StoreRequest;
 use App\Models\Feedback;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class FeedbackController extends Controller
 {
@@ -44,12 +45,12 @@ class FeedbackController extends Controller
                 }
             }
 
-            if (!empty($errors)){
+            if (!empty($errors)) {
                 return responseJson(false, $errors);
             }
 
             return responseJson($success, $response, 201);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
 
             Log::error($th, $data);
 

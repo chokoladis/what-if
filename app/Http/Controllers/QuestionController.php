@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Events\ViewEvent;
@@ -7,15 +9,18 @@ use App\Http\Requests\Question\IndexRequest;
 use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Question;
 use App\Models\QuestionVotes;
 use App\Models\Tag;
 use App\Repositories\CategoryRepository;
 use App\Repositories\TagRepository;
-use App\Services\QuestionIndexService;
 use App\Services\QuestionService;
 use App\Services\UserService;
+use Error;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 
 class QuestionController extends Controller
@@ -34,6 +39,21 @@ class QuestionController extends Controller
         $this->categoryRepository = new CategoryRepository(Category::class, true);
     }
 
+
+    public static function findByUrl(string $url) : ?Question
+    {
+        $urlExplode = explode('/', $url);
+        $questionCode = $urlExplode[count($urlExplode) - 1];
+
+        $question = Question::query()->where('code', $questionCode)->first();
+        return $question;
+    }
+
+    /**
+     * @param IndexRequest $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\View\View|object
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
     public function index(IndexRequest $request)
     {
 //        $data = $this->questionIndexService->getIndexPageData($request);
@@ -47,17 +67,17 @@ class QuestionController extends Controller
         if (!$questions) {
             $questionPaginator = QuestionService::paginateWithFilter($request);
             if ($questionPaginator->count()) {
-                Cache::set($key,$questionPaginator, 3600);
+                Cache::set($key, $questionPaginator, 3600);
                 $questions = $questionPaginator;
             } else {
-                Cache::set($key,null, 3600);
+                Cache::set($key, null, 3600);
             }
         }
 
         return view('questions.index', compact('questions', 'tags', 'categories'));
     }
 
-    public function add()
+    public function add() : View
     {
         $categories = Category::getDaughtersCategories();
         //cache
@@ -66,7 +86,7 @@ class QuestionController extends Controller
         return view('questions.add', compact('categories', 'tags'));
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request) : RedirectResponse
     {
         [$question, $error] = $this->questionService->store($request);
 
@@ -81,11 +101,15 @@ class QuestionController extends Controller
         }
     }
 
+    /**
+     * @param string $code
+     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View|object
+     */
     public function detail(string $code)
     {
         try {
             $question = Question::getByCode($code);
-        } catch(ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return view('questions.detail', ['error' => $e->getMessage()]);
         }
 
@@ -97,7 +121,7 @@ class QuestionController extends Controller
 
         $arComments = [];
 //            mb use algoritm
-        /* @var \App\Models\Comment $comment */
+        /* @var Comment $comment */
         foreach ($question->comments as $comment) {
 
             if ($comment->isReply()) {
@@ -124,22 +148,17 @@ class QuestionController extends Controller
         );
     }
 
-    public static function findByUrl(string $url)
-    {
-        $urlExplode = explode('/', $url);
-        $questionCode = $urlExplode[count($urlExplode) - 1];
-
-        $question = Question::query()->where('code', $questionCode)->first();
-        return $question;
-    }
-
+    /**
+     * @param RightCommentStoreRequest $request
+     * @return \Illuminate\Http\Response|object
+     */
     public function setRightComment(RightCommentStoreRequest $request)
     {
         $data = $request->validated();
 
         if ($data['question_id'] < 0 || $data['comment_id'] < 0) {
             return responseJson(false, [
-                new \Error('Вопрос или комментарий не прошли валидацию', 'question_or_comment_no_valid')
+                new Error('Вопрос или комментарий не прошли валидацию', 'question_or_comment_no_valid')
             ]);
         }
 
@@ -150,11 +169,11 @@ class QuestionController extends Controller
         }
 
         return responseJson(false, [
-            new \Error('Ошибка при задании верного комментария', 'error_in_set_right_comment')
+            new Error('Ошибка при задании верного комментария', 'error_in_set_right_comment')
         ]);
     }
 
-    public function recommendations(IndexRequest $request)
+    public function recommendations(IndexRequest $request) : View
     {
 //        $sidebar = $this->questionIndexService->getSidebarFilterData();
         $tags = Cache::remember('tags_all', 3600, function () {

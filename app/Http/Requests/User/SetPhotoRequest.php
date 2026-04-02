@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use App\Services\FileService;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SetPhotoRequest extends FormRequest
@@ -18,7 +19,7 @@ class SetPhotoRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -27,11 +28,11 @@ class SetPhotoRequest extends FormRequest
         ];
     }
 
-    public function messages(): array
-    {
-        return [
-            //The photo field must be an image.
-            //The photo field must be a file of type: jpeg, png, jpg, gif.
-        ];
-    }
+//    public function messages(): array
+//    {
+//        return [
+//            //The photo field must be an image.
+//            //The photo field must be a file of type: jpeg, png, jpg, gif.
+//        ];
+//    }
 }

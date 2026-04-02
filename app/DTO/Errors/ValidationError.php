@@ -6,7 +6,7 @@ readonly class ValidationError extends Error
 {
     function __construct(
         string  $message,
-        string  $field,
+        protected string  $field,
         ?string $code = 'validation_error',
     )
     {
