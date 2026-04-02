@@ -9,7 +9,7 @@ class FileGarbageCollector
 {
     const DIR_ACTIVE = ['categories', 'questions', 'users'];
 
-    public function cleanFileStorage()
+    public function cleanFileStorage() : void
     {
         $disk = Storage::disk('public');
 
@@ -25,7 +25,7 @@ class FileGarbageCollector
                 continue;
             }
 
-            $preparedFilesPath = array_map(function ($filePath) use ($disk) {
+            $preparedFilesPath = array_map(function ($filePath) {
                 $arPath = explode('/', $filePath);
                 unset($arPath[0]);
                 return implode('/', $arPath);
@@ -56,11 +56,9 @@ class FileGarbageCollector
         }
     }
 
-    private function getAllActiveDir()
+    private function getAllActiveDir() : \Iterator
     {
-        $disk = Storage::disk('public');
-
-        foreach ($disk->allDirectories() as $dir) {
+        foreach (Storage::disk('public')->allDirectories() as $dir) {
 
             $posSlash = stripos($dir, '/');
             if (is_bool($posSlash)) {

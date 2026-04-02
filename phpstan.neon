@@ -1,0 +1,10 @@
+parameters:
+    paths:
+        - app/
+    excludePaths:
+        - app/console
+    level: 8
+    ignoreErrors:
+        - identifier: missingType.generics
+        - '#Cannot call method notifications\(\) on Illuminate[a-zA-Z\\_]+#'
+        - '#Access to an undefined property App\\Models[a-zA-Z\\]#'

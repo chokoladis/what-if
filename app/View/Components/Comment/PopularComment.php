@@ -15,9 +15,11 @@ class PopularComment extends Component
 
     /**
      * Create a new component instance.
+     * @param Comment|mixed $comment
+     * @param bool $compact
      */
     public function __construct(
-        public Comment|array $comment,
+        public mixed $comment,
         public bool $compact = false,
     )
     {

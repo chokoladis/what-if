@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\NotificationType;
+use App\Notifications\Comment\CommentNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -113,15 +113,12 @@ class Comment extends Model
          */
 
         static::created(function ($item) {
-
-//            todo setting
             if (strtolower(config('notification.status')) !== 'off'){
-                Notification::create([
-                    'user_id' => $item->user_id,
-                    'entity_id' => $item->id,
-                    'entity' => __CLASS__,
-                    'type' => $this->isReply() ? NotificationType::RESPONDED_TO_COMMENT : NotificationType::QUESTION_COMMENTED,
-                ]);
+
+                $notification = new \App\Notifications\Comment\CommentNotification($item->user, $item->comment);
+                if (!CommentNotification::isExists($notification)) {
+                    $item->comment->question->user->notify($notification);
+                }
             }
         });
 

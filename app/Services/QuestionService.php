@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\DTO\Errors\CommonError;
@@ -16,6 +18,7 @@ use App\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,13 +38,13 @@ class QuestionService
         'simple', 'compact'
     ];
 
-    private static $model = Question::class;
+    private static string $model = Question::class;
 
     public static function getList(
         array $filter = [],
         array $sort = [],
         int   $limit = 10
-    )
+    ) : LengthAwarePaginator|false
     {
         if (empty($filter)) {
             return false;

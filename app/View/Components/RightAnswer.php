@@ -16,9 +16,10 @@ class RightAnswer extends Component
 
     /**
      * Create a new component instance.
+     * @param Comment|mixed $comment
      */
     public function __construct(
-        public Comment|array $comment,
+        public mixed $comment,
         public bool $compact = false,
     )
     {

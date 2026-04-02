@@ -19,7 +19,8 @@ services:
     volumes:
       - .:/var/www/what_if #отключить для боя/теста
       - ./dockerfiles/php/conf/fpm.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-#      - ./dockerfiles/php/conf/php.ini:/usr/local/etc/php/php.ini
+      - ./dockerfiles/php/conf/php.ini:/usr/local/etc/php/php.ini
+      - ./dockerfiles/php/conf/php.ini:/usr/local/etc/php/cli/php.ini
     container_name: what-if_php
     deploy:
       resources:

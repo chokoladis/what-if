@@ -9,6 +9,9 @@ use Illuminate\View\Component;
 
 class SliderPopular extends Component
 {
+    /**
+     * @var Collection<string,mixed>
+     */
     public Collection $slides;
 
     /**

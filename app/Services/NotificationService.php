@@ -6,7 +6,11 @@ use Illuminate\Notifications\DatabaseNotification;
 
 final class NotificationService
 {
-    public static function toMessage(DatabaseNotification $notification)
+    /**
+     * @param DatabaseNotification $notification
+     * @return array<string, string>
+     */
+    public static function toMessage(DatabaseNotification $notification) : array
     {
         $data = $notification->data;
         if ($data['text']) {

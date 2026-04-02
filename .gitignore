@@ -11,3 +11,4 @@ vendor
 !storage/app/public
 storage/framework
 storage/logs
+composer.lock

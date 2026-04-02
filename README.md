@@ -16,8 +16,10 @@
 > - WebSocket (reverb)
 > - Queue (БД)
 > - Docker, Docker-compose (nginx, php-fpm, node, mysql, redis)
-> - Дебаг пакет - barryvdh/laravel-debugbar
 > - Встроен gemini.ai (проверка картинок на запрещенку)
+> - Дополнительно установлены пакеты:
+> - дебаг запросов - barryvdh/laravel-debugbar
+> - проверка кода на ошибки - phpstan/phpstan
 ### 🔬 [Тесты](https://github.com/chokoladis/what-if/tree/main/readme/tests)
 
 

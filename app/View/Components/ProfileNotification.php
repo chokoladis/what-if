@@ -5,6 +5,7 @@ namespace App\View\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Component;
 
 class ProfileNotification extends Component
@@ -17,8 +18,7 @@ class ProfileNotification extends Component
      */
     public function __construct()
     {
-        //        todo check paginate
-        $this->notifications = auth()->user()->notifications()->latest()->paginate();
+        $this->notifications = Auth::user()->notifications()->latest()->paginate();
     }
 
     /**

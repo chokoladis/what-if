@@ -6,12 +6,12 @@ use App\Models\Setting;
 
 class Option
 {
-    private static function baseQuery(string $name)
+    private static function baseQuery(string $name) : ?Setting
     {
         return Setting::query()->where('name', $name)->first();
     }
 
-    static function isCaptchaSetOn()
+    static function isCaptchaSetOn() : bool
     {
         $result = self::baseQuery('captcha_set_on');
 
@@ -22,7 +22,7 @@ class Option
         return false;
     }
 
-    static function isSmartCacheOn()
+    static function isSmartCacheOn() : bool
     {
 //        todo make cache|redis or use .env
         $result = self::baseQuery('smart_cache_on');
