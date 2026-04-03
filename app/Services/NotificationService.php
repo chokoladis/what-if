@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use App\Notifications\Comment\VoteNotification;
 use Illuminate\Notifications\DatabaseNotification;
 
 final class NotificationService
@@ -10,7 +12,7 @@ final class NotificationService
      * @param DatabaseNotification $notification
      * @return array<string, string>
      */
-    public static function toMessage(DatabaseNotification $notification) : array
+    public static function toMessage(DatabaseNotification $notification): array
     {
         $data = $notification->data;
         if ($data['text']) {
@@ -20,7 +22,7 @@ final class NotificationService
             ];
         }
 
-        $fromUser = \App\Models\User::getNameById($data['from_user']['id']);
+        $fromUser = User::getNameById($data['from_user']['id']);
 
         if ($fromUser && $fromUser->name) {
             $username = $fromUser->name;
@@ -33,7 +35,7 @@ final class NotificationService
         if (strcmp($notification->type, \App\Notifications\Question\VoteNotification::class) === 0) {
             $title = 'Ваш вопрос лайкнули';
             $text = sprintf($baseText, $username, $data['question']['url'], 'вопрос - ' . $data['question']['title']);
-        } elseif (strcmp($notification->type, \App\Notifications\Comment\VoteNotification::class) === 0) {
+        } elseif (strcmp($notification->type, VoteNotification::class) === 0) {
             $title = 'Ваш комментарий лайкнули';
             $text = sprintf($baseText, $username, $data['question']['url'], 'комментарий - ' . $data['comment']['text'] . ', в вопросе - ' . $data['question']['title']);
         } else {

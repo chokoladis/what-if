@@ -19,13 +19,13 @@ use Illuminate\Support\Facades\DB;
 
 class UserService
 {
-    public static function getRecommendations() : LengthAwarePaginator
+    public static function getRecommendations(): LengthAwarePaginator
     {
         if (!Auth::id())
             abort(401);
 
         // from activity with question
-        $questionWithLikes = Cache::remember('question_with_likes_u'.Auth::id(), 7200, function () {
+        $questionWithLikes = Cache::remember('question_with_likes_u' . Auth::id(), 7200, function () {
             return Question::query()
                 ->join('question_votes', 'questions.id', '=', 'question_votes.question_id')
                 ->where('active', true)
@@ -76,16 +76,16 @@ class UserService
     /**
      * @return Collection<int, Notification>
      */
-    public static function getLastNotifications() : Collection
+    public static function getLastNotifications(): Collection
     {
         // todo foreget
-        return Cache::remember('notify_'.Auth::id(), 86400, function () {
+        return Cache::remember('notify_' . Auth::id(), 86400, function () {
             return Auth::user()->notifications()
                 ->limit(5)->latest()->get();
         });
     }
 
-    public function setPhoto(UploadedFile $file) : void
+    public function setPhoto(UploadedFile $file): void
     {
         $avatarValidator = new AIAvatarValidator;
         if ($avatarValidator->isSetOn()) {

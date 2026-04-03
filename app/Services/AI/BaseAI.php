@@ -14,14 +14,23 @@ abstract class BaseAI implements AiApiInterface
         $this->prepareSettings();
     }
 
-    function isSetOn(): bool
+    protected function prepareSettings()
     {
-        return false;
+        if (empty($this->model)) {
+            $this->setModel($this->getDefaultModel());
+        }
     }
 
     private function setModel(string $model)
     {
         $this->model = $model;
+    }
+
+    abstract protected function getDefaultModel();
+
+    function isSetOn(): bool
+    {
+        return false;
     }
 
     protected function getModel()
@@ -39,16 +48,6 @@ abstract class BaseAI implements AiApiInterface
 
         return $apiKey;
     }
-
-    protected function prepareSettings()
-    {
-        if (empty($this->model)) {
-            $this->setModel($this->getDefaultModel());
-        }
-    }
-
-
-    abstract protected function getDefaultModel();
 
     abstract protected function getConfigApiKey();
 

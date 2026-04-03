@@ -3,6 +3,8 @@
 namespace App\Services\AI\OpenAI;
 
 use App\Services\AI\BaseAI;
+use Error;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 abstract class BaseService extends BaseAI
@@ -15,6 +17,15 @@ abstract class BaseService extends BaseAI
     protected function getConfigApiKey()
     {
         return config('services.openai.api_key');
+    }
+
+    protected function request($data)
+    {
+        if (empty($data['input'])) {
+            return [false, new Error(__('entities.integrations.data_empty'), 'data_empty')];
+        }
+
+        return $this->sendCurl($data);
     }
 
     protected function sendCurl(array $data)
@@ -47,12 +58,12 @@ abstract class BaseService extends BaseAI
         if (is_string($response)) {
             $jsonResult = json_decode($response, true);
             if (!empty($jsonResult['error'])) {
-                throw new \Exception($jsonResult['error']['message']);
+                throw new Exception($jsonResult['error']['message']);
             } else {
                 return true;
             }
         } else {
-            throw new \Exception($error);
+            throw new Exception($error);
         }
     }
 
@@ -62,15 +73,6 @@ abstract class BaseService extends BaseAI
             'model' => $this->getModel(),
             'input' => $data['input']
         ], JSON_UNESCAPED_UNICODE);
-    }
-
-    protected function request($data)
-    {
-        if (empty($data['input'])) {
-            return [false, new \Error(__('entities.integrations.data_empty'), 'data_empty')];
-        }
-
-        return $this->sendCurl($data);
     }
 
 }

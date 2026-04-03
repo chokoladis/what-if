@@ -31,11 +31,6 @@ class UserController extends Controller
         return view('profile.index', compact('tags', 'userTags', 'notifications'));
     }
 
-    public function edit(): View
-    {
-        return view('profile.edit');
-    }
-
     public function update(UpdateRequest $request)
     {
 

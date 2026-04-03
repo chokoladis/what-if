@@ -5,34 +5,43 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Http;
 
 class CaptchaService
 {
     const BASE_URL = 'https://api.hcaptcha.com/siteverify';
 
-    public function verify(string $response): mixed
+    public static function getSitekey()
+    {
+        $arResult = Setting::query()
+            ->orWhere('name', 'h_captcha_sitekey')
+            ->first();
+
+        if (!empty($arResult) && $arResult->value) {
+            return $arResult->value;
+        }
+
+        return config('services.h_captcha.sitekey');
+    }
+
+    public function verify(string $captcha): mixed
     {
         $prepareQuery = [
             'secret' => $this->getSecret(),
             'remoteip' => getIPAddress(),
-            'response' => $response
+            'response' => $captcha
         ];
 
-        $url = self::BASE_URL . '?' . http_build_query($prepareQuery);
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-        $curl_response = curl_exec($curl);
-        $errors = curl_error($curl);
-
-        $result = json_decode($curl_response, true);
+        $response = Http::post(self::BASE_URL . '?' . http_build_query($prepareQuery));
+//        todo check status/errors
+        $result = json_decode($response->getBody()->getContents(), true);
 
         if ($result['success']) {
             if (isset($result['score']) && $result['score'] < 0.5) {
                 return [false, $result['error-codes']];
             }
         } else {
-            return [$result['success'], array_merge($result['error-codes'], [$errors])];
+            return [$result['success'], $result['error-codes']];
         }
 
         return [true, null];
@@ -49,19 +58,6 @@ class CaptchaService
         }
 
         return config('services.h_captcha.secret');
-    }
-
-    public static function getSitekey()
-    {
-        $arResult = Setting::query()
-            ->orWhere('name', 'h_captcha_sitekey')
-            ->first();
-
-        if (!empty($arResult) && $arResult->value) {
-            return $arResult->value;
-        }
-
-        return config('services.h_captcha.sitekey');
     }
 
 }

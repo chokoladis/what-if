@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Http\Requests\Search\IndexRequest;
-use App\Interfaces\Models\SearchableInterface;
 
 class SearchService
 {
@@ -14,7 +13,7 @@ class SearchService
 
 
 //    todo suggest search - limit 3 or 5
-    public function prepareData(IndexRequest $request) : mixed
+    public function prepareData(IndexRequest $request): mixed
     {
         $data = $request->validated();
 

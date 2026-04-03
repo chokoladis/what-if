@@ -12,13 +12,13 @@ if (!function_exists('responseJson')) {
             unset($data['result']);
 
             if (!$status) {
-                $status = \App\Services\ResponseService::RESPONSE_BAD_REQUEST;
+                $status = App\Enums\Http\ResponseStatus::RESPONSE_BAD_REQUEST->value;
             }
         }
 
         return response(
             $data,
-            $status ?? \App\Services\ResponseService::RESPONSE_OK,
+            $status ?? App\Enums\Http\ResponseStatus::RESPONSE_OK->value,
         );
     }
 }

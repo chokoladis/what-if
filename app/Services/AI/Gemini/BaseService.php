@@ -20,6 +20,11 @@ class BaseService extends BaseAI
         return config('services.gemini.api_key');
     }
 
+    protected function request($data)
+    {
+        return $this->sendCurl($data);
+    }
+
     public function sendCurl(array $data)
     {
         $apiKey = $this->getApiKey();
@@ -39,18 +44,13 @@ class BaseService extends BaseAI
         }
     }
 
-    protected function request($data)
-    {
-        return $this->sendCurl($data);
-    }
-
     protected function getResponse(string $response)
     {
         $responseContent = json_decode($response, true);
 
-        if ($responseContent['error']){
+        if ($responseContent['error']) {
             Log::error(__CLASS__, [$responseContent['error']]);
-            throw new AIWorkException(__CLASS__.', error status - '.$responseContent['error']['status']);
+            throw new AIWorkException(__CLASS__ . ', error status - ' . $responseContent['error']['status']);
         }
 
         $content = current($responseContent['candidates'])['content'];
@@ -58,8 +58,8 @@ class BaseService extends BaseAI
         $jsonResult = $firstPart['text'];
 
         if (stripos($jsonResult, ';') === false) {
-            Log::debug(__CLASS__.', incorrect format', [$jsonResult]);
-            throw new AIWorkException(__CLASS__.', incorrect format');
+            Log::debug(__CLASS__ . ', incorrect format', [$jsonResult]);
+            throw new AIWorkException(__CLASS__ . ', incorrect format');
         } else {
             [$isLegal, $error] = explode(';', $jsonResult);
 

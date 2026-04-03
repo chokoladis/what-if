@@ -25,7 +25,7 @@ class AvatarValidatorService extends BaseService
         $disk = Storage::disk('public');
         $chankPath = (get_class($file) === TempFile::class
                 ? 'temp'
-                : $file->relation ). '/' . $file->path;
+                : $file->relation) . '/' . $file->path;
 
         if (!$disk->exists($chankPath)) {
             throw new FileSaveException(__('entities.integrations.file_not_found'), 'file_not_found');

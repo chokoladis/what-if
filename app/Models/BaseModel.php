@@ -16,14 +16,10 @@ class BaseModel extends Model
 
     public $guarded = [];
 
-    public static function getByCode(?string $code)
+    public static function getByCode(?string $code) : ?self
     {
-        // use cache
-        if ($res = static::class::where('code', $code)->first()){
-            return $res;
-        } else {
-            throw new ModelNotFoundException();
-        }
+//        cache ?
+        return self::class::where('code', $code)->first();
     }
 
     public function file(): HasOne

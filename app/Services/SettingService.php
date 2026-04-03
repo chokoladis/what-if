@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\SettingException;
 use App\Models\Errors\CommonError;
-use App\Models\Setting;
+use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 
@@ -34,7 +35,7 @@ class SettingService
 
     /**
      * @return array{false|string, ?CommonError}
-     * */
+     */
     public function setTheme(): array
     {
         try {
@@ -49,23 +50,22 @@ class SettingService
 
             return [$newTheme, null];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [false, new CommonError($e->getMessage())];
         }
     }
 
     /**
      * @param string $type
-     * @return array{bool, ?CommonError}
+     * @return true
      */
-    public function setTypeOutput(string $type) : array
+    public function setTypeOutput(string $type): true
     {
         if (in_array($type, QuestionService::ITEMS_TYPE_OUTPUT)) {
             Cookie::queue('items-type-output', $type, 36000000);
-
-            return [true, null];
-        } else {
-            return [false, new CommonError(__('services.options.lang_not_support'), 'lang_not_support')];
+            return true;
         }
+
+        throw new SettingException(__('services.options.lang_not_support'));
     }
 }

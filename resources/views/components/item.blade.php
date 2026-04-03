@@ -12,9 +12,12 @@
     $itemsTypeOutCookie = \Illuminate\Support\Facades\Cookie::get('items-type-output', 'simple');
     $currentItemsTypeOutput = in_array($itemsTypeOutCookie, $itemsTypeOut) ? $itemsTypeOutCookie : current($itemsTypeOut);
 
-    $popularComment = $question->getPopularComment();
-    $mainClass = $question->right_comment_id ? 'border-success' : '';
-
+//        todo переработать или убрать популярный коммент?
+    $popularComment = null; //$question->getPopularComment();
+    $mainClass = $question->right_comment ? 'border-success' : '';
+    $votes = $question->votes->groupBy('vote')->map->count()->toArray();
+    $like = \App\Enums\Vote::LIKE->value;
+    $dislike = \App\Enums\Vote::DISLIKE->value;
 @endphp
 
 <div class="item card mb-3 {{ $mainClass }}">
@@ -28,10 +31,10 @@
             <div class="card-body">
                 <div class="votes">
                     <div class="icon like btn btn-success">
-                        <b>{{ $question->likes_count ?? 0 }}</b>
+                        <b>{{ $votes[$like] ?? 0 }}</b>
                     </div>
                     <div class="icon dislike btn btn-danger">
-                        <b>{{ $question->dislikes_count ?? 0 }}</b>
+                        <b>{{ $votes[$dislike]  ?? 0 }}</b>
                     </div>
                 </div>
                 <a href="{{ route('questions.detail', $question->code) }}" class="card-title">{{ $question->title }}</a>
@@ -88,10 +91,10 @@
             <div class="item-header">
                 <div class="votes">
                     <div class="icon like btn btn-success">
-                        <b>{{ $question->likes_count ?? 0 }}</b>
+                        <b>{{ $votes[$like] ?? 0 }}</b>
                     </div>
                     <div class="icon dislike btn btn-danger">
-                        <b>{{ $question->dislikes_count ?? 0 }}</b>
+                        <b>{{ $votes[$dislike] ?? 0 }}</b>
                     </div>
                     @if ($question->right_comment_id)
                         <x-right-answer :comment="$question->right_comment" :compact="true"></x-right-answer>

@@ -14,20 +14,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
-class   Question extends BaseModel
+class Question extends BaseModel
 {
 //    use Searchable;
 
     public $guarded = [];
 
-    public static function getByCode(?string $code)
+    public static function getByCode(?string $code) : ?Question
     {
         // use cache 
-        if ($question = Question::active()->where('code', $code)->first()) {
-            return $question;
-        } else {
-            throw new ModelNotFoundException(__('questions.alerts.not_available'));
-        }
+        return Question::active()->where('code', $code)->first();
     }
 
     public static function getActive()
@@ -130,12 +126,12 @@ class   Question extends BaseModel
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function votes(): hasMany
+    public function votes(): HasMany
     {
-        return $this->hasMany(QuestionVotes::class, 'question_id', 'id');
+        return $this->HasMany(QuestionVotes::class, 'question_id', 'id');
     }
 
-    public function right_comment() //: HasOne
+    public function right_comment() : HasOne
     {
         return $this->HasOne(Comment::class, 'question_id', 'id')
             ->where('active', true)

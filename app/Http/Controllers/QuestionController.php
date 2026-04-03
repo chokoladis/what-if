@@ -91,7 +91,7 @@ class QuestionController extends Controller
         [$question, $error] = $this->questionService->store($request);
 
         if (!$question) {
-            return redirect()->back()->with('error', $error)->withInput();
+            return redirect()->back()->withErrors('error', $error)->withInput();
         }
 
         if ($question->wasRecentlyCreated) {
@@ -107,10 +107,11 @@ class QuestionController extends Controller
      */
     public function detail(string $code)
     {
-        try {
-            $question = Question::getByCode($code);
-        } catch (ModelNotFoundException $e) {
-            return view('questions.detail', ['error' => $e->getMessage()]);
+        $question = Question::getByCode($code);
+
+        if (!$question) {
+//            or to session ?
+            return view('questions.detail', ['error' => __('questions.alerts.not_available')]);
         }
 
         Event(new ViewEvent($question));

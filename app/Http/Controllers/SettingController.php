@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\SettingException;
 use App\Models\Errors\CommonError;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
@@ -44,7 +45,12 @@ class SettingController extends Controller
         if (!$type)
             return responseJson(false, new CommonError(__('validation.required', 'type'), 'value_not_set'));
 
-        [$result, $error] = $this->settingService->setTypeOutput($type);
-        return $result ? responseJson() : responseJson(false, $error);
+        try {
+            $this->settingService->setTypeOutput($type);
+            return responseJson();
+        } catch(SettingException $e) {
+//            or common error ?
+            return responseJson(false, $e->getMessage());
+        }
     }
 }

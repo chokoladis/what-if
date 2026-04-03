@@ -23,7 +23,7 @@ class QuestionFactory extends Factory
             'title' => $this->faker->sentence(),
             'category_id' => Category::factory(),
             'file_id' => File::factory()->forQuestion(),
-            'user_id' => User::query()->inRandomOrder()->select('id')->first()->id,
+            'user_id' => User::query()->inRandomOrder()->select('id')->first()?->id ?? User::factory()->create()->id,
             'active' => $this->faker->boolean(),
         ];
     }

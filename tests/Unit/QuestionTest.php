@@ -2,13 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Http\Controllers\QuestionController;
 use App\Http\Requests\Question\StoreRequest;
-use App\Models\Question;
 use App\Services\QuestionService;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class QuestionTest extends TestCase
 {
@@ -65,7 +62,7 @@ class QuestionTest extends TestCase
 //        $questionMock = Mockery::mock('alias:App\Models\Question');
 
         // Мокаем FormRequest и подсовываем данные
-        $mock = \Mockery::mock(StoreRequest::class);
+        $mock = Mockery::mock(StoreRequest::class);
         $mock->shouldReceive('validated')->andReturn([
             'category' => '0',
             'title' => '1',
@@ -93,6 +90,6 @@ class QuestionTest extends TestCase
 
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 }

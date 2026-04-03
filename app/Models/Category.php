@@ -111,16 +111,15 @@ class Category extends BaseModel
             ->get()->first();
     }
 
-    public static function getByCode(?string $code)
+    /**
+     * @param string|null $code
+     * @return ?Category
+     */
+    public static function getByCode(?string $code) : ?Category
     {
-        $category = Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
+        return Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
             return Category::active()->where('code', $code)->with('file')->first();
         });
-        if (!$category){
-            throw new ModelNotFoundException();
-        }
-
-        return $category;
     }
 
     public function file(): HasOne

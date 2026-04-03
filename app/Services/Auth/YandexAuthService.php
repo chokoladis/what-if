@@ -7,82 +7,33 @@ namespace App\Services\Auth;
 use App\Exceptions\Auth\External\IncorrectResponseException;
 use App\Exceptions\Auth\External\ResponseHaveErrorException;
 use App\Interfaces\Services\AuthExternalInterface;
-use App\Models\User;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 final class YandexAuthService extends BaseExternalService implements AuthExternalInterface
 {
     const string URL_GET_TOKEN = 'https://oauth.yandex.ru/token';
     const string URL_GET_USER_INFO = 'https://login.yandex.ru/info';
-    const YANDEX_LINK_PICTURE = 'https://avatars.mds.yandex.net/get-yapic/';
+    const string YANDEX_LINK_PICTURE = 'https://avatars.mds.yandex.net/get-yapic/';
 
-    protected function getToken(string $code) : string
+    public function authorize(string $code)
     {
         try {
-            $params = array(
-                'client_id' => config('auth.socials.yandex.client_id'),
-                'client_secret' => config('auth.socials.yandex.client_secret'),
-                'grant_type' => 'authorization_code',
-                'code' => $code
+            return $this->setUser(
+                $this->getUserInfo(
+                    $this->getToken($code)
+                )
             );
-
-            $ch = curl_init(self::URL_GET_TOKEN);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_HEADER, false);
-            $data = curl_exec($ch);
-            curl_close($ch);
-
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (IncorrectResponseException|ResponseHaveErrorException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        if (is_bool($data)){
-            throw new IncorrectResponseException();
-        }
-
-        $data = json_decode($data, true);
-
-        if (!empty($data['access_token'])) {
-            return $data['access_token'];
-        } elseif (!empty($data['error'])) {
-            throw new ResponseHaveErrorException('Response has error: ' . $data['error']);
-        } else {
-            throw new IncorrectResponseException('Undefined response');
-        }
-    }
-
-    protected function getUserInfo(string $accessToken) : array
-    {
-        $ch = curl_init(self::URL_GET_USER_INFO);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('format' => 'json'));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: OAuth ' . $accessToken));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        $info = curl_exec($ch);
-        curl_close($ch);
-
-        $info = json_decode($info, true);
-
-        if (is_bool($info)) {
-            throw new IncorrectResponseException();
-        }
-
-        if (isset($info['error'])) {
-            throw new ResponseHaveErrorException("Yandex API Error: " . ($info['error']['message'] ?? 'Unknown error'));
-        }
-
-        return $info;
     }
 
     public function setUser(array $userData)
     {
-        $validator = \Illuminate\Support\Facades\Validator::make($userData, [
+        $validator = Validator::make($userData, [
             'default_email' => ['required', 'string', 'email'],
             'real_name' => ['required', 'string', 'max:150'],
         ]);
@@ -93,41 +44,62 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
 
         $validData = $validator->validated();
 
-        $user = User::query()
-            ->where('email', $validData['default_email'])
-            ->first();
-
-        if (!$user) {
-            $imgLink = $imgLink = isset($userData['default_avatar_id']) && !empty($userData['default_avatar_id'])
-                ? self::YANDEX_LINK_PICTURE . $userData['default_avatar_id']
-                : null;
-
-            $user = User::create([
-                'name' => $validData['real_name'],
-                'email' => $validData['default_email'],
-                'password' => Str::random(12),
-                'active' => 1,
-                'profile_photo_path' => $imgLink,
-            ]);
-
-            // send psw on email
-        }
+        $user = $this->userRepository->createIfNotExists([
+            'name' => $validData['real_name'],
+            'email' => $validData['default_email'],
+            'active' => 1,
+            'profile_photo_path' => !empty($userData['default_avatar_id'])
+                ? self::YANDEX_LINK_PICTURE . $userData['default_avatar_id'] : null,
+        ]);
 
         Auth::login($user);
 
         return true;
     }
 
-    public function authorize(string $code)
+    protected function getUserInfo(string $accessToken): array
     {
+        $response = Http::withoutVerifying()
+            ->asForm()
+            ->withHeader('Authorization', 'OAuth ' . $accessToken)
+            ->post(self::URL_GET_USER_INFO);
+
         try {
-            $data = $this->getToken($code);
-
-            $userData = $this->getUserInfo($data);
-
-            return $this->setUser($userData);
-        } catch (IncorrectResponseException|ResponseHaveErrorException $e){
-            return redirect()->back()->with('error', $e->getMessage());
+            $response->throw();
+        } catch (RequestException $e) {
+            throw new IncorrectResponseException('HTTP ' . $e->response->status() . ': ' . $e->response->body());
         }
+
+        $info = $response->json();
+
+        if (isset($info['error'])) {
+            throw new ResponseHaveErrorException("Yandex API Error: " . ($info['error']['message'] ?? 'Unknown error'));
+        }
+
+        return $info;
+    }
+
+    protected function getToken(string $code): string
+    {
+        $response = Http::withoutVerifying()
+            ->asForm()
+            ->post(self::URL_GET_TOKEN, [
+                'client_id' => config('auth.socials.yandex.client_id'),
+                'client_secret' => config('auth.socials.yandex.client_secret'),
+                'grant_type' => 'authorization_code',
+                'code' => $code
+            ]);
+
+        try {
+            $response->throw();
+        } catch (RequestException $e) {
+            throw new IncorrectResponseException('HTTP ' . $e->response->status() . ': ' . $e->response->body());
+        }
+
+        if (!empty($response->json('access_token'))) {
+            return (string)$response->json('access_token');
+        }
+
+        throw new ResponseHaveErrorException('Response has error: ' . $response->json('error') ?? 'undefined');
     }
 }

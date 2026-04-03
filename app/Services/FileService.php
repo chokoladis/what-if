@@ -10,7 +10,6 @@ use App\Models\File;
 use App\Models\TempFile;
 use Detection\Cache\Cache;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -23,6 +22,18 @@ class FileService
     const MAX_FILE_SIZE_KB = self::MAX_FILE_SIZE / 1024;
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE / 1048576;
     const ALLOW_IMG_EXT = ['jpg', 'png', 'jpeg', 'gif'];
+
+    public static function saveTemp(TemporaryUploadedFile|UploadedFile $img)
+    {
+        $fileDTO = self::prepareFileDTO($img, 'temp');
+
+        return TempFile::create([
+            'name' => $fileDTO->name,
+            'expansion' => $fileDTO->ext,
+            'path' => $fileDTO->filePath,
+            'original_name' => $img->getClientOriginalName()
+        ]);
+    }
 
     private static function prepareFileDTO(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
     {
@@ -52,31 +63,6 @@ class FileService
         );
     }
 
-    public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
-    {
-//        сделать сохранение по папкам-юзерам и названиям файлов ? (для проверки на существование и по контрольной сумме)
-        $fileDTO = self::prepareFileDTO($img, $mainDir);
-
-        return File::create([
-            'name' => $fileDTO->name,
-            'expansion' => $fileDTO->ext,
-            'path' => $fileDTO->filePath,
-            'relation' => $fileDTO->mainDir
-        ]);
-    }
-
-    public static function saveTemp(TemporaryUploadedFile|UploadedFile $img)
-    {
-        $fileDTO = self::prepareFileDTO($img, 'temp');
-
-        return TempFile::create([
-            'name' => $fileDTO->name,
-            'expansion' => $fileDTO->ext,
-            'path' => $fileDTO->filePath,
-            'original_name' => $img->getClientOriginalName()
-        ]);
-    }
-
     static function getPhoto(?File $file)
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
@@ -96,7 +82,7 @@ class FileService
     {
         $disk = Storage::disk('public');
 
-        $sourcePath = 'temp/'.$file->path;
+        $sourcePath = 'temp/' . $file->path;
 
         if (!$disk->exists($sourcePath)) {
             throw new FileSaveException('Temp file not found');
@@ -109,7 +95,7 @@ class FileService
             $disk->makeDirectory($folder);
         }
 
-        $res = $disk->move($sourcePath, $folder.'/'.$file->name);
+        $res = $disk->move($sourcePath, $folder . '/' . $file->name);
         if (false === $res) {
             throw new FileSaveException();
         }
@@ -126,14 +112,13 @@ class FileService
         return File::create($data);
     }
 
-
     static function getPhotoFromIndex(?array $file, string $subdir)
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
         if ($file && $file['path']) {
             $filePath = Storage::url($subdir . '/' . $file['path']);
-            return file_exists($_SERVER['DOCUMENT_ROOT'].$filePath) ? $filePath : $nophoto_src;
+            return file_exists($_SERVER['DOCUMENT_ROOT'] . $filePath) ? $filePath : $nophoto_src;
         }
 
         return $nophoto_src;
@@ -174,5 +159,18 @@ class FileService
         }
 
         return $mainPath;
+    }
+
+    public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
+    {
+//        сделать сохранение по папкам-юзерам и названиям файлов ? (для проверки на существование и по контрольной сумме)
+        $fileDTO = self::prepareFileDTO($img, $mainDir);
+
+        return File::create([
+            'name' => $fileDTO->name,
+            'expansion' => $fileDTO->ext,
+            'path' => $fileDTO->filePath,
+            'relation' => $fileDTO->mainDir
+        ]);
     }
 }

@@ -8,16 +8,64 @@ use App\Exceptions\Auth\External\IncorrectResponseException;
 use App\Exceptions\Auth\External\ResponseHaveErrorException;
 use App\Interfaces\Services\AuthExternalInterface;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Throwable;
 
 final class GoogleAuthService extends BaseExternalService implements AuthExternalInterface
 {
     const string URL_GET_TOKEN = 'https://accounts.google.com/o/oauth2/token';
     const string URL_GET_USER_INFO = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
-    protected function getToken(string $code) : string
+    public function authorize(string $code)
+    {
+        try {
+            $userData = $this->getUserInfo($this->getToken($code));
+
+            return $this->setUser($userData);
+        } catch (IncorrectResponseException|ResponseHaveErrorException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    protected function getUserInfo(string $accessToken): array
+    {
+        $options = [
+            "ssl" => [
+                "crypto_method" => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
+                "verify_peer" => true,
+                "verify_peer_name" => true,
+            ],
+            "http" => [
+                "ignore_errors" => true,
+                "timeout" => 10
+            ]
+        ];
+
+        $params = ['access_token' => $accessToken];
+
+        $response = file_get_contents(
+            self::URL_GET_USER_INFO . '?' . http_build_query($params),
+            false,
+            stream_context_create($options)
+        );
+
+        if ($response === false) {
+            $error = error_get_last();
+            throw new Exception("Connection failed: " . $error['message']);
+        }
+        $info = json_decode($response, true);
+
+        if (isset($info['error'])) {
+            throw new ResponseHaveErrorException("Google API Error: " . ($info['error']['message'] ?? 'Unknown error'));
+        }
+
+        return $info;
+    }
+
+    protected function getToken(string $code): string
     {
         try {
             $params = array(
@@ -37,11 +85,11 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
             $data = curl_exec($ch);
             curl_close($ch);
 
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             throw $th;
         }
 
-        if (is_bool($data)){
+        if (is_bool($data)) {
             throw new IncorrectResponseException();
         }
 
@@ -54,41 +102,6 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
         } else {
             throw new IncorrectResponseException('Undefined response');
         }
-    }
-
-    protected function getUserInfo(string $accessToken) : array
-    {
-        $options = [
-            "ssl" => [
-                "crypto_method" => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
-                "verify_peer" => true,
-                "verify_peer_name" => true,
-            ],
-            "http" => [
-                "ignore_errors" => true,
-                "timeout" => 10
-            ]
-        ];
-
-        $params = ['access_token' => $accessToken];
-
-        $response = file_get_contents(
-            self::URL_GET_USER_INFO.'?' . http_build_query($params),
-            false,
-            stream_context_create($options)
-        );
-
-        if ($response === false) {
-            $error = error_get_last();
-            throw new \Exception("Connection failed: " . $error['message']);
-        }
-        $info = json_decode($response, true);
-
-        if (isset($info['error'])) {
-            throw new ResponseHaveErrorException("Google API Error: " . ($info['error']['message'] ?? 'Unknown error'));
-        }
-
-        return $info;
     }
 
     public function setUser(array $userData)
@@ -124,16 +137,5 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
         Auth::login($user);
 
         return true;
-    }
-
-    public function authorize(string $code)
-    {
-        try {
-            $userData = $this->getUserInfo($this->getToken($code));
-
-            return $this->setUser($userData);
-        } catch (IncorrectResponseException|ResponseHaveErrorException $e){
-            return redirect()->back()->with('error', $e->getMessage());
-        }
     }
 }
