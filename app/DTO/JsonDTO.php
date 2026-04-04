@@ -2,20 +2,21 @@
 
 namespace App\DTO;
 
-use JsonException;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\JsonEncodingException;
+use JsonException;
+use JsonSerializable;
 
-class JsonDTO implements Jsonable, \JsonSerializable
+class JsonDTO implements Jsonable, JsonSerializable
 {
 
     /**
      * Convert the model instance to JSON.
      *
-     * @param  int  $options
+     * @param int $options
      * @return string
      *
-     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     * @throws JsonEncodingException
      */
     public function toJson($options = 0)
     {
@@ -28,7 +29,7 @@ class JsonDTO implements Jsonable, \JsonSerializable
         return $json;
     }
 
-    public function jsonSerialize() : mixed
+    public function jsonSerialize(): mixed
     {
         return get_object_vars($this);
     }

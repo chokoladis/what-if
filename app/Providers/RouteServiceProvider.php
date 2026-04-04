@@ -21,7 +21,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        RateLimiter::for('global', function (){
+        RateLimiter::for('global', function () {
             return Limit::perMinute(40);
         });
     }

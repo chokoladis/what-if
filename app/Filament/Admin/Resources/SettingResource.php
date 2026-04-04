@@ -14,20 +14,18 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class SettingResource extends Resource
 {
-    protected static string | \UnitEnum | null $navigationGroup = 'Настройки';
+    const DIR = 'settings';
+    protected static string|UnitEnum|null $navigationGroup = 'Настройки';
     protected static ?string $modelLabel = 'Настройки';
     protected static ?string $navigationLabel = 'Общие настройки';
     protected static ?string $pluralModelLabel = 'Общие настройки';
     protected static ?string $model = Setting::class;
-
     protected static null|string|BackedEnum $navigationIcon = Heroicon::WrenchScrewdriver;
-
     protected static null|string|BackedEnum $activeNavigationIcon = 'heroicon-o-document-text';
-
-    const DIR = 'settings';
 
     public static function form(Schema $schema): Schema
     {

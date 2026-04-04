@@ -45,12 +45,12 @@
             </nav>
         </div>
 
-        @if (!$childs->isEmpty())
+        @if (!$children->isEmpty())
 
             <div class="daughters mt-4">
                 <h4>{{ __('categories.subcategories') }}</h4>
 
-                <x-category-slider :childs="$childs"></x-category-slider>
+                <x-category-slider :children="$children"></x-category-slider>
             </div>
 
         @endif
@@ -63,7 +63,7 @@
                         @php
                             $votes = \App\Services\QuestionService::getVotes($question->id)
                         @endphp
-                        <li class="list-group-item @if($question->right_comment_id) list-group-item-success @endif">
+                        <li class="list-group-item @if($question->right_comment) list-group-item-success @endif">
                             <div class="reaction">
                                 <div class="badge text-bg-success">
                                     <span class="uk-icon" uk-icon="chevron-up"></span>

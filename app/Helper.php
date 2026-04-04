@@ -1,8 +1,10 @@
 <?php
 
+use Illuminate\Http\Response;
+
 if (!function_exists('responseJson')) {
 //    todo middleware ?
-    function responseJson(bool $success = true, mixed $result = null, int $status = null)
+    function responseJson(bool $success = true, mixed $result = null, int $status = null): Response
     {
         $data = ['success' => $success, 'result' => $result];
 
@@ -12,13 +14,13 @@ if (!function_exists('responseJson')) {
             unset($data['result']);
 
             if (!$status) {
-                $status = App\Enums\Http\ResponseStatus::RESPONSE_BAD_REQUEST->value;
+                $status = Response::HTTP_BAD_REQUEST;
             }
         }
 
         return response(
             $data,
-            $status ?? App\Enums\Http\ResponseStatus::RESPONSE_OK->value,
+            $status ?? Response::HTTP_OK,
         );
     }
 }

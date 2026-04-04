@@ -13,7 +13,7 @@ class CategorySlider extends Component
      * Create a new component instance.
      */
     public function __construct(
-        public Collection $childs,
+        public Collection $children,
     )
     {
     }

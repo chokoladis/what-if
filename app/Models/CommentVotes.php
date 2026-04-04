@@ -7,6 +7,7 @@ use App\Notifications\Comment\VoteNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class CommentVotes extends Model
 {
@@ -14,18 +15,13 @@ class CommentVotes extends Model
 
     public $guarded = [];
 
-    public function getTable()
-    {
-        return 'comment_votes';
-    }
-
     public static function getForCurrentUser($commentId)
     {
         // cache
         return CommentVotes::query()
             ->select('vote')
             ->where('comment_id', $commentId)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->first();
     }
 
@@ -47,6 +43,11 @@ class CommentVotes extends Model
                 }
             }
         });
+    }
+
+    public function getTable()
+    {
+        return 'comment_votes';
     }
 
     public function comment(): BelongsTo

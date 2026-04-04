@@ -8,7 +8,6 @@ use App\DTO\FileDTO;
 use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\TempFile;
-use Detection\Cache\Cache;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;

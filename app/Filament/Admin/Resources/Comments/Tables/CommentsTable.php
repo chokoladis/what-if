@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Comments\Tables;
 
-use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

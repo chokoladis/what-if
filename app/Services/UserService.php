@@ -8,6 +8,7 @@ use App\Jobs\UserAvatarVerify;
 use App\Models\Notification;
 use App\Models\Question;
 use App\Models\QuestionTags;
+use App\Models\User;
 use App\Models\UserTags;
 use App\Services\AI\Gemini\AvatarValidatorService as AIAvatarValidator;
 use Illuminate\Http\UploadedFile;
@@ -88,16 +89,18 @@ class UserService
     public function setPhoto(UploadedFile $file): void
     {
         $avatarValidator = new AIAvatarValidator;
+        /** @var User $user */
+        $user = Auth::user();
         if ($avatarValidator->isSetOn()) {
             $photo = FileService::saveTemp($file);
 
-            UserAvatarVerify::dispatch(Auth::user(), $photo);
+            UserAvatarVerify::dispatch($user, $photo);
         } else {
             DB::beginTransaction();
 
             $photo = FileService::save($file, 'users');
 
-            if (!Auth::user()->update(['photo_id' => $photo->id]))
+            if (!$user->update(['photo_id' => $photo->id]))
                 DB::rollBack();
 
             DB::commit();

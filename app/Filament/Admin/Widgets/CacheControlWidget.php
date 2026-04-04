@@ -10,6 +10,16 @@ class CacheControlWidget extends StatsOverviewWidget
 {
     protected ?string $pollingInterval = null;
 
+    public function clearCache()
+    {
+        Artisan::call('optimize:clear');
+
+        Notification::make()
+            ->title('Кэш очищен')
+            ->success()
+            ->send();
+    }
+
     protected function getStats(): array
     {
         return [
@@ -25,15 +35,5 @@ class CacheControlWidget extends StatsOverviewWidget
 
 //            StatsOverviewWidget\Stat::make('Общий кэш', 'Создать')
         ];
-    }
-
-    public function clearCache()
-    {
-        Artisan::call('optimize:clear');
-
-        Notification::make()
-            ->title('Кэш очищен')
-            ->success()
-            ->send();
     }
 }

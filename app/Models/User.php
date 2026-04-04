@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FileService;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,32 +48,6 @@ class User extends Authenticatable implements FilamentUser
         'photo_id',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
-    public function photo()
-    {
-        return $this->hasOne(File::class, 'id', 'photo_id');
-    }
-
-    public function getAvatarPath(): string
-    {
-//        todo drop by update
-        return Cache::remember('avatar_'.auth()->id(), 86400, function () {
-            return \App\Services\FileService::getPhoto($this->photo);
-        });
-    }
-
     public static function boot()
     {
 
@@ -95,6 +70,26 @@ class User extends Authenticatable implements FilamentUser
 
     }
 
+    public static function getNameById(int $id)
+    {
+        return Cache::remember('user_name_' . $id, 86400, function () use ($id) {
+            return self::query()->find($id, 'name');
+        });
+    }
+
+    public function photo()
+    {
+        return $this->hasOne(File::class, 'id', 'photo_id');
+    }
+
+    public function getAvatarPath(): string
+    {
+//        todo drop by update
+        return Cache::remember('avatar_' . auth()->id(), 86400, function () {
+            return FileService::getPhoto($this->photo);
+        });
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->role === 'admin';
@@ -102,11 +97,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function getShortName()
     {
-        return mb_strlen($this->name) > 8 ? mb_substr($this->name,0, 8).'...' : $this->name;
+        return mb_strlen($this->name) > 8 ? mb_substr($this->name, 0, 8) . '...' : $this->name;
     }
 
     //    paginate
-    public function questions() : HasMany
+    public function questions(): HasMany
     {
         return $this->hasMany(Question::class); //->latest()
     }
@@ -125,10 +120,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Tag::class, 'user_tags');
     }
 
-    public static function getNameById(int $id)
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return Cache::remember('user_name_'.$id, 86400, function () use ($id) {
-            return self::query()->find($id, 'name');
-        });
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

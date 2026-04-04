@@ -10,9 +10,9 @@ use App\Http\Requests\User\UpdateRequest;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Contracts\View\View;
 use Throwable;
 
 class UserController extends Controller

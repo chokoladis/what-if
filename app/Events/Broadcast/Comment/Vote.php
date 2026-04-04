@@ -3,7 +3,6 @@
 namespace App\Events\Broadcast\Comment;
 
 use App\Models\Notification;
-use App\Models\QuestionVotes;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -20,7 +19,7 @@ class Vote implements ShouldBroadcast
      */
     public function __construct(
         public Notification $notification,
-        public string $message,
+        public string       $message,
     )
     {
     }
@@ -28,14 +27,14 @@ class Vote implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return array<int, Channel>
      */
     public function broadcastOn(): array
     {
         $model = $this->notification->entity;
 
         return [
-            new PrivateChannel('comment.vote.'.$this->notification->$model->user->id),
+            new PrivateChannel('comment.vote.' . $this->notification->$model->user->id),
         ];
     }
 }

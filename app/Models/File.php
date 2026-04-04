@@ -16,12 +16,6 @@ class File extends Model
     //     return $this->belongsTo(Question::class);
     // }
 
-
-    public function getFullUrlAttribute(): string
-    {
-        return asset('storage/' . $this->relation . '/' . $this->path);
-    }
-
     public static function boot()
     {
 
@@ -44,5 +38,10 @@ class File extends Model
                 $disk->delete($file->relation . '/' . $file->path);
         });
 
+    }
+
+    public function getFullUrlAttribute(): string
+    {
+        return asset('storage/' . $this->relation . '/' . $this->path);
     }
 }

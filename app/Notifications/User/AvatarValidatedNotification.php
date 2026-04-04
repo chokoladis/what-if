@@ -2,11 +2,8 @@
 
 namespace App\Notifications\User;
 
-use App\Interfaces\Services\UniqueDataNotifyInterface;
 use App\Models\File;
-use App\Models\Question;
 use App\Models\TempFile;
-use App\Models\User;
 use App\Notifications\BaseNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 
@@ -18,7 +15,7 @@ class AvatarValidatedNotification extends BaseNotification
      */
     public function __construct(
         private TempFile|File $photo,
-        private bool $isCorrect,
+        private bool          $isCorrect,
     )
     {
     }

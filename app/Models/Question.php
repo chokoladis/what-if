@@ -5,14 +5,11 @@ namespace App\Models;
 use App\DTO\Indexing\CommentDTO;
 use App\DTO\Indexing\UserDTO;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 
 class Question extends BaseModel
 {
@@ -20,16 +17,10 @@ class Question extends BaseModel
 
     public $guarded = [];
 
-    public static function getByCode(?string $code) : ?Question
+    public static function getByCode(?string $code): ?Question
     {
         // use cache 
         return Question::active()->where('code', $code)->first();
-    }
-
-    public static function getActive()
-    {
-        //cache
-        return Question::query()->where('active', true)->get();
     }
 
     public static function getTopPopular()
@@ -49,6 +40,39 @@ class Question extends BaseModel
         return $query;
     }
 
+    public static function boot()
+    {
+
+        parent::boot();
+
+        static::creating(function ($item) {
+            $item->code = Str::slug(Str::lower($item->title), '-');
+        });
+
+        static::created(function ($item) {
+            // File::find($item->file_id)->update(['question_id' => $item->id]);
+            QuestionStatistics::create([
+                'question_id' => $item->id
+            ]);
+        });
+
+        // updated to active = true // send sms/mail message about it
+    }
+
+    public static function getPopular(Builder $builder)
+    {
+        // todo with likes
+        return $builder->join('question_statistics', 'questions.id', '=', 'question_id')
+            ->orderBy('views', 'desc');
+    }
+
+    public static function scopeActive()
+    {
+        return Question::query()->where('active', true);
+    }
+
+    //    todo
+
     public function getCurrentUserComment()
     {
 
@@ -66,46 +90,12 @@ class Question extends BaseModel
         return $res;
     }
 
-    public function getPopularComment()
-    {
-        $cacheKey = 'question_popular_comment_' . $this->id;
-        $popularCommentId = Cache::remember($cacheKey, 3600, function () {
-            $query = DB::table('comments')
-                ->join('comment_votes', 'comments.id', '=', 'comment_votes.comment_id')
-                ->where('comments.question_id', $this->id)
-                ->where('comments.active', true)
-                ->select('comment_votes.vote', 'comment_votes.comment_id')
-                ->get();
-
-            if ($query->isEmpty()) {
-                return 0;
-            }
-
-            $comments = [];
-            foreach ($query as $comment) {
-                if (!isset($comments[$comment->comment_id])) {
-                    $comments[$comment->comment_id] = 0;
-                }
-                $comments[$comment->comment_id] += $comment->vote;
-            }
-
-            return (int) array_search(max($comments), $comments, true);
-        });
-
-        if (!$popularCommentId) {
-            return false;
-        }
-
-        return Comment::query()->with('user')->find($popularCommentId);
-    }
-
     public function category(): HasOne
     {
         return $this->HasOne(Category::class, 'id', 'category_id');
     }
 
-    //    todo
-    public function comments() : HasMany
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class, 'question_id', 'id')
             ->where('active', true);
@@ -131,7 +121,7 @@ class Question extends BaseModel
         return $this->HasMany(QuestionVotes::class, 'question_id', 'id');
     }
 
-    public function right_comment() : HasOne
+    public function right_comment(): HasOne
     {
         return $this->HasOne(Comment::class, 'question_id', 'id')
             ->where('active', true)
@@ -143,32 +133,7 @@ class Question extends BaseModel
         return $this->belongsToMany(Tag::class, 'question_tags', 'question_id', 'tag_id');
     }
 
-
-    public static function boot()
-    {
-
-        parent::boot();
-
-        /**
-         * Write code on Method
-         *
-         * @return response()
-         */
-        static::creating(function ($item) {
-            $item->code = Str::slug(Str::lower($item->title), '-');
-        });
-
-        static::created(function ($item) {
-            // File::find($item->file_id)->update(['question_id' => $item->id]);
-            QuestionStatistics::create([
-                'question_id' => $item->id
-            ]);
-        });
-
-        // updated to active = true // send sms/mail message about it
-    }
-
-    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $title)
+    public function scopeSearch(Builder $query, string $title)
     {
         return $query->where('title', 'LIKE', '%' . $title . '%')
             ->orWhere('code', 'LIKE', '%' . $title . '%');
@@ -188,10 +153,10 @@ class Question extends BaseModel
 
         $rightComment = $this->right_comment;
         if ($rightComment) {
-            $obj['right_comment'] = New CommentDTO(
+            $obj['right_comment'] = new CommentDTO(
                 $rightComment->id,
                 $rightComment->text,
-                New UserDTO($rightComment->user)
+                new UserDTO($rightComment->user)
             );
         }
 
@@ -205,11 +170,6 @@ class Question extends BaseModel
         }
 
         return $obj;
-    }
-
-    public function shouldBeSearchable()
-    {
-        return $this->active;
     }
 
     public function getCategoryIds()
@@ -235,20 +195,46 @@ class Question extends BaseModel
         return $arIds;
     }
 
-    public static function getPopular(Builder $builder)
+    public function getPopularComment()
     {
-        // todo with likes
-        return $builder->join('question_statistics', 'questions.id', '=', 'question_id')
-            ->orderBy('views', 'desc');
+        $cacheKey = 'question_popular_comment_' . $this->id;
+        $popularCommentId = Cache::remember($cacheKey, 3600, function () {
+            $query = DB::table('comments')
+                ->join('comment_votes', 'comments.id', '=', 'comment_votes.comment_id')
+                ->where('comments.question_id', $this->id)
+                ->where('comments.active', true)
+                ->select('comment_votes.vote', 'comment_votes.comment_id')
+                ->get();
+
+            if ($query->isEmpty()) {
+                return 0;
+            }
+
+            $comments = [];
+            foreach ($query as $comment) {
+                if (!isset($comments[$comment->comment_id])) {
+                    $comments[$comment->comment_id] = 0;
+                }
+                $comments[$comment->comment_id] += $comment->vote;
+            }
+
+            return (int)array_search(max($comments), $comments, true);
+        });
+
+        if (!$popularCommentId) {
+            return false;
+        }
+
+        return Comment::query()->with('user')->find($popularCommentId);
     }
 
-    public static function scopeActive()
+    public function shouldBeSearchable()
     {
-        return Question::query()->where('active', true);
+        return $this->active;
     }
 
-    public function getShortTitle()
+    public function getShortTitle(?int $length = 15)
     {
-        return mb_strlen($this->title) > 15 ? mb_substr($this->title,0, 15).'...' : $this->title;
+        return mb_strlen($this->title) > $length ? mb_substr($this->title, 0, $length) . '...' : $this->title;
     }
 }

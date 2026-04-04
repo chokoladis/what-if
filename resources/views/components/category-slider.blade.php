@@ -6,7 +6,7 @@
 @endpush
 
 <div class="category_slider">
-    @foreach ($childs as $item)
+    @foreach ($children as $item)
         <div class="card">
             <img src="{{ \App\Services\FileService::getPhoto($item->file) }}"
                  class="card-img-top" alt="...">

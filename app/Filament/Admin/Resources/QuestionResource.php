@@ -5,15 +5,14 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\QuestionResource\Pages;
 use App\Models\Category;
 use App\Models\Comment;
-use App\Models\File;
 use App\Models\Question;
 use App\Models\QuestionComments;
-use App\Models\Tag;
 use App\Models\User;
-use Filament\Forms;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -23,14 +22,14 @@ use UnitEnum;
 
 class QuestionResource extends Resource
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Данные';
+    protected static string|UnitEnum|null $navigationGroup = 'Данные';
     protected static ?string $modelLabel = 'Вопросы';
     protected static ?string $navigationLabel = 'Вопросы';
 
     protected static ?string $pluralModelLabel = 'Вопросы';
     protected static ?string $model = Question::class;
 
-    protected static null|string|\BackedEnum $navigationIcon = Heroicon::Megaphone;
+    protected static null|string|BackedEnum $navigationIcon = Heroicon::Megaphone;
 
     public static function form(Schema $schema): Schema
     {

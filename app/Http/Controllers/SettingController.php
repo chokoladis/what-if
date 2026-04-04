@@ -48,7 +48,7 @@ class SettingController extends Controller
         try {
             $this->settingService->setTypeOutput($type);
             return responseJson();
-        } catch(SettingException $e) {
+        } catch (SettingException $e) {
 //            or common error ?
             return responseJson(false, $e->getMessage());
         }

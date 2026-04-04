@@ -1,18 +1,16 @@
-@foreach($replies as $comment)
+@foreach($commentChildren as $comment)
     @php
-        $isRight = $question->right_comment_id === $comment->id;
-
-        $parent = $comment->comment;
-        $comment = $comment->reply;
+//        dd($comment);
+        $parent = $comment->parent;
         
         $text = '@'.$parent->user->name.' '.$comment->text;
     @endphp
-    <div class="comment comment-reply {{ $isRight ? 'is-answer' : '' }}">
+    <div class="comment comment-reply {{ $comment->is_answer ? 'is-answer' : '' }}">
 
         <x-comment.rating :comment="$comment"></x-comment.rating>
 
         <div class="main">
-            <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
+            <div class="right_comment_description {{ !$comment->is_answer ? 'd-none' : '' }}">
                 <i uk-icon="icon: check; ratio: 1.2"></i>
                 <small>{{ __('Верный ответ') }}</small>
             </div>
@@ -21,7 +19,7 @@
                 <div class="comment_actions">
                     <div class="btn btn-mini btn-link reply"
                          data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
-                    @if($question->user == auth()->user())
+                    @if($comment->question->user == \Illuminate\Support\Facades\Auth::user())
                         <div class="btn btn-mini btn-outline-success right_answer"
                              data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
                     @endif
@@ -40,7 +38,7 @@
     </div>
 @endforeach
 <form class="form-subcomments">
-    <input type="hidden" name="offset" value="{{ count($replies) }}">
+    <input type="hidden" name="offset" value="{{ count($commentChildren) }}">
 
     <div class="js-subcomments-load">{{ __('Загрузить ещё') }}</div>
 </form>

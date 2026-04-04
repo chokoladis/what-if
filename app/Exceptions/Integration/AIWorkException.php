@@ -2,7 +2,9 @@
 
 namespace App\Exceptions\Integration;
 
-class AIWorkException extends \Exception
+use Exception;
+
+class AIWorkException extends Exception
 {
     protected $message = 'Error work with AI';
 }

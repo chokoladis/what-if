@@ -15,7 +15,7 @@ class VoteNotification extends BaseNotification implements UniqueDataNotifyInter
      * Create a new notification instance.
      */
     public function __construct(
-        private User $voter,
+        private User     $voter,
         private Question $question,
     )
     {

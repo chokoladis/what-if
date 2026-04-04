@@ -2,6 +2,7 @@
 
 namespace App\View\Components\Question;
 
+use App\Services\QuestionService;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -21,7 +22,7 @@ class SliderPopular extends Component
         int $count = 10
     )
     {
-        $this->slides = \App\Services\QuestionService::getPopular($count);
+        $this->slides = QuestionService::getPopular($count);
     }
 
     /**

@@ -4,9 +4,7 @@ namespace App\DTO\Indexing;
 
 class FileDTO
 {
-    public function __construct(
-
-    )
+    public function __construct()
     {
     }
 }

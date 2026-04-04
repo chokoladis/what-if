@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\CaptchaService;
 use App\Tools\Option;
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +16,7 @@ class CaptchaMiddleware
      *
      * @param Closure(Request): (Response) $next
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response|RedirectResponse
     {
         if (Option::isCaptchaSetOn()) {
 

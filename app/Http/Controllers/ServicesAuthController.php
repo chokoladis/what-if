@@ -6,11 +6,10 @@ use App\Services\Auth\GoogleAuthService;
 use App\Services\Auth\YandexAuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class ServicesAuthController extends Controller
 {
-    public function googleAuth(Request $request) : RedirectResponse
+    public function googleAuth(Request $request): RedirectResponse
     {
         if ($code = $request->get('code')) {
 
@@ -28,7 +27,7 @@ class ServicesAuthController extends Controller
         }
     }
 
-    public function yandexAuth(Request $request) : RedirectResponse
+    public function yandexAuth(Request $request): RedirectResponse
     {
         if ($code = $request->get('code')) {
 

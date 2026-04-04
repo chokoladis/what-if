@@ -4,12 +4,13 @@ namespace App\Tools;
 
 use App\Models\File;
 use Illuminate\Support\Facades\Storage;
+use Iterator;
 
 class FileGarbageCollector
 {
     const DIR_ACTIVE = ['categories', 'questions', 'users'];
 
-    public function cleanFileStorage() : void
+    public function cleanFileStorage(): void
     {
         $disk = Storage::disk('public');
 
@@ -46,7 +47,7 @@ class FileGarbageCollector
             $diffPaths = [];
             foreach ($preparedFilesPath as $itemPath) {
                 if (!in_array($itemPath, $queryModels)) {
-                    $diffPaths[] = $relation.'/'.$itemPath;
+                    $diffPaths[] = $relation . '/' . $itemPath;
                 }
             }
 
@@ -56,7 +57,7 @@ class FileGarbageCollector
         }
     }
 
-    private function getAllActiveDir() : \Iterator
+    private function getAllActiveDir(): Iterator
     {
         foreach (Storage::disk('public')->allDirectories() as $dir) {
 

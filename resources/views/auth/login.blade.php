@@ -96,7 +96,7 @@
                                 <p class="col-md-4">{{ __('user.auth_throw_service')}}</p>
                                 <div class="col-md-6 services">
                                     <a href="{{ $gUrl }}">
-                                        <img src="/storage/main/google_icon_min.png" alt="google">
+                                        <img src="{{ public_path('/main/google_icon_min.png') }}" alt="google">
                                     </a>
                                     <a href="{{ $yUrl }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"

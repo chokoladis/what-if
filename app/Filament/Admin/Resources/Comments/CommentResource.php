@@ -17,11 +17,12 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class CommentResource extends Resource
 {
     protected static ?string $model = Comment::class;
-    protected static string | \UnitEnum | null $navigationGroup = 'Данные';
+    protected static string|UnitEnum|null $navigationGroup = 'Данные';
     protected static ?string $modelLabel = 'Комментарии';
     protected static ?string $navigationLabel = 'Комментарии';
     protected static ?string $pluralModelLabel = 'Комментарии';

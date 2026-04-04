@@ -2,14 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\Integration\AIWorkException;
 use App\Exceptions\FileValidationException;
+use App\Exceptions\Integration\AIWorkException;
 use App\Models\TempFile;
 use App\Models\User;
 use App\Notifications\User\AvatarValidatedNotification;
 use App\Notifications\User\TemporaryErrorNotification;
 use App\Services\AI\Gemini\AvatarValidatorService;
 use App\Services\FileService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class UserAvatarVerify implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        protected User $user,
+        protected User     $user,
         protected TempFile $photo,
     )
     {
@@ -36,8 +37,8 @@ class UserAvatarVerify implements ShouldQueue
     {
         try {
             [$isLegal, $error] = (new AvatarValidatorService)->isContentFileLegal($this->photo);
-        } catch(AIWorkException $e) {
-            $fileName = mb_strlen($this->photo->original_name) > 10 ? mb_substr($this->photo->original_name, 0, 10).'...' : $this->photo->original_name;
+        } catch (AIWorkException $e) {
+            $fileName = mb_strlen($this->photo->original_name) > 10 ? mb_substr($this->photo->original_name, 0, 10) . '...' : $this->photo->original_name;
             $this->user->notify(new TemporaryErrorNotification($fileName));
             return;
         }
@@ -51,7 +52,7 @@ class UserAvatarVerify implements ShouldQueue
 
             try {
                 $photo = FileService::saveFromQueue($this->photo, 'users');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::emergency('photo not saved in queue', ['user' => $this->user, 'photo' => $this->photo]);
                 DB::rollBack();
             }

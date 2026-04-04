@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Tag extends Model
 {
@@ -13,15 +14,15 @@ class Tag extends Model
 
     public $timestamps = false;
 
+    public static function getAll()
+    {
+        return Cache::remember('tags', 3600, function () {
+            return Tag::sorted()->get();
+        });
+    }
+
     public function scopeSorted($query)
     {
         return $query->orderBy('sort');
-    }
-
-    public static function getAll()
-    {
-        return \Illuminate\Support\Facades\Cache::remember('tags', 3600, function () {
-            return Tag::sorted()->get();
-        });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Laravel\Scout\Builder;
@@ -17,8 +18,13 @@ abstract class Repository
     )
     {
         if (!is_subclass_of($this->model, Model::class)) {
-            throw new \Exception("Model class must be an instance of Illuminate\Database\Eloquent\Model");
+            throw new Exception("Model class must be an instance of Illuminate\Database\Eloquent\Model");
         }
+    }
+
+    public function searchWithPaginate(array $data, ?array $filters = []): LengthAwarePaginator
+    {
+        return $this->getSearchBuilder($data, $filters)->paginateRaw(static::DEFAULT_PER_PAGE);
     }
 
     public function getSearchBuilder(array $data, ?array $filters = []): Builder
@@ -27,10 +33,5 @@ abstract class Repository
             $options['filter'] = $filters;
             return $meilisearch->search($query, $options);
         });
-    }
-
-    public function searchWithPaginate(array $data, ?array $filters = []): LengthAwarePaginator
-    {
-        return $this->getSearchBuilder($data, $filters)->paginateRaw(static::DEFAULT_PER_PAGE);
     }
 }

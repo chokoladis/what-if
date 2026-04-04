@@ -2,28 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 
 class Category extends BaseModel
 {
 //    use Searchable;
 
     const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
-
-    public function getRouteKeyName()
-    {
-        return 'code';
-    }
-
-    public function scopeActive()
-    {
-        return Category::query()->where('active', true);
-    }
 
     public static function getCategoriesLevel0()
     {
@@ -60,14 +49,62 @@ class Category extends BaseModel
     public function getDaughterCategories($catLevel, $categoryParentId)
     {
 
-        // dump($catLevel, '..', $categoryParentId);
-
         return Category::query()
             ->where('level', $catLevel)
             ->where('parent_id', $categoryParentId)
             ->get()
             ->toArray();
         // imgs
+    }
+
+    /**
+     * @param string|null $code
+     * @return ?Category
+     */
+    public static function getByCode(?string $code): ?Category
+    {
+        return Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
+            return Category::active()->where('code', $code)->with('file')->first();
+        });
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($category) {
+//            if (!is_numeric($category->file_id)){
+//                $file = FileService::save($category->file_id, 'categories');
+//                $category->file_id = $file->id;
+//            }
+            $category->code = Str::slug(Str::lower($category->title), '-');
+            $category->level = !$category->parent ? 0 : $category->parent->level + 1;
+        });
+
+        static::updating(function ($category) {
+
+//            todo
+//            Log::debug('upd categori - '.$category->file_id);
+//
+//            if (!is_numeric($category->file_id)){
+//                $file = FileService::save($category->file_id, 'categories');
+//                $category->file_id = $file->id;
+//            }
+        });
+
+        static::deleted(function ($item) {
+            File::find($item->file_id)->delete();
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'code';
+    }
+
+    public function scopeActive()
+    {
+        return Category::query()->where('active', true);
     }
 
     public function getNLevelChildByCategoryId()
@@ -77,6 +114,44 @@ class Category extends BaseModel
             ->where('parent_id', $this->id)
             ->where('level', $this->level + 1)
             ->get();
+    }
+
+    public function file(): HasOne
+    {
+        return $this->hasOne(File::class, 'id', 'file_id');
+    }
+
+    public function categorytable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function scopeSearch(Builder $query, string $title)
+    {
+        return $query->where('title', 'LIKE', '%' . $title . '%')
+            ->orWhere('code', 'LIKE', '%' . $title . '%');
+    }
+
+    public function toSearchableArray()
+    {
+        $count = $this->getCountQuestion();
+
+        return [
+            'title' => $this->title,
+            'code' => $this->code,
+            'parents' => $this->getParents(),
+            'parent_id' => $this->parent_id,
+            'created_at' => $this->created_at,
+            'count_question' => $count
+        ];
+    }
+
+    public function getCountQuestion()
+    {
+        return Question::search()
+            ->where('category_id', $this->id)
+            ->whereIn('category_list', $this->id)
+            ->get()->count();
     }
 
     public function getParents()
@@ -111,103 +186,9 @@ class Category extends BaseModel
             ->get()->first();
     }
 
-    /**
-     * @param string|null $code
-     * @return ?Category
-     */
-    public static function getByCode(?string $code) : ?Category
-    {
-        return Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
-            return Category::active()->where('code', $code)->with('file')->first();
-        });
-    }
-
-    public function file(): HasOne
-    {
-        return $this->hasOne(File::class, 'id', 'file_id');
-    }
-
-    public function categorytable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function stats()
-    {
-//        todo
-        return $this->hasOne(CategoryStats::class, 'category_id', 'id');
-    }
-
-    public static function boot()
-    {
-
-        parent::boot();
-
-        /**
-         * Write code on Method
-         *
-         * @return response()
-         */
-        static::creating(function ($category) {
-
-//            todo
-//            Log::debug('creating category 2', [$category]);
-//
-//            if (!is_numeric($category->file_id)){
-//                $file = FileService::save($category->file_id, 'categories');
-//                $category->file_id = $file->id;
-//            }
-            $category->code = Str::slug(Str::lower($category->title), '-');
-            $category->level = !$category->parent ? 0 : $category->parent->level + 1;
-        });
-
-        static::updating(function ($category) {
-
-//            todo
-//            Log::debug('upd categori - '.$category->file_id);
-//
-//            if (!is_numeric($category->file_id)){
-//                $file = FileService::save($category->file_id, 'categories');
-//                $category->file_id = $file->id;
-//            }
-        });
-
-        static::deleted(function ($item) {
-            File::find($item->file_id)->delete();
-        });
-    }
-
-    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $title)
-    {
-        return $query->where('title', 'LIKE', '%' . $title . '%')
-            ->orWhere('code', 'LIKE', '%' . $title . '%');
-    }
-
-    public function toSearchableArray()
-    {
-        $count = $this->getCountQuestion();
-
-        return [
-            'title' => $this->title,
-            'code' => $this->code,
-            'parents' => $this->getParents(),
-            'parent_id' => $this->parent_id,
-            'created_at' => $this->created_at,
-            'count_question' => $count
-        ];
-    }
-
     public function shouldBeSearchable()
     {
         return $this->active;
-    }
-
-    public function getCountQuestion()
-    {
-        return Question::search()
-            ->where('category_id', $this->id)
-            ->whereIn('category_list', $this->id)
-            ->get()->count();
     }
 
     public function subcategories()

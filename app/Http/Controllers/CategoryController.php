@@ -5,41 +5,41 @@ namespace App\Http\Controllers;
 use App\Events\ViewEvent;
 use App\Models\Category;
 use App\Services\QuestionService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         return view('categories.index', ['categories' => Category::getCategoriesLevel0()]);
     }
 
-    public function detail($category)
+    public function detail(string $category): RedirectResponse|View
     {
-        try {
-            $category = Category::getByCode($category);
-        } catch (ModelNotFoundException $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+        $category = Category::getByCode($category);
+        if (!$category) {
+            return redirect()->back()->with('error', 'Category not found');
         }
 
         Event(new ViewEvent($category));
 
-        $childs = self::getCurrCategoryChilds($category);
+        $children = self::getCurrCategoryChilds($category);
         $questions = QuestionService::getList(['active' => true, 'category_id' => $category->id]);
 
-        return view('categories.detail', compact('category', 'childs', 'questions'));
+        return view('categories.detail', compact('category', 'children', 'questions'));
     }
 
-    static function getCurrCategoryChilds(Category $category)
+    static function getCurrCategoryChilds(Category $category): Collection
     {
         return Cache::remember('category_childs_' . $category->id, Category::$timeCache, function () use ($category) {
-            $categories = Category::query()
+            return Category::query()
                 ->where('active', 1)
                 ->where('parent_id', $category->id)
+                ->with(['file'])
                 ->get();
-            $categories->load('file');
-            return $categories;
         });
     }
 }

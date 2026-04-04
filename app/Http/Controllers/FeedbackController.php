@@ -6,12 +6,13 @@ use App\DTO\Errors\CommonError;
 use App\DTO\Errors\ValidationError;
 use App\Http\Requests\Feedback\StoreRequest;
 use App\Models\Feedback;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class FeedbackController extends Controller
 {
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): Response
     {
         $success = true;
         $errors = [];
@@ -49,12 +50,12 @@ class FeedbackController extends Controller
                 return responseJson(false, $errors);
             }
 
-            return responseJson($success, $response, 201);
+            return responseJson($success, $response, Response::HTTP_CREATED);
         } catch (Throwable $th) {
 
-            Log::error($th, $data);
+            Log::error($th);
 
-            throw $th;
+            return responseJson(false, [new CommonError('Не предвиденная ошибка')], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

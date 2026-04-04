@@ -4,24 +4,27 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\DTO\Errors\CommonError;
 use App\Events\ViewEvent;
 use App\Http\Requests\Question\IndexRequest;
 use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Comment;
-use App\Models\Question;
 use App\Models\QuestionVotes;
 use App\Models\Tag;
 use App\Repositories\CategoryRepository;
 use App\Repositories\TagRepository;
 use App\Services\QuestionService;
 use App\Services\UserService;
-use Error;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class QuestionController extends Controller
 {
@@ -39,20 +42,10 @@ class QuestionController extends Controller
         $this->categoryRepository = new CategoryRepository(Category::class, true);
     }
 
-
-    public static function findByUrl(string $url) : ?Question
-    {
-        $urlExplode = explode('/', $url);
-        $questionCode = $urlExplode[count($urlExplode) - 1];
-
-        $question = Question::query()->where('code', $questionCode)->first();
-        return $question;
-    }
-
     /**
      * @param IndexRequest $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\View\View|object
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @return Factory|View|Application|\Illuminate\View\View|object
+     * @throws InvalidArgumentException
      */
     public function index(IndexRequest $request)
     {
@@ -77,7 +70,7 @@ class QuestionController extends Controller
         return view('questions.index', compact('questions', 'tags', 'categories'));
     }
 
-    public function add() : View
+    public function add(): View
     {
         $categories = Category::getDaughtersCategories();
         //cache
@@ -86,7 +79,7 @@ class QuestionController extends Controller
         return view('questions.add', compact('categories', 'tags'));
     }
 
-    public function store(StoreRequest $request) : RedirectResponse
+    public function store(StoreRequest $request): RedirectResponse
     {
         [$question, $error] = $this->questionService->store($request);
 
@@ -103,78 +96,64 @@ class QuestionController extends Controller
 
     /**
      * @param string $code
-     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View|object
+     * @return View|\Illuminate\View\View|object
      */
     public function detail(string $code)
     {
-        $question = Question::getByCode($code);
+        $question = $this->questionService->getWithFullData($code);
 
         if (!$question) {
-//            or to session ?
+//            or redirect with error to session ?
             return view('questions.detail', ['error' => __('questions.alerts.not_available')]);
         }
 
         Event(new ViewEvent($question));
 
-        $arVotes = QuestionService::getVotes($question['id']);
         //        todo
-        $questionCurrentUserVote = QuestionVotes::getByQuestionIdForUser($question['id']);
+        $voteCurrentUser = QuestionVotes::getVoteCurrentUser($question['id']);
 
         $arComments = [];
-//            mb use algoritm
         /* @var Comment $comment */
         foreach ($question->comments as $comment) {
 
-            if ($comment->isReply()) {
+//            dump('comment', $comment, $comment->parent);
+
+            if ($comment->parent) {
                 continue;
             }
 
-            $countChilds = $comment->getCountChilds($comment->replies);
-
+//            todo rework
             $arComments[$comment->id]['comment'] = $comment;
-            $arComments[$comment->id]['count_childs'] = $countChilds;
-        }
-
-        $isNeedShowFullTitle = false;
-
-        if (mb_strlen($question->title) > 70) {
-            $title = mb_strcut($question->title, 0, 70) . '...';
-            $isNeedShowFullTitle = true;
-        } else {
-            $title = $question->title;
+            $arComments[$comment->id]['count_childs'] = $comment->getTotalCountChildren($comment->replies);
         }
 
         return view('questions.detail',
-            compact('question', 'arVotes', 'questionCurrentUserVote', 'arComments', 'title', 'isNeedShowFullTitle')
+            compact('question', 'voteCurrentUser', 'arComments')
         );
     }
 
     /**
-     * @param RightCommentStoreRequest $request
-     * @return \Illuminate\Http\Response|object
+     * @param Request $request
+     * @return Response|object
      */
-    public function setRightComment(RightCommentStoreRequest $request)
+    public function setRightComment(Request $request)
     {
-        $data = $request->validated();
+        $data = $request->validate([
+            'comment_id' => 'required|exists:comments,id',
+        ]);
+//
+//        todo send realizy to service
 
-        if ($data['question_id'] < 0 || $data['comment_id'] < 0) {
-            return responseJson(false, [
-                new Error('Вопрос или комментарий не прошли валидацию', 'question_or_comment_no_valid')
-            ]);
-        }
-
-        if ($this->questionService->isCommentContains($data) !== null) {
-            if ($this->questionService->setRightComment($data)) {
-                return responseJson(true);
-            }
+        if ($this->questionService->setRightComment($data)) {
+            return responseJson();
         }
 
         return responseJson(false, [
-            new Error('Ошибка при задании верного комментария', 'error_in_set_right_comment')
+            new CommonError('Ошибка при задании верного комментария', 'error_in_set_right_comment')
         ]);
     }
 
-    public function recommendations(IndexRequest $request) : View
+    public function recommendations(IndexRequest $request): View
     {
 //        $sidebar = $this->questionIndexService->getSidebarFilterData();
         $tags = Cache::remember('tags_all', 3600, function () {

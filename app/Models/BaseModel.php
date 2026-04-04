@@ -2,21 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class BaseModel extends Model
 {
-    use HasFactory;
 
     static $timeCache = 43200;
+    public $guarded = [];
     protected $searchFilter = [];
 
-    public $guarded = [];
-
-    public static function getByCode(?string $code) : ?self
+    public static function getByCode(?string $code): ?self
     {
 //        cache ?
         return self::class::where('code', $code)->first();

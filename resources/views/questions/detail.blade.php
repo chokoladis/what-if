@@ -1,9 +1,11 @@
 @php
     use App\Services\FileService;
 
+    $votes = $question->votes->groupBy('vote')->map->count()->toArray();
+    $like = \App\Enums\Vote::LIKE->value;
+    $dislike = \App\Enums\Vote::DISLIKE->value;
+
     $currentVote = !empty($questionCurrentUserVote) ? $questionCurrentUserVote['vote'] : 0;
-    $likeVal = \App\Enums\Vote::LIKE;
-    $dislikeVal = \App\Enums\Vote::DISLIKE;
 @endphp
 @extends('layouts.app')
 
@@ -32,24 +34,24 @@
                 <div class="actions">
                     @if(auth()->id())
                         <input type="hidden" id="question_id" value="{{ $question->id }}">
-                        <div class="icon like btn {{ $currentVote === $likeVal ? 'btn-success' : 'btn-outline-success' }}"
-                             data-vote="{{$likeVal}}">
+                        <div class="icon like btn {{ $currentVote === $like ? 'btn-success' : 'btn-outline-success' }}"
+                             data-vote="{{$like}}">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
-                            <b>{{ $arVotes['likes'] ?? 0 }}</b>
+                            <b>{{ $votes[$like] ?? 0 }}</b>
                         </div>
-                        <div class="icon dislike btn {{ $currentVote === $dislikeVal ? 'btn-danger' : 'btn-outline-danger' }}"
-                             data-vote="{{$dislikeVal}}">
+                        <div class="icon dislike btn {{ $currentVote === $dislike ? 'btn-danger' : 'btn-outline-danger' }}"
+                             data-vote="{{$dislike}}">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
-                            <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
+                            <b>{{ $votes[$dislike] ?? 0 }}</b>
                         </div>
                     @else
                         <div class="icon like btn btn-success">
                             <span class="uk-icon" uk-icon="chevron-up"></span>
-                            <b>{{ $arVotes['likes'] ?? 0 }}</b>
+                            <b>{{ $votes[$like] ?? 0 }}</b>
                         </div>
                         <div class="icon dislike btn btn-danger">
                             <span class="uk-icon" uk-icon="chevron-down"></span>
-                            <b>{{ $arVotes['dislikes'] ?? 0 }}</b>
+                            <b>{{ $votes[$like] ?? 0 }}</b>
                         </div>
                     @endif
                 </div>
@@ -58,7 +60,7 @@
                     {{--во весь экран --}}
                     <div class="shadow"></div>
                     <div class="bottom">
-                        <h1 class="h1">{{ $title }}</h1>
+                        <h1 class="h1">{{ $question->getShortTitle(70) }}</h1>
                         <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#question-img-popup">
                             <span uk-icon="image"></span>
                         </button>
@@ -98,7 +100,7 @@
                     <i>{{ $question->statistics->views }}</i>
                 </div>
             </div>
-            @if($isNeedShowFullTitle)
+            @if(mb_strlen($question->title) > 70)
                 <h3 class="h3 mt-4">{{ $question->title }}</h3>
             @endif
             <div class="comments">
@@ -158,7 +160,7 @@
                 @endif
             </div>
 
-            @if (auth()->user())
+            @auth
                 <form action="{{ route('comments.store') }}" method="post" enctype="multipart/form-data">
 
                     <h4>{{ __('comment.left_comment') }}</h4>
@@ -192,7 +194,7 @@
 
                     <button type="submit" class="btn btn-primary mb-3">{{ __('btn.reply') }}</button>
                 </form>
-            @endif
+            @endauth()
             @if($question->category)
                 <div class="category">
                     <a href="{{ route('categories.detail', $question->category->code)}}"

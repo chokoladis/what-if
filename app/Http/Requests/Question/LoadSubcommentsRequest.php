@@ -23,7 +23,6 @@ class LoadSubcommentsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'question-id' => ['required', 'numeric', 'exists:questions,id'],
             'comment-id' => ['required', 'numeric', 'exists:comments,id'],
             'offset' => ['numeric', 'min:3', 'nullable'],
         ];

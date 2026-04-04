@@ -6,32 +6,31 @@ use App\Filament\Admin\Resources\QuestionCategoryResource\Pages;
 use App\Models\Category;
 use App\Models\File;
 use App\Services\FileService;
-use Filament\Forms;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
 class QuestionCategoryResource extends Resource
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Данные';
-
+    const DIR = 'categories';
+    protected static string|UnitEnum|null $navigationGroup = 'Данные';
     protected static ?string $modelLabel = 'Категории';
     protected static ?string $navigationLabel = 'Категории';
     protected static ?string $pluralModelLabel = 'Категории';
     protected static bool $hasTitleCaseModelLabel = false;
     protected static ?string $model = Category::class;
-
-    protected static null|string|\BackedEnum $navigationIcon = Heroicon::Squares2x2;
-
-    const DIR = 'categories';
+    protected static null|string|BackedEnum $navigationIcon = Heroicon::Squares2x2;
 
     public static function form(Schema $schema): Schema
     {
@@ -79,7 +78,7 @@ class QuestionCategoryResource extends Resource
                             return;
                         }
 
-                        $component->state(new \Illuminate\Http\UploadedFile(
+                        $component->state(new UploadedFile(
                             $disk->path('/categories/' . $file->path),
                             $file->name,
                         ));

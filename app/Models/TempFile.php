@@ -9,11 +9,6 @@ class TempFile extends Model
 {
     public $guarded = [];
 
-    public function getFullUrlAttribute(): string
-    {
-        return asset('storage/temp/' . $this->path);
-    }
-
     public static function boot()
     {
 
@@ -36,5 +31,10 @@ class TempFile extends Model
                 $disk->delete('temp/' . $file->path);
         });
 
+    }
+
+    public function getFullUrlAttribute(): string
+    {
+        return asset('storage/temp/' . $this->path);
     }
 }

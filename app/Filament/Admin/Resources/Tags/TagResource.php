@@ -9,7 +9,6 @@ use App\Filament\Admin\Resources\Tags\Pages\ViewTag;
 use App\Filament\Admin\Resources\Tags\Schemas\TagForm;
 use App\Filament\Admin\Resources\Tags\Schemas\TagInfolist;
 use App\Filament\Admin\Resources\Tags\Tables\TagsTable;
-use App\Models\Question;
 use App\Models\Tag;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -20,7 +19,7 @@ use UnitEnum;
 
 class TagResource extends Resource
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Данные';
+    protected static string|UnitEnum|null $navigationGroup = 'Данные';
     protected static ?string $modelLabel = 'Теги';
     protected static ?string $navigationLabel = 'Теги';
     protected static ?string $pluralModelLabel = 'Теги';

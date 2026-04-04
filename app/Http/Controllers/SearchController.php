@@ -20,7 +20,7 @@ class SearchController extends Controller
         $this->categoryRepository = new CategoryRepository(Category::class);
     }
 
-    public function index(IndexRequest $request) : View
+    public function index(IndexRequest $request): View
     {
         $data = $request->validated();
         $filters = $data['filters'] ?? [];

@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DTO\Errors\CommonError;
-use App\DTO\Errors\ValidationError;
 use App\Exceptions\FileSaveException;
 use App\Http\Requests\Question\IndexRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Question;
 use App\Models\QuestionComments;
 use App\Models\QuestionTags;
@@ -19,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -44,8 +44,8 @@ class QuestionService
     private static string $model = Question::class;
 
     /**
-     * @param array<string, bool|string|int> $filter
-     * @param array $sort
+     * @param array<string, mixed> $filter
+     * @param array<int, string> $sort
      * @param int $limit
      * @return LengthAwarePaginator|false
      */
@@ -90,7 +90,7 @@ class QuestionService
         return $res;
     }
 
-    public static function paginateWithFilter(IndexRequest $request)
+    public static function paginateWithFilter(IndexRequest $request): AbstractPaginator
     {
         $builder = Question::active();
 
@@ -143,6 +143,7 @@ class QuestionService
 
     public static function getPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 YEAR')
     {
+//        for rework
         $collection = self::getRawDataForPopular(interval: $interval);
 
         if ($collection->isEmpty())
@@ -198,6 +199,7 @@ class QuestionService
 
     static function getVotes(int $id)
     {
+//        for rework or delete
         return Cache::remember('question_votes_' . $id, 3600 * 3, function () use ($id) {
             $tableName = (new QuestionVotes)->getTable();
             return QuestionVotes::query()
@@ -209,23 +211,16 @@ class QuestionService
         });
     }
 
-    /**
-     * @param array<string, int|string> $data
-     * @return bool
-     */
-    public function isCommentContains(array $data): bool
-    {
-        return QuestionComments::query()
-            ->where('question_id', $data['question_id'])
-            ->where('comment_id', $data['comment_id'])
-            ->exists();
-    }
-
     public function setRightComment($data)
     {
-        return self::$model::query()
-            ->where('id', $data['question_id'])
-            ->update(['right_comment_id' => $data['comment_id']]);
+//        todo add index active
+        /** @var ?Comment $comment */
+        $comment = Comment::active()->where('id', $data['comment_id'])->with(['question', 'question.user'])->first();
+        if ($comment->question->user->id === Auth::id()){
+            return $comment->update(['is_answer' => true]);
+        }
+
+        return false;
     }
 
     public function store(StoreRequest $request)
@@ -316,8 +311,14 @@ class QuestionService
         return [$data, null];
     }
 
-    public function getPopularForWeek()
+    public function getWithFullData(string $code)
     {
-        $collection = $this->getRawDataForPopular(interval: '1 WEEK');
+//        todo with join
+        return Cache::remember('question_full_data_' . $code, 86400, function () use ($code) {
+            return Question::active()
+                ->where('code', $code)
+                ->with(['file', 'category', 'tags', 'user', 'statistics', 'votes', 'comments', 'right_comment'])
+                ->first();
+        });
     }
 }

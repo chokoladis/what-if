@@ -28,7 +28,7 @@ class CommentInfolist
                     ->placeholder('-'),
                 TextEntry::make('deleted_at')
                     ->dateTime()
-                    ->visible(fn (Comment $record): bool => $record->trashed()),
+                    ->visible(fn(Comment $record): bool => $record->trashed()),
             ]);
     }
 }

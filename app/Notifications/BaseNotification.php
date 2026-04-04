@@ -10,6 +10,18 @@ abstract class BaseNotification extends Notification
 {
     use Queueable;
 
+    public static function isExists(UniqueDataNotifyInterface $notification): bool
+    {
+        $query = \App\Models\Notification::query()
+            ->where('type', get_class($notification));
+
+        foreach ($notification->getUniqueData() as $key => $value) {
+            $query->where('data->' . $key, $value);
+        }
+
+        return $query->select(['id'])->exists();
+    }
+
     /**
      * Get the notification's delivery channels.
      *
@@ -18,17 +30,5 @@ abstract class BaseNotification extends Notification
     public function via(object $notifiable): array
     {
         return ['broadcast', 'database'];
-    }
-
-    public static function isExists(UniqueDataNotifyInterface $notification): bool
-    {
-        $query = \App\Models\Notification::query()
-            ->where('type', get_class($notification));
-
-        foreach ($notification->getUniqueData() as $key => $value) {
-            $query->where('data->'.$key, $value);
-        }
-
-        return $query->select(['id'])->exists();
     }
 }
