@@ -13,7 +13,8 @@ reload:
 	make down
 	make up
 
-db-start:
+#db
+db-fake-run:
 	docker exec -w /var/www/what_if what-if_php php artisan migrate
 	docker exec -w /var/www/what_if what-if_php sh -c "php artisan db:seed DatabaseSeeder && php artisan db:seed QuestionSeeder"
 	docker exec -w /var/www/what_if what-if_php sh -c "php artisan db:seed TagSeeder && php artisan db:seed QuestionTagsSeeder && php artisan db:seed UserTagsSeeder"
@@ -23,11 +24,13 @@ db-restore:
 db-export:
 	docker exec what-if_mysql mysqldump -u$(DB_USERNAME) -p$(DB_PASSWORD) $(DB_DATABASE) | gzip > dumps/what_if_$(shell date +%F).sql.gz
 
+#composer
 install-composer:
 	docker exec -w /var/www/what_if what-if_php composer install --no-interaction --prefer-dist --optimize-autoloader
 update-composer:
 	docker exec -w /var/www/what_if what-if_php composer update --no-interaction
 
+#other
 fix-right:
 	docker-compose exec php chown -R www-data:www-data /var/www/what_if/storage/app
 	docker-compose exec php chown -R www-data:www-data /var/www/what_if/storage/logs
@@ -37,3 +40,6 @@ fix-right:
 
 clear-cache:
 	docker exec -it what-if_php php artisan optimize:clear
+
+tests-run:
+	docker exec -w /var/www/what_if what-if_php php artisan test

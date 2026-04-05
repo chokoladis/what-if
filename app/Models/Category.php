@@ -3,18 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Category extends BaseModel
 {
+    use HasFactory;
 //    use Searchable;
 
     const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
 
-    public static function getCategoriesLevel0()
+    public static function getCategoriesLevel0() : Collection
     {
         return Cache::remember('category_level_0', now()->addDay(), function () {
             return Category::active()->where('level', 0)->with('file')->get();

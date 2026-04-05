@@ -10,7 +10,6 @@ use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Question;
-use App\Models\QuestionComments;
 use App\Models\QuestionTags;
 use App\Models\QuestionVotes;
 use App\Models\Tag;

@@ -4,13 +4,17 @@
 cp .env.example .env
 make up
 make install-composer
-make db-start
+make db-fake-run
 ```
 
 **Note (for notifications)**: Reverb startup is currently manual; worker daemonization is in the roadmap.
 
 ```bash
   docker exec -it what-if_php php artisan reverb:start
+```
+**Run test cases**
+```bash
+  make tests-run
 ```
 
 ## 🛠 Tech

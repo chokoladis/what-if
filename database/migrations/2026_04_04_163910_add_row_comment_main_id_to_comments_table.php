@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->after('question_id')
-                ->unsignedBigInteger('comment_main_id')->nullable()->index('comment_main_id');
+            $table->unsignedBigInteger('comment_main_id')->nullable()->index('comment_main_id')->after('question_id');
         });
     }
 

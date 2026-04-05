@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Feature\Questions;
 
 
 use App\Models\Question;
@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class QuestionTest extends TestCase
+class StoreTest extends TestCase
 {
     public function test_store_success_create(): void
     {
@@ -48,7 +48,6 @@ class QuestionTest extends TestCase
         $response->assertJsonValidationErrors(['img']);
     }
 
-
     public function test_store_valid_img(): void
     {
         $this->withoutMiddleware();
@@ -62,15 +61,5 @@ class QuestionTest extends TestCase
         ]);
 
         $response->assertStatus(302);
-    }
-
-    public function test_index_page_ok(): void
-    {
-        Question::factory()->create([
-            'active' => true
-        ]);
-
-        $response = $this->get(route('questions.index'));
-        $response->assertOk()->assertSeeHtml('class="item card mb-3 "');
     }
 }

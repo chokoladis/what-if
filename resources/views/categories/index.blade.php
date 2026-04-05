@@ -8,30 +8,22 @@
 
 @section('content')
     <div class="categories-list container">
+        <div class="row">
+            @foreach ($categories as $item)
 
-        @if ($categories->isEmpty())
-            <p>{{ __('categories.not_found') }}</p>
-        @else
-            <div class="row">
-
-                @foreach ($categories as $item)
-
-                    <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
-                        <div class="card">
-                            <a href="{{ route('categories.detail', $item->code ) }}">
-                                <img src="{{ \App\Services\FileService::getPhoto($item->file) }}"
-                                     alt="Картинка категории не найдена">
-                                <div class="card-body">
-                                    {{ $item->title }}
-                                </div>
-                            </a>
-                        </div>
+                <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
+                    <div class="card">
+                        <a href="{{ route('categories.detail', $item->code ) }}">
+                            <img src="{{ \App\Services\FileService::getPhoto($item->file) }}"
+                                 alt="Картинка категории не найдена">
+                            <div class="card-body">
+                                {{ $item->title }}
+                            </div>
+                        </a>
                     </div>
+                </div>
 
-                @endforeach
-
-            </div>
-        @endif
-
+            @endforeach
+        </div>
     </div>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\DTO\Indexing\CommentDTO;
 use App\DTO\Indexing\UserDTO;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
@@ -13,6 +14,7 @@ use Illuminate\Support\Str;
 
 class Question extends BaseModel
 {
+    use HasFactory;
 //    use Searchable;
 
     public $guarded = [];

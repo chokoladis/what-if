@@ -96,15 +96,14 @@ class QuestionController extends Controller
 
     /**
      * @param string $code
-     * @return View|\Illuminate\View\View|object
+     * @return View|RedirectResponse
      */
     public function detail(string $code)
     {
         $question = $this->questionService->getWithFullData($code);
 
         if (!$question) {
-//            or redirect with error to session ?
-            return view('questions.detail', ['error' => __('questions.alerts.not_available')]);
+            return view('errors.404', ['error' =>  __('questions.alerts.not_available')]);
         }
 
         Event(new ViewEvent($question));

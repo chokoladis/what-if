@@ -14,7 +14,12 @@ class CategoryController extends Controller
 {
     public function index(): View
     {
-        return view('categories.index', ['categories' => Category::getCategoriesLevel0()]);
+        $categories = Category::getCategoriesLevel0();
+        if ($categories->isEmpty()) {
+            return view('errors.404', ['error' => __('categories.not_found')]);
+        }
+
+        return view('categories.index', compact('categories'));
     }
 
     public function detail(string $category): RedirectResponse|View
