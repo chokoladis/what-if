@@ -106,4 +106,18 @@ class UserService
             DB::commit();
         }
     }
+
+    /**
+     * @param array<string, string> $data
+     * @return bool
+     */
+    public function update(array $data): bool
+    {
+        return Auth::user()->update($data);
+    }
+
+    public function getFullUserInfo(int $userId): ?User
+    {
+        return User::with(['questions', 'photo', 'tags'])->where('id', $userId)->first();
+    }
 }

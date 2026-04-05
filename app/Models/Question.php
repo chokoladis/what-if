@@ -19,8 +19,9 @@ class Question extends BaseModel
 
     public static function getByCode(?string $code): ?Question
     {
-        // use cache 
-        return Question::active()->where('code', $code)->first();
+        return Cache::remember("question.{$code}", 3600, function () use ($code) {
+            return Question::active()->where('code', $code)->first();
+        });
     }
 
     public static function getTopPopular()
@@ -55,6 +56,8 @@ class Question extends BaseModel
                 'question_id' => $item->id
             ]);
         });
+
+        // todo drop cache detail and list
 
         // updated to active = true // send sms/mail message about it
     }

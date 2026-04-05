@@ -14,7 +14,7 @@ class CommentNotification extends BaseNotification implements UniqueDataNotifyIn
      * Create a new notification instance.
      */
     public function __construct(
-        private User $voter,
+        private User    $voter,
         private Comment $comment,
     )
     {

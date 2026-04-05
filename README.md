@@ -1,60 +1,61 @@
-## 📀 Установка
-### Если хотите установить с нуля
-1) Подготавливаете файл .env(.env.example), 
-2) Скачивание и запуск контейнеров - `Make up`
-3) Установка композера - `make install-composer`
-4) Запуск миграций и фейк данных - `Make db-start`
-5) в контейнере запуск комманды - `php artisan reverb:start` (Временное решение)
-### Другой вариант установки
-1-3) аналогично
-4) `Make db-restore` (Есть вероятность не актуальной структуры)
-## Техническая часть
-### 🧪 Используемые технологии/инструменты
-> - Laravel + Vite, JS, JQuery, Html, Scss
-> - Filament
-> - Meilisearch
-> - WebSocket (reverb)
-> - Queue (БД)
-> - Docker, Docker-compose (nginx, php-fpm, node, mysql, redis)
-> - Встроен gemini.ai (проверка картинок на запрещенку)
-> - Дополнительно установлены пакеты:
-> - дебаг запросов - barryvdh/laravel-debugbar
-> - проверка кода на ошибки - phpstan/phpstan
-### 🔬 [Тесты](https://github.com/chokoladis/what-if/tree/main/readme/tests)
+## 📀 Quick Start
 
+```bash
+cp .env.example .env
+make up
+make install-composer
+make db-start
+```
 
-## 📸 Наглядное представление функционала
+**Note (for notifications)**: Reverb startup is currently manual; worker daemonization is in the roadmap.
+
+```bash
+  docker exec -it what-if_php php artisan reverb:start
+```
+
+## 🛠 Tech
+### 🧪 Stack & Architecture
+* Backend: Laravel 11, PHP 8.3
+* Admin Panel: Filament
+* Realtime: Laravel Reverb (WebSockets)
+* Search Engine: Meilisearch integration
+* Infrastructure: Docker-compose (Nginx, PHP-FPM, MySQL, Redis)
+### 🛡 Quality & Tooling
+* Static Analysis: PHPStan (Level 8)
+* Testing: PHPUnit (function), JMeter/Postman for load testing.
+* AI Integration: Gemini AI for content moderation.
+
+### 🔬 [Tests](https://github.com/chokoladis/what-if/tree/main/readme/tests)
+
+## 📸 Visual representation of the functionality
 <br>
 <p align="center">
     <img src="/readme/main_page.png" style="width: 100%; max-width: 800px;" />
 </p>
-<b>Главная страница</b>
+<b>Mainpage</b>
 
-### 🔥 [Основной функционал](https://github.com/chokoladis/what-if/tree/main/readme/main)
-### 👤 [Профиль](https://github.com/chokoladis/what-if/tree/main/readme/profile)
+### 🔥 [Main functional](https://github.com/chokoladis/what-if/tree/main/readme/main)
+### 👤 [Profile](https://github.com/chokoladis/what-if/tree/main/readme/profile)
 ### ⚙ Admin
 
-- CRUD категории, вопросов, тегов, комментариев
-- Настройки: Капчи, использования gemini, умного кэширования*1
-- Очистка кэша
+* Smart Caching: Event-driven cache invalidation for related entities.
+* Full CRUD for categories, tags, and comments with integrated captcha.
+* Captcha, smart cache settings
 
-Ещё в разработке
-- Просмотр и ответ на оставленные заявки?
-- CRUD Юзеров
-- Кол-во новых сущностей в виде бейджов
+Still in development
+- View and respond to submitted requests?
+- User CRUD
+- Number of new entities in the form of badges
 
 <br><br>
 <p align="center">
     <img src="/readme/dashboard_settings.png" alt="admin dashboard" style="width: 100%; max-width: 800px;" />
 </p>
-<b>Настройки в админ панели</b>
+<b>Settings in admin panel</b>
 <br><br>
 <p align="center">
     <img src="/readme/admin_dasboard.png" alt="admin dashboard" style="width: 100%; max-width: 800px;" />
 </p>
-<b>Админка v2</b>
+<b>Admin panel v2</b>
 
 <br><br>
-`
-*1 - Умное кеширование - сброс кеша по сущности или смежной сущности, при CRUD операции (если поддерживается)
-`

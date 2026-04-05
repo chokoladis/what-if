@@ -10,8 +10,6 @@ use App\Models\File;
 use App\Models\TempFile;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class FileService
@@ -22,7 +20,7 @@ class FileService
     const MAX_FILE_SIZE_MB = self::MAX_FILE_SIZE / 1048576;
     const ALLOW_IMG_EXT = ['jpg', 'png', 'jpeg', 'gif'];
 
-    public static function saveTemp(TemporaryUploadedFile|UploadedFile $img)
+    public static function saveTemp(TemporaryUploadedFile|UploadedFile $img): TempFile
     {
         $fileDTO = self::prepareFileDTO($img, 'temp');
 
@@ -34,7 +32,7 @@ class FileService
         ]);
     }
 
-    private static function prepareFileDTO(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
+    private static function prepareFileDTO(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main'): FileDTO
     {
         $disk = Storage::disk('public');
 
@@ -62,7 +60,7 @@ class FileService
         );
     }
 
-    static function getPhoto(?File $file)
+    static function getPhoto(?File $file): string
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
@@ -77,7 +75,7 @@ class FileService
         return $nophoto_src;
     }
 
-    public static function saveFromQueue(TempFile $file, string $mainDir = 'main')
+    public static function saveFromQueue(TempFile $file, string $mainDir = 'main'): File
     {
         $disk = Storage::disk('public');
 
@@ -123,44 +121,7 @@ class FileService
         return $nophoto_src;
     }
 
-    public static function createThumbWebp(string $filePath)
-    {
-//        todo rework
-        $imgManager = new ImageManager(new Driver());
-
-        $realPath = public_path() . Storage::url($filePath);
-        $image = $imgManager->read($realPath);
-
-        $size = filesize($filePath); // bites
-        $kbSize = $size / 1024;
-
-        $pathInfo = pathinfo($filePath);
-        $mainPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.webp';
-        $newFilepath = public_path() . Storage::url($mainPath);
-
-        if ($kbSize > 100) {
-
-            $image->resize(300, 300)->toWebp(80)->save($newFilepath);
-
-        } elseif (file_exists($newFilepath)) {
-
-            $size = filesize($newFilepath);
-            $kbSize = $size / 1024;
-
-            if ($kbSize > 100) {
-
-                $image = $imgManager->read($newFilepath);
-                $image->resize(300, 300)->toWebp(70)->save($newFilepath);
-            }
-
-        } else {
-            return false;
-        }
-
-        return $mainPath;
-    }
-
-    public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main')
+    public static function save(TemporaryUploadedFile|UploadedFile $img, string $mainDir = 'main'): File
     {
 //        сделать сохранение по папкам-юзерам и названиям файлов ? (для проверки на существование и по контрольной сумме)
         $fileDTO = self::prepareFileDTO($img, $mainDir);

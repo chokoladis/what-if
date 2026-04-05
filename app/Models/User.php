@@ -38,7 +38,6 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
-
     /**
      * The accessors to append to the model's array form.
      *
@@ -100,11 +99,12 @@ class User extends Authenticatable implements FilamentUser
         return mb_strlen($this->name) > 8 ? mb_substr($this->name, 0, 8) . '...' : $this->name;
     }
 
-    //    paginate
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class); //->latest()
     }
+
+    //    paginate
 
     public function getQuestionsWithPages(Request $request)
     {
@@ -132,4 +132,5 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+
 }

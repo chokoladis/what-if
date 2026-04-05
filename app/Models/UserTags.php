@@ -21,4 +21,6 @@ class UserTags extends Model
     {
         return $this->hasOne(Tag::class, 'id', 'tag_id');
     }
+
+//    todo drop in boot methods
 }

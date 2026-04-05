@@ -48,7 +48,7 @@ Route::middleware(['locale'])->group(function () {
 
             Route::prefix('comments')->name('comments.')->group(function () {
                 Route::post('/', 'CommentController@store')->name('store');
-                Route::post('/vote', 'CommentVotesController@vote')->name('vote');
+                Route::post('/vote', 'CommentVoteController@vote')->name('vote');
             });
 
             Route::controller('UserController')->prefix('profile')->name('profile.')->group(function () {

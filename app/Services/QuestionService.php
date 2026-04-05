@@ -197,7 +197,7 @@ class QuestionService
         });
     }
 
-    static function getVotes(int $id)
+    static function getVotes(int $id): ?QuestionVotes
     {
 //        for rework or delete
         return Cache::remember('question_votes_' . $id, 3600 * 3, function () use ($id) {
@@ -211,19 +211,19 @@ class QuestionService
         });
     }
 
-    public function setRightComment($data)
+    public function setRightComment($data): bool
     {
 //        todo add index active
         /** @var ?Comment $comment */
         $comment = Comment::active()->where('id', $data['comment_id'])->with(['question', 'question.user'])->first();
-        if ($comment->question->user->id === Auth::id()){
+        if ($comment->question->user->id === Auth::id()) {
             return $comment->update(['is_answer' => true]);
         }
 
         return false;
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): mixed
     {
         $question = Question::query()
             ->where('title', $request->get('title'))
@@ -311,7 +311,7 @@ class QuestionService
         return [$data, null];
     }
 
-    public function getWithFullData(string $code)
+    public function getWithFullData(string $code): ?Question
     {
 //        todo with join
         return Cache::remember('question_full_data_' . $code, 86400, function () use ($code) {

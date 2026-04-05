@@ -9,8 +9,6 @@
 @endpush
 
 @php
-    $user = auth()->user();
-
     $isActiveQuestions = request()->get('page');
 @endphp
 @section('content')
@@ -185,8 +183,8 @@
 
                                 <div class="user-tags-items">
                                     {{--todo cтили под кнопки в линию--}}
-                                    @if(!$userTags->isEmpty())
-                                        @foreach($userTags as $tag)
+                                    @if(!$user->tags()->isEmpty())
+                                        @foreach($user->tags() as $tag)
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="tags[]" value="{{$tag->id}}" id="tag-{{$tag->id}}" checked>
                                                 <label class="form-check-label" for="tag-{{$tag->id}}">
@@ -196,7 +194,7 @@
                                         @endforeach
                                     @endif
 
-                                    @foreach($tags as $tag)
+                                    @foreach($tagsNotChecked as $tag)
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="tags[]" value="{{$tag->id}}" id="tag-{{$tag->id}}">
                                             <label class="form-check-label" for="tag-{{$tag->id}}">

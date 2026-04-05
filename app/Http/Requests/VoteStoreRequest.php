@@ -26,7 +26,7 @@ class VoteStoreRequest extends FormRequest
     {
         return [
             'entity_id' => ['required', 'integer', 'min:1'],
-            'vote' => ['required', new Enum(Vote::class)],
+            'vote' => ['required', new Enum(Vote::class), 'integer'],
         ];
     }
 }
