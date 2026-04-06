@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\Question;
 use App\Repositories\CategoryRepository;
 use App\Repositories\QuestionRepository;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
 class SearchController extends Controller
 {

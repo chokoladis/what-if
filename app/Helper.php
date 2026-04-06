@@ -26,7 +26,7 @@ if (!function_exists('responseJson')) {
 }
 
 if (!function_exists('getNumbers')) {
-    function getNumbers($var)
+    function getNumbers(string $var): string
     {
         preg_match_all('/[\d]/', $var, $matches);
         return implode('', $matches[0]);
@@ -34,7 +34,7 @@ if (!function_exists('getNumbers')) {
 }
 
 if (!function_exists('getIPAddress')) {
-    function getIPAddress()
+    function getIPAddress(): string
     {
 
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -48,7 +48,7 @@ if (!function_exists('getIPAddress')) {
 }
 
 if (!function_exists('secureVal')) {
-    function safeVal(string $var)
+    function safeVal(string $var): string
     {
         return addslashes(strip_tags(trim($var)));
     }

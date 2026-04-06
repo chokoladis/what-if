@@ -124,7 +124,7 @@ class QuestionService
             ->withQueryString();
     }
 
-    private static function sortBuilder(Builder $builder, Request $request)
+    private static function sortBuilder(Builder $builder, Request $request): Builder
     {
         if ($request->sort === 'popular') {
             $builder = Question::getPopular($builder);

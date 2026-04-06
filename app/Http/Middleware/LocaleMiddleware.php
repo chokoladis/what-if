@@ -17,9 +17,9 @@ class LocaleMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $lang = (string)$request->cookie('lang', 'en');
+        $lang = $request->cookie('lang', 'en');
 
-        if (in_array($lang, SettingService::LANG)) {
+        if (is_string($lang) && in_array($lang, SettingService::LANG)) {
             App::setLocale($lang);
         }
 

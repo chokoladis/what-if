@@ -10,7 +10,7 @@ class CacheControlWidget extends StatsOverviewWidget
 {
     protected ?string $pollingInterval = null;
 
-    public function clearCache()
+    public function clearCache(): void
     {
         Artisan::call('optimize:clear');
 

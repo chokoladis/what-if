@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Exceptions\FileValidationException;
 use App\Exceptions\Integration\AIWorkException;
+use App\Interfaces\AiApiInterface;
 use App\Models\TempFile;
 use App\Models\User;
 use App\Notifications\User\AvatarValidatedNotification;
@@ -24,6 +25,7 @@ class UserAvatarVerify implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
+        protected AiApiInterface $AIAvatarValidator, //todo rework
         protected User     $user,
         protected TempFile $photo,
     )
@@ -55,6 +57,7 @@ class UserAvatarVerify implements ShouldQueue
             } catch (Exception $e) {
                 Log::emergency('photo not saved in queue', ['user' => $this->user, 'photo' => $this->photo]);
                 DB::rollBack();
+                return;
             }
 
             if (!$this->user->update(['photo_id' => $photo->id])) {

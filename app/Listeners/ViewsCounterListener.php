@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ViewEvent;
+use Illuminate\Support\Facades\Auth;
 
 class ViewsCounterListener
 {
@@ -21,7 +22,7 @@ class ViewsCounterListener
     {
         $model = $event->model;
 
-        $user_id = auth()->id() ?? request()->ip();
+        $user_id = Auth::id() ?? request()->ip();
         $user_id = str_replace('.', '_', $user_id);
 
         // todo save to db for recommendations

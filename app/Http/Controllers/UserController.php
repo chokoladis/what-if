@@ -7,8 +7,10 @@ use App\Exceptions\FileValidationException;
 use App\Http\Requests\User\SetPhotoRequest;
 use App\Http\Requests\User\SetTagsRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Models\User;
 use App\Services\TagService;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
@@ -39,10 +41,10 @@ class UserController extends Controller
         if (!$user)
             abort(404);
 
-        $tagsNotChecked = $this->tagService->getNotSelected($user->tags()->pluck('id'));
+        $tagsNotChecked = $this->tagService->getNotSelected($user->tags()->pluck('tags.id'));
         $notifications = UserService::getLastNotifications();
 
-        return view('profile.index', compact('tagsNotChecked', 'notifications'));
+        return view('profile.index', compact('user', 'tagsNotChecked', 'notifications'));
     }
 
     public function update(UpdateRequest $request): RedirectResponse
@@ -76,13 +78,15 @@ class UserController extends Controller
 
     public function setTags(SetTagsRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-        $res = Auth::user()->tags()->sync(isset($data['tags']) ? $data['tags'] : []);
+        try {
+            $data = $request->validated();
+            /** @var User $user */
+            $user = Auth::user();
+            $user->tags()->sync(isset($data['tags']) ? $data['tags'] : []);
 
-        if (!empty($res)) {
             return redirect()->route('profile.index')->with('message', __('system.alerts.success'));
+        } catch (Exception $e) {
+            return redirect()->route('profile.index')->with('error', __('system.alerts.error'));
         }
-
-        return redirect()->route('profile.index')->with('error', __('system.alerts.error'));
     }
 }

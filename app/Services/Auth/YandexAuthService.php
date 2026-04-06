@@ -8,6 +8,7 @@ use App\Exceptions\Auth\External\IncorrectResponseException;
 use App\Exceptions\Auth\External\ResponseHaveErrorException;
 use App\Interfaces\Services\AuthExternalInterface;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +19,7 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
     const string URL_GET_USER_INFO = 'https://login.yandex.ru/info';
     const string YANDEX_LINK_PICTURE = 'https://avatars.mds.yandex.net/get-yapic/';
 
-    public function authorize(string $code)
+    public function authorize(string $code): RedirectResponse|true
     {
         try {
             return $this->setUser(
@@ -31,7 +32,11 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
         }
     }
 
-    public function setUser(array $userData)
+    /**
+     * @param array<string, string|int> $userData
+     * @return RedirectResponse|true
+     */
+    public function setUser(array $userData): RedirectResponse|true
     {
         $validator = Validator::make($userData, [
             'default_email' => ['required', 'string', 'email'],

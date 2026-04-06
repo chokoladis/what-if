@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 class Question extends BaseModel
 {
     use HasFactory;
+
 //    use Searchable;
 
     public $guarded = [];
@@ -104,11 +105,6 @@ class Question extends BaseModel
     {
         return $this->hasMany(Comment::class, 'question_id', 'id')
             ->where('active', true);
-    }
-
-    public function file(): HasOne
-    {
-        return $this->hasOne(File::class, 'id', 'file_id');
     }
 
     public function statistics(): HasOne

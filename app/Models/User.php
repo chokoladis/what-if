@@ -6,10 +6,13 @@ use App\Services\FileService;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable implements FilamentUser
@@ -27,6 +30,7 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'photo_id',
+        'active'
     ];
 
     /**
@@ -49,14 +53,8 @@ class User extends Authenticatable implements FilamentUser
 
     public static function boot()
     {
-
         parent::boot();
 
-        /**
-         * Write code on Method
-         *
-         * @return response()
-         */
         static::updated(function ($user) {
 
             if ($user->getOriginal('photo_id') !== $user->photo_id) {
@@ -69,14 +67,14 @@ class User extends Authenticatable implements FilamentUser
 
     }
 
-    public static function getNameById(int $id)
+    public static function getNameById(int $id): ?User
     {
-        return Cache::remember('user_name_' . $id, 86400, function () use ($id) {
+        return Cache::remember('user_get_name_by_id_' . $id, 86400, function () use ($id) {
             return self::query()->find($id, 'name');
         });
     }
 
-    public function photo()
+    public function photo(): HasOne
     {
         return $this->hasOne(File::class, 'id', 'photo_id');
     }
@@ -94,7 +92,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === 'admin';
     }
 
-    public function getShortName()
+    public function getShortName(): string
     {
         return mb_strlen($this->name) > 8 ? mb_substr($this->name, 0, 8) . '...' : $this->name;
     }
@@ -106,7 +104,7 @@ class User extends Authenticatable implements FilamentUser
 
     //    paginate
 
-    public function getQuestionsWithPages(Request $request)
+    public function getQuestionsWithPages(Request $request): LengthAwarePaginator
     {
         $data = $request->validate([
             'perPage' => 'integer|min:5|max:30',
@@ -115,7 +113,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Question::class)->latest()->paginate($data['perPage'] ?? 5);
     }
 
-    public function tags()
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'user_tags');
     }

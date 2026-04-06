@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class BaseModel extends Model
 {
 
-    static $timeCache = 43200;
+    static int $timeCache = 43200;
     public $guarded = [];
-    protected $searchFilter = [];
 
     public static function getByCode(?string $code): ?self
     {

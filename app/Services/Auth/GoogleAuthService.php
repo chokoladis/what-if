@@ -8,18 +8,21 @@ use App\Exceptions\Auth\External\IncorrectResponseException;
 use App\Exceptions\Auth\External\ResponseHaveErrorException;
 use App\Interfaces\Services\AuthExternalInterface;
 use App\Models\User;
+use App\Services\FileService;
 use Exception;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Throwable;
 
 final class GoogleAuthService extends BaseExternalService implements AuthExternalInterface
 {
     const string URL_GET_TOKEN = 'https://accounts.google.com/o/oauth2/token';
     const string URL_GET_USER_INFO = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
-    public function authorize(string $code)
+    public function authorize(string $code): RedirectResponse|true
     {
         try {
             $userData = $this->getUserInfo($this->getToken($code));
@@ -67,44 +70,30 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
 
     protected function getToken(string $code): string
     {
-        try {
-            $params = array(
+        $response = Http::withoutVerifying()
+            ->asForm()
+            ->post(self::URL_GET_TOKEN, [
                 'client_id' => config('auth.socials.google.client_id'),
                 'client_secret' => config('auth.socials.google.client_secret'),
                 'redirect_uri' => config('auth.socials.google.redirect_uri'),
                 'grant_type' => 'authorization_code',
                 'code' => $code
-            );
+            ]);
 
-            $ch = curl_init(self::URL_GET_TOKEN);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_HEADER, false);
-            $data = curl_exec($ch);
-            curl_close($ch);
-
-        } catch (Throwable $th) {
-            throw $th;
+        try {
+            $response->throw();
+        } catch (RequestException $e) {
+            throw new IncorrectResponseException('HTTP ' . $e->response->status() . ': ' . $e->response->body());
         }
 
-        if (is_bool($data)) {
-            throw new IncorrectResponseException();
+        if (!empty($response->json('access_token'))) {
+            return (string)$response->json('access_token');
         }
 
-        $data = json_decode($data, true);
-
-        if (!empty($data['access_token'])) {
-            return $data['access_token'];
-        } elseif (isset($data['error']) && !empty($data['error'])) {
-            throw new ResponseHaveErrorException('Response has error: ' . $data['error']);
-        } else {
-            throw new IncorrectResponseException('Undefined response');
-        }
+        throw new ResponseHaveErrorException('Response has error: ' . $response->json('error') ?? 'undefined');
     }
 
-    public function setUser(array $userData)
+    public function setUser(array $userData): RedirectResponse|true
     {
         $validator = Validator::make($userData, [
             'email' => ['required', 'string', 'email'],
@@ -123,12 +112,17 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
             ->first();
 
         if (!$user) {
+            try {
+                $file = FileService::save($validData['picture']);
+            } catch (Exception $exception) {
+            }
+
             $user = User::create([
                 'name' => $validData['name'],
                 'email' => $validData['email'],
                 'password' => Str::random(12),
                 'active' => 1,
-                'profile_photo_path' => $validData['picture'],
+                'photo_id' => $file?->id,
             ]);
 
             // send psw on email

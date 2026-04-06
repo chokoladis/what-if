@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\DTO\Errors\CommonError;
 use App\Events\ViewEvent;
 use App\Http\Requests\Question\IndexRequest;
-use App\Http\Requests\Question\RightCommentStoreRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
 use App\Models\Comment;
@@ -103,7 +102,7 @@ class QuestionController extends Controller
         $question = $this->questionService->getWithFullData($code);
 
         if (!$question) {
-            return view('errors.404', ['error' =>  __('questions.alerts.not_available')]);
+            return view('errors.404', ['error' => __('questions.alerts.not_available')]);
         }
 
         Event(new ViewEvent($question));

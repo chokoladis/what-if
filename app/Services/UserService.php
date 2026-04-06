@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Interfaces\AiApiInterface;
 use App\Jobs\UserAvatarVerify;
 use App\Models\Notification;
 use App\Models\Question;
@@ -20,6 +21,12 @@ use Illuminate\Support\Facades\DB;
 
 class UserService
 {
+    public function __construct(
+        private ?AiApiInterface $AIAvatarValidator = null,
+    )
+    {
+    }
+
     public static function getRecommendations(): LengthAwarePaginator
     {
         if (!Auth::id())
@@ -88,13 +95,12 @@ class UserService
 
     public function setPhoto(UploadedFile $file): void
     {
-        $avatarValidator = new AIAvatarValidator;
         /** @var User $user */
         $user = Auth::user();
-        if ($avatarValidator->isSetOn()) {
+        if ($this->AIAvatarValidator && $this->AIAvatarValidator->isSetOn()) {
             $photo = FileService::saveTemp($file);
 
-            UserAvatarVerify::dispatch($user, $photo);
+            UserAvatarVerify::dispatch($this->AIAvatarValidator, $user, $photo);
         } else {
             DB::beginTransaction();
 

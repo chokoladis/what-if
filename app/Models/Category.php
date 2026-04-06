@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -13,17 +12,21 @@ use Illuminate\Support\Str;
 class Category extends BaseModel
 {
     use HasFactory;
+
 //    use Searchable;
 
     const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
 
-    public static function getCategoriesLevel0() : Collection
+    public static function getCategoriesLevel0(): Collection
     {
         return Cache::remember('category_level_0', now()->addDay(), function () {
             return Category::active()->where('level', 0)->with('file')->get();
         });
     }
 
+    /**
+     * @return array<int|null, mixed>
+     */
     public static function getDaughtersCategories()
     {
         // todo rework,    cache
@@ -37,6 +40,7 @@ class Category extends BaseModel
 
         foreach ($arr as $level => $items) {
 
+            /** @var Category $category */
             foreach ($items as $category) {
 
                 $res[$level][$category->id] = [
@@ -49,9 +53,8 @@ class Category extends BaseModel
         return $res;
     }
 
-    public function getDaughterCategories($catLevel, $categoryParentId)
+    public function getDaughterCategories(int $catLevel, int $categoryParentId): mixed
     {
-
         return Category::query()
             ->where('level', $catLevel)
             ->where('parent_id', $categoryParentId)
@@ -117,11 +120,6 @@ class Category extends BaseModel
             ->where('parent_id', $this->id)
             ->where('level', $this->level + 1)
             ->get();
-    }
-
-    public function file(): HasOne
-    {
-        return $this->hasOne(File::class, 'id', 'file_id');
     }
 
     public function categorytable(): MorphTo

@@ -6,7 +6,6 @@ use App\Filament\Admin\Resources\QuestionResource\Pages;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Question;
-use App\Models\QuestionComments;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -33,6 +32,9 @@ class QuestionResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
+        /** @var Question $question */
+        $question = $schema->model;
+
         return $schema
             ->components([
                 Forms\Components\Select::make('user_id')
@@ -52,7 +54,7 @@ class QuestionResource extends Resource
                 Forms\Components\Select::make('right_comment_id')
                     ->options(
                         Comment::query()
-                            ->where('question_id', $schema->model->id)
+                            ->where('question_id', $question->id)
                             ->pluck('text', 'id')
 //                        todo обрезать могуть быть слишком длинные данные
                     ),

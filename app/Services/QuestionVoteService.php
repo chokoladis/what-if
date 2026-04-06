@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class QuestionVoteService
 {
+    /**
+     * @param string $code
+     * @param array<string, int> $data
+     * @return bool
+     */
     public function vote(string $code, array $data): bool
     {
         if ($question = Question::getByCode($code)) {
