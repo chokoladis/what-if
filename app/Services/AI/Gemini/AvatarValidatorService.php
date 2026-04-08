@@ -2,6 +2,7 @@
 
 namespace App\Services\AI\Gemini;
 
+use App\DTO\Errors\CommonError;
 use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\Setting;
@@ -20,6 +21,13 @@ class AvatarValidatorService extends BaseService
         return false;
     }
 
+    /**
+     * @param TempFile|File $file
+     * @return array{bool, CommonError|null}
+     * @throws FileSaveException
+     * @throws \App\Exceptions\Integration\AIWorkException
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function isContentFileLegal(TempFile|File $file)
     {
         $disk = Storage::disk('public');
@@ -35,20 +43,20 @@ class AvatarValidatorService extends BaseService
         $mimeType = mime_content_type($fullPath);
         $base64data = base64_encode(file_get_contents($fullPath));
 
-        $requestData = ['contents' => [
-            'parts' => [
-                [
-                    'inline_data' => [
-                        'mime_type' => $mimeType,
-                        'data' => $base64data
+        return $this->sendRequest([
+            'contents' => [
+                'parts' => [
+                    [
+                        'inline_data' => [
+                            'mime_type' => $mimeType,
+                            'data' => $base64data
+                        ]
+                    ],
+                    [
+                        'text' => 'Is the attached image legitimate. Return response next format - (bool); (string:*max 70 chars*|null). Example - true; , or false;is picture 18+.'
                     ]
                 ],
-                [
-                    'text' => 'Is the attached image legitimate. Return response next format - (bool); (string:*max 70 chars*|null). Example - true; , or false;is picture 18+.'
-                ]
-            ],
-        ]];
-
-        return $this->request($requestData);
+            ]
+        ]);
     }
 }

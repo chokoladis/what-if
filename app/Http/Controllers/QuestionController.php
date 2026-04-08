@@ -134,15 +134,14 @@ class QuestionController extends Controller
      * @param Request $request
      * @return Response|object
      */
-    public function setRightComment(Request $request)
+    public function setRightComment(Request $request) : Response
     {
         $data = $request->validate([
             'comment_id' => 'required|exists:comments,id',
         ]);
-//
-//        todo send realizy to service
+        // todo send realizy to service
 
-        if ($this->questionService->setRightComment($data)) {
+        if ($this->questionService->setRightComment($data['comment_id'])) {
             return responseJson();
         }
 

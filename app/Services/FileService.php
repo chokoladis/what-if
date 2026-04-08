@@ -9,7 +9,9 @@ use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\TempFile;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class FileService
@@ -109,11 +111,16 @@ class FileService
         return File::create($data);
     }
 
-    static function getPhotoFromIndex(?array $file, string $subdir)
+    /**
+     * @param array<string, string>|null $file
+     * @param string $subdir
+     * @return string
+     */
+    static function getPhotoFromIndex(?array $file, string $subdir) : string
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
-        if ($file && $file['path']) {
+        if (!empty($file['path'])) {
             $filePath = Storage::url($subdir . '/' . $file['path']);
             return file_exists($_SERVER['DOCUMENT_ROOT'] . $filePath) ? $filePath : $nophoto_src;
         }
@@ -131,6 +138,55 @@ class FileService
             'expansion' => $fileDTO->ext,
             'path' => $fileDTO->filePath,
             'relation' => $fileDTO->mainDir
+        ]);
+    }
+
+    public static function saveFromUrl(string $url, string $mainDir = 'main'): ?File
+    {
+        $response = Http::get($url);
+
+        try {
+            $response->throw();
+        } catch (\Throwable $e) {
+            \Illuminate\Log\log('throw from trying get the content from url', ['url' => $url, 'exception_file' => $e->getFile(), 'exception_line' => $e->getLine()]);
+            return null;
+        }
+
+        if (!$response->successful() || $response->body() === '') {
+            \Illuminate\Log\log('Could not get the content file from url', ['url' => $url]);
+            return null;
+        }
+
+        $mimeType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($response->body());
+        $ext = explode('/', $mimeType)[1];
+        if (!in_array($ext, self::ALLOW_IMG_EXT)) {
+            \Illuminate\Log\log('not support mime type from url', ['url' => $url, 'mime_type' => $mimeType]);
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+
+        $name = Str::random().'.'.$ext;
+
+        $subDir = substr($name, 0, 3);
+        $folder = "{$mainDir}/{$subDir}";
+
+        if (!$disk->exists($folder)) {
+            $disk->makeDirectory($folder);
+        }
+
+        $filePath = "{$subDir}/{$name}";
+
+        if (false === $disk->put("$folder/$name", $response->body())){
+            \Illuminate\Log\log('Error in save file from url', ['url' => $url]);
+            return null;
+        }
+
+        return File::create([
+            'name' => $name,
+            'expansion' => $ext,
+            'path' => $filePath,
+            'relation' => $mainDir
         ]);
     }
 }

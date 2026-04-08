@@ -33,6 +33,13 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
         }
     }
 
+    /**
+     * @param string $accessToken
+     * @return array<string, string|int>
+     * @throws IncorrectResponseException
+     * @throws ResponseHaveErrorException
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     protected function getUserInfo(string $accessToken): array
     {
         $options = [
@@ -90,7 +97,7 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
             return (string)$response->json('access_token');
         }
 
-        throw new ResponseHaveErrorException('Response has error: ' . $response->json('error') ?? 'undefined');
+        throw new ResponseHaveErrorException('Response has error: ' . $response->json('error'));
     }
 
     public function setUser(array $userData): RedirectResponse|true
@@ -107,26 +114,12 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
 
         $validData = $validator->validated();
 
-        $user = User::query()
-            ->where('email', $validData['email'])
-            ->first();
-
-        if (!$user) {
-            try {
-                $file = FileService::save($validData['picture']);
-            } catch (Exception $exception) {
-            }
-
-            $user = User::create([
-                'name' => $validData['name'],
-                'email' => $validData['email'],
-                'password' => Str::random(12),
-                'active' => 1,
-                'photo_id' => $file?->id,
-            ]);
-
-            // send psw on email
-        }
+        $user = $this->userRepository->createIfNotExists([
+            'name' => $validData['name'],
+            'email' => $validData['email'],
+            'photo_url' => $validData['picture'],
+            'active' => 1,
+        ]);
 
         Auth::login($user);
 

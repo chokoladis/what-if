@@ -41,20 +41,22 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
         $validator = Validator::make($userData, [
             'default_email' => ['required', 'string', 'email'],
             'real_name' => ['required', 'string', 'max:150'],
+            'default_avatar_id' => ['string', 'nullable'],
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator);
         }
         //$userData["verified_email" => true]
 
+        /** @var array<string, string|int|null> $validData */
         $validData = $validator->validated();
 
         $user = $this->userRepository->createIfNotExists([
             'name' => $validData['real_name'],
             'email' => $validData['default_email'],
             'active' => 1,
-            'profile_photo_path' => !empty($userData['default_avatar_id'])
-                ? self::YANDEX_LINK_PICTURE . $userData['default_avatar_id'] : null,
+            'photo_url' => !empty($validData['default_avatar_id'])
+                ? self::YANDEX_LINK_PICTURE . $validData['default_avatar_id'] : null,
         ]);
 
         Auth::login($user);
@@ -62,6 +64,13 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
         return true;
     }
 
+    /**
+     * @param string $accessToken
+     * @return array<string, string|int>
+     * @throws IncorrectResponseException
+     * @throws ResponseHaveErrorException
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     protected function getUserInfo(string $accessToken): array
     {
         $response = Http::withoutVerifying()
@@ -105,6 +114,6 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
             return (string)$response->json('access_token');
         }
 
-        throw new ResponseHaveErrorException('Response has error: ' . $response->json('error') ?? 'undefined');
+        throw new ResponseHaveErrorException('Response has error: ' . $response->json('error'));
     }
 }

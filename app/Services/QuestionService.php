@@ -126,11 +126,12 @@ class QuestionService
 
     private static function sortBuilder(Builder $builder, Request $request): Builder
     {
-        if ($request->sort === 'popular') {
+        $sort = $request->get('sort');
+        if ($sort === 'popular') {
             $builder = Question::getPopular($builder);
         } else {
             try {
-                [$sortBy, $order] = explode('_', $request->sort);
+                [$sortBy, $order] = explode('_', $sort);
                 $builder->orderBy($sortBy, $order);
             } catch (Throwable $err) {
                 $builder->orderBy('id', 'desc');
@@ -140,7 +141,7 @@ class QuestionService
         return $builder;
     }
 
-    public static function getPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 YEAR')
+    public static function getPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 YEAR') : Collection
     {
 //        for rework
         $collection = self::getRawDataForPopular(interval: $interval);
@@ -165,7 +166,7 @@ class QuestionService
         });
     }
 
-    private static function getRawDataForPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 DAY')
+    private static function getRawDataForPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 DAY') : \Illuminate\Support\Collection
     {
         if ($interval === '1 DAY') {
             $cacheTtl = 3600 * 3;
@@ -210,12 +211,15 @@ class QuestionService
         });
     }
 
-    public function setRightComment($data): bool
+    public function setRightComment(int $commentId): bool
     {
-//        todo add index active
+        // todo add index active
         /** @var ?Comment $comment */
-        $comment = Comment::active()->where('id', $data['comment_id'])->with(['question', 'question.user'])->first();
-        if ($comment->question->user->id === Auth::id()) {
+        $comment = Comment::active()
+            ->where('id', $commentId)
+            ->with(['question', 'question.user'])
+            ->first();
+        if ($comment && $comment->question?->user->id === Auth::id()) {
             return $comment->update(['is_answer' => true]);
         }
 
@@ -235,28 +239,27 @@ class QuestionService
 
         [$data, $error] = $this->prepareStoreData($request);
 
-        if (!$data) {
+        if (empty($data)) {
             DB::rollBack();
 
             return [false, $error];
         }
 
-        if (isset($data['tags'])) {
-            $tags = $data['tags'];
-            unset($data['tags']);
-        }
+        $tags = $data['tags'] ?? null;
+        unset($data['tags']);
 
-        $res = Question::create($data);
+        /** @var ?Question $question */
+        $question = Question::create($data);
 
-        if (empty($res)) {
+        if (!$question) {
             DB::rollBack();
             return [false, 'Не удалось создать вопрос'];
-        } elseif (!empty($res) && !empty($tags)) {
+        } elseif ($tags === null) {
             $tags = Tag::query()->whereIn('name', $tags)->get('id');
 
             foreach ($tags as $tag) {
                 $createdTag = QuestionTags::create([
-                    'question_id' => $res->id,
+                    'question_id' => $question->id,
                     'tag_id' => $tag->id
                 ]);
                 if (!$createdTag) {
@@ -268,12 +271,12 @@ class QuestionService
 
         DB::commit();
 
-        return [$res, null];
+        return [$question, null];
     }
 
     /**
      * @param StoreRequest $request
-     * @return array{array|false, ?string}
+     * @return mixed
      * @throws ModelNotFoundException
      */
     private function prepareStoreData(StoreRequest $request)
@@ -284,7 +287,9 @@ class QuestionService
 
         try {
             if ($request->has('img') && $img = $request->file('img')) {
-                if ($img->isValid()) {
+                if (is_array($img)){
+                    return [false, 'Необходим только один файл'];
+                } elseif ($img->isValid()) {
                     $res = FileService::save($img, 'questions');
                     $data['file_id'] = $res['id'];
                     unset($data['img']);

@@ -19,7 +19,7 @@ class CaptchaService
             ->orWhere('name', 'h_captcha_sitekey')
             ->first();
 
-        return $arResult?->value ?? config('services.h_captcha.sitekey');
+        return $arResult ? $arResult->value : config('services.h_captcha.sitekey');
     }
 
     /**
@@ -30,11 +30,10 @@ class CaptchaService
     public function verify(string $captcha): array
     {
         $response = Http::post(self::BASE_URL . '?' . http_build_query([
-                'secret' => $this->getSecret(),
-                'remoteip' => getIPAddress(),
-                'response' => $captcha
-            ]));
-//        todo check status/errors
+            'secret' => $this->getSecret(),
+            'remoteip' => getIPAddress(),
+            'response' => $captcha
+        ]));
 
         try {
             $response->throw();
@@ -44,12 +43,14 @@ class CaptchaService
 
         $result = $response->json();
 
-        if ($result['success']) {
+        $success = filter_var($result['success'], FILTER_VALIDATE_BOOL);
+
+        if ($success) {
             if (isset($result['score']) && $result['score'] < 0.5) {
                 return [false, $result['error-codes']];
             }
         } else {
-            return [$result['success'], $result['error-codes']];
+            return [$success, $result['error-codes']];
         }
 
         return [true, null];
@@ -61,7 +62,7 @@ class CaptchaService
             ->where('name', 'h_captcha_secret')
             ->first();
 
-        return $arResult?->value ?? config('services.h_captcha.secret');
+        return $arResult ? $arResult->value : config('services.h_captcha.secret');
     }
 
 }

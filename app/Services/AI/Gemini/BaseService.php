@@ -10,22 +10,23 @@ use Illuminate\Support\Facades\Log;
 
 class BaseService extends BaseAI
 {
-    public function getDefaultModel()
+    public function getDefaultModel() : string
     {
         return 'gemini-2.0-flash';
     }
 
-    protected function getConfigApiKey()
+    protected function getConfigApiKey() : string
     {
-        return config('services.gemini.api_key');
+        return (string)config('services.gemini.api_key');
     }
 
-    protected function request($data)
-    {
-        return $this->sendCurl($data);
-    }
-
-    public function sendCurl(array $data)
+    /**
+     * @param mixed $data
+     * @return array{bool, CommonError|null}
+     * @throws AIWorkException
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
+    public function sendRequest(mixed $data)
     {
         $apiKey = $this->getApiKey();
 
@@ -40,20 +41,23 @@ class BaseService extends BaseAI
         if ($response->clientError()) {
             throw new AIWorkException(code: $response->status());
         } else {
-            return $this->getResponse($response->body());
+            return $this->getResponse($response->json());
         }
     }
 
-    protected function getResponse(string $response)
+    /**
+     * @param mixed $responseData
+     * @return array{bool, CommonError|null}
+     * @throws AIWorkException
+     */
+    protected function getResponse(mixed $responseData) : array
     {
-        $responseContent = json_decode($response, true);
-
-        if ($responseContent['error']) {
-            Log::error(__CLASS__, [$responseContent['error']]);
-            throw new AIWorkException(__CLASS__ . ', error status - ' . $responseContent['error']['status']);
+        if ($responseData['error']) {
+            Log::error(__CLASS__, [$responseData['error']]);
+            throw new AIWorkException(__CLASS__ . ', error status - ' . $responseData['error']['status']);
         }
 
-        $content = current($responseContent['candidates'])['content'];
+        $content = current($responseData['candidates'])['content'];
         $firstPart = current($content['parts']);
         $jsonResult = $firstPart['text'];
 

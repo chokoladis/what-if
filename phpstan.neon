@@ -21,3 +21,4 @@ parameters:
         - '#Access to an undefined property App\\Http\\Requests\\[a-zA-Z\\\:\$]+#'
         - '#Cannot call method update\(\) on Illuminate\\Contracts\\Auth\\Authenticatable\|null#'
         - '#Access to an undefined property Illuminate\\Notifications\\DatabaseNotification\:\:\$[a-zA-Z\d]+#'
+        - '#Call to an undefined method Illuminate\\Contracts\\Filesystem\\Filesystem\:\:url\(\)#'

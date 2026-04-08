@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3.13",
+        "ext-fileinfo": "*",
         "filament/filament": "~4.0",
         "http-interop/http-factory-guzzle": "^1.2",
         "intervention/image": "^3.7",

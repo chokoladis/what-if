@@ -3,21 +3,31 @@
 namespace App\Services;
 
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class CommentService
 {
-    public function save(array $data)
+    /**
+     * @param array<string, string|int> $data
+     * @return Comment|null
+     */
+    public function save(array $data) : ?Comment
     {
-//        todo start transaction
-        $data['user_id'] = Auth::id();
-        $data['active'] = Auth::user()->role === 'admin'; //todo gate ?
+        /** @var User $user */
+        $user = Auth::user();
+        $data['user_id'] = $user->id;
+        $data['active'] = $user->role === 'admin'; //todo gate ?
 
         return Comment::firstOrCreate(['text' => $data['text'], 'user_id' => $data['user_id']], $data);
     }
 
+    /**
+     * @param array<string, int> $data
+     * @return Collection
+     */
     public function getChildren(array $data): Collection
     {
         $offset = $data['offset'] ?? 0;
