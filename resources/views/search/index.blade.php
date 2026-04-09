@@ -1,6 +1,6 @@
 @php
     use App\Services\FileService;
-    use Carbon\Carbon;
+    use App\Services\QuestionService;use Carbon\Carbon;
 @endphp
 @extends('layouts.app')
 
@@ -23,12 +23,13 @@
                 <input type="hidden" name="query" value="{{ request('q') }}">
                 <div class="sort">
                     @php
-                        $sorts = \App\Services\QuestionService::SORTS;
+                        $sorts = QuestionService::SORTS;
                         $currentSort = request('sort') ? request('sort') : array_key_first($sorts);
                     @endphp
                     <select class="form-select form-select" name="sort">
                         @foreach($sorts as $key => $sortName)
-                            <option value="{{ $key }}" @if($currentSort === $key) selected @endif>{{ __('system.sort.'.$sortName) }}</option>
+                            <option value="{{ $key }}"
+                                    @if($currentSort === $key) selected @endif>{{ __('system.sort.'.$sortName) }}</option>
                         @endforeach
                     </select>
                 </div>

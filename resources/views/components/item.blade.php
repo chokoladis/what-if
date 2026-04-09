@@ -1,3 +1,8 @@
+@php use App\Models\Question; @endphp
+@php use App\Services\QuestionService; @endphp
+@php use Illuminate\Support\Facades\Cookie; @endphp
+@php use App\Enums\Vote; @endphp
+@php use App\Services\FileService; @endphp
 @once
     @push('style')
         @vite(['resources/scss/components/item.scss'])
@@ -5,36 +10,129 @@
 @endonce
 @php
     /**
-    * @var \App\Models\Question $question
+    * @var Question $question
      */
 
-    $itemsTypeOut = \App\Services\QuestionService::ITEMS_TYPE_OUTPUT;
-    $itemsTypeOutCookie = \Illuminate\Support\Facades\Cookie::get('items-type-output', 'simple');
+    $itemsTypeOut = QuestionService::ITEMS_TYPE_OUTPUT;
+    $itemsTypeOutCookie = Cookie::get('items-type-output', 'simple');
     $currentItemsTypeOutput = in_array($itemsTypeOutCookie, $itemsTypeOut) ? $itemsTypeOutCookie : current($itemsTypeOut);
 
 //        todo переработать или убрать популярный коммент?
     $popularComment = null; //$question->getPopularComment();
     $mainClass = $question->right_comment ? 'border-success' : '';
     $votes = $question->votes->groupBy('vote')->map->count()->toArray();
-    $like = \App\Enums\Vote::LIKE->value;
-    $dislike = \App\Enums\Vote::DISLIKE->value;
+    $like = Vote::LIKE->value;
+    $dislike = Vote::DISLIKE->value;
 @endphp
 
 <div class="item card mb-3 {{ $mainClass }}">
     <div class="row g-0">
-    @if($currentItemsTypeOutput === 'simple')
-        <a href="{{ route('questions.detail', $question->code) }}" class="img-col col-sm-4 col-md-3">
-            <img src="{{ \App\Services\FileService::getPhoto($question->file, 'questions/') }}" alt=""
-                 class="img-fluid rounded-start">
-        </a>
-        <div class="col-sm-8 col-md-9">
-            <div class="card-body">
-                <div class="votes">
-                    <div class="icon like btn btn-success">
-                        <b>{{ $votes[$like] ?? 0 }}</b>
+        @if($currentItemsTypeOutput === 'simple')
+            <a href="{{ route('questions.detail', $question->code) }}" class="img-col col-sm-4 col-md-3">
+                <img src="{{ FileService::getPhoto($question->file, 'questions/') }}" alt=""
+                     class="img-fluid rounded-start">
+            </a>
+            <div class="col-sm-8 col-md-9">
+                <div class="card-body">
+                    <div class="votes">
+                        <div class="icon like btn btn-success">
+                            <b>{{ $votes[$like] ?? 0 }}</b>
+                        </div>
+                        <div class="icon dislike btn btn-danger">
+                            <b>{{ $votes[$dislike]  ?? 0 }}</b>
+                        </div>
                     </div>
-                    <div class="icon dislike btn btn-danger">
-                        <b>{{ $votes[$dislike]  ?? 0 }}</b>
+                    <a href="{{ route('questions.detail', $question->code) }}"
+                       class="card-title">{{ $question->title }}</a>
+
+                    <div class="category">
+                        @if($question->category)
+                            <a href="{{ route('categories.detail', $question->category->code) }}" class="title">
+                                <i uk-icon="folder"></i>
+                                <span>{{ $question->category?->title }}</span>
+                            </a>
+                        @endif
+                        @if($question->tags)
+                            <div class="tags">
+                                @foreach($question->tags as $tag)
+                                    <a href="{{ route('questions.index', [ 'tags[]' => $tag->name ]) }}"
+                                       class="link-success link-underline-opacity-25">{{ '#'.$tag->name }}</a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+
+                    @if ($question->right_comment_id)
+                        <x-right-answer :comment="$question->right_comment"></x-right-answer>
+                    @endif
+                    @if ($popularComment)
+                        <x-comment.popular-comment :comment="$popularComment"></x-comment.popular-comment>
+                    @endif
+
+                    <div class="date">
+                        <div class="author">
+                            <i uk-icon="microphone"></i>
+                            <span>{{ '@'.$question->user->getShortName() }}</span>
+                        </div>
+                        @if($question->statistics)
+                            <div class="views">
+                                <i uk-icon="eye"></i>
+                                <span>{{ $question->statistics->views }}</span>
+                            </div>
+                        @endif
+                        <p class="card-text">
+                            <i uk-icon="question"></i>
+                            <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
+                        </p>
+                        @if ($question->created_at != $question->updated_at)
+                            <p class="card-text">
+                                <i uk-icon="pencil"></i>
+                                <small class="text-body-secondary">{{ $question->updated_at->diffForHumans() }}</small>
+                            </p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="card-body">
+                <div class="item-header">
+                    <div class="votes">
+                        <div class="icon like btn btn-success">
+                            <b>{{ $votes[$like] ?? 0 }}</b>
+                        </div>
+                        <div class="icon dislike btn btn-danger">
+                            <b>{{ $votes[$dislike] ?? 0 }}</b>
+                        </div>
+                        @if ($question->right_comment_id)
+                            <x-right-answer :comment="$question->right_comment" :compact="true"></x-right-answer>
+                        @endif
+                        @if ($popularComment)
+                            <x-comment.popular-comment
+                                    :comment="$popularComment" :compact="true"></x-comment.popular-comment>
+                        @endif
+                    </div>
+
+                    <div class="date">
+                        <div class="author">
+                            <i uk-icon="microphone"></i>
+                            <span>{{ '@'.$question->user->getShortName() }}</span>
+                        </div>
+                        @if($question->statistics)
+                            <div class="views">
+                                <i uk-icon="eye"></i>
+                                <span>{{ $question->statistics->views }}</span>
+                            </div>
+                        @endif
+                        <p class="card-text">
+                            <i uk-icon="question"></i>
+                            <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
+                        </p>
+                        @if ($question->created_at != $question->updated_at)
+                            <p class="card-text">
+                                <i uk-icon="pencil"></i>
+                                <small class="text-body-secondary">{{ $question->updated_at->diffForHumans() }}</small>
+                            </p>
+                        @endif
                     </div>
                 </div>
                 <a href="{{ route('questions.detail', $question->code) }}" class="card-title">{{ $question->title }}</a>
@@ -49,103 +147,13 @@
                     @if($question->tags)
                         <div class="tags">
                             @foreach($question->tags as $tag)
-                                <a href="{{ route('questions.index', [ 'tags[]' => $tag->name ]) }}" class="link-success link-underline-opacity-25">{{ '#'.$tag->name }}</a>
+                                <a href="{{ route('questions.index', [ 'tags[]' => $tag->name ]) }}"
+                                   class="link-success link-underline-opacity-25">{{ '#'.$tag->name }}</a>
                             @endforeach
                         </div>
                     @endif
                 </div>
-
-                @if ($question->right_comment_id)
-                    <x-right-answer :comment="$question->right_comment"></x-right-answer>
-                @endif
-                @if ($popularComment)
-                    <x-comment.popular-comment :comment="$popularComment"></x-comment.popular-comment>
-                @endif
-
-                <div class="date">
-                    <div class="author">
-                        <i uk-icon="microphone"></i>
-                        <span>{{ '@'.$question->user->getShortName() }}</span>
-                    </div>
-                    @if($question->statistics)
-                        <div class="views">
-                            <i uk-icon="eye"></i>
-                            <span>{{ $question->statistics->views }}</span>
-                        </div>
-                    @endif
-                    <p class="card-text">
-                        <i uk-icon="question"></i>
-                        <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
-                    </p>
-                    @if ($question->created_at != $question->updated_at)
-                        <p class="card-text">
-                            <i uk-icon="pencil"></i>
-                            <small class="text-body-secondary">{{ $question->updated_at->diffForHumans() }}</small>
-                        </p>
-                    @endif
-                </div>
             </div>
-        </div>
-    @else
-        <div class="card-body">
-            <div class="item-header">
-                <div class="votes">
-                    <div class="icon like btn btn-success">
-                        <b>{{ $votes[$like] ?? 0 }}</b>
-                    </div>
-                    <div class="icon dislike btn btn-danger">
-                        <b>{{ $votes[$dislike] ?? 0 }}</b>
-                    </div>
-                    @if ($question->right_comment_id)
-                        <x-right-answer :comment="$question->right_comment" :compact="true"></x-right-answer>
-                    @endif
-                    @if ($popularComment)
-                        <x-comment.popular-comment
-                                :comment="$popularComment" :compact="true"></x-comment.popular-comment>
-                    @endif
-                </div>
-
-                <div class="date">
-                    <div class="author">
-                        <i uk-icon="microphone"></i>
-                        <span>{{ '@'.$question->user->getShortName() }}</span>
-                    </div>
-                    @if($question->statistics)
-                        <div class="views">
-                            <i uk-icon="eye"></i>
-                            <span>{{ $question->statistics->views }}</span>
-                        </div>
-                    @endif
-                    <p class="card-text">
-                        <i uk-icon="question"></i>
-                        <small class="text-body-secondary">{{ $question->created_at->diffForHumans() }}</small>
-                    </p>
-                    @if ($question->created_at != $question->updated_at)
-                        <p class="card-text">
-                            <i uk-icon="pencil"></i>
-                            <small class="text-body-secondary">{{ $question->updated_at->diffForHumans() }}</small>
-                        </p>
-                    @endif
-                </div>
-            </div>
-            <a href="{{ route('questions.detail', $question->code) }}" class="card-title">{{ $question->title }}</a>
-
-            <div class="category">
-                @if($question->category)
-                    <a href="{{ route('categories.detail', $question->category->code) }}" class="title">
-                        <i uk-icon="folder"></i>
-                        <span>{{ $question->category?->title }}</span>
-                    </a>
-                @endif
-                @if($question->tags)
-                    <div class="tags">
-                        @foreach($question->tags as $tag)
-                            <a href="{{ route('questions.index', [ 'tags[]' => $tag->name ]) }}" class="link-success link-underline-opacity-25">{{ '#'.$tag->name }}</a>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        </div>
-    @endif
+        @endif
     </div>
 </div>

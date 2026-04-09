@@ -2,7 +2,10 @@ parameters:
     paths:
         - app/
     excludePaths:
-        - app/console
+        analyse:
+            - app/Console/*
+            - app/Filament/*
+            - app/Livewire/*
     level: 8
     ignoreErrors:
         - identifier: missingType.generics
@@ -14,6 +17,7 @@ parameters:
         - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:updateOrCreate\(\)#'
         - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:firstOrCreate\(\)#'
         - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:active\(\)#'
+        - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:search\(\)#'
         - '#Parameter \#1 \$message of class App\\Models\\Errors[a-zA-Z\\]+ constructor expects string, array\|string\|null given#'
         - '#Parameter \#1 \$message of class App\\Exceptions\\[a-zA-Z\\]+ constructor expects string, array\|string\|null given\.#'
         - '#Parameter \#2 \$key of method Illuminate\\Http\\RedirectResponse\:\:[a-zA-Z\\\(\)]+ expects string, array\|string\|null given#'

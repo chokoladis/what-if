@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -16,6 +17,11 @@ class Category extends BaseModel
 //    use Searchable;
 
     const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
+
+    public function getRouteKeyName()
+    {
+        return 'code';
+    }
 
     public static function getCategoriesLevel0(): Collection
     {
@@ -103,37 +109,21 @@ class Category extends BaseModel
         });
     }
 
-    public function getRouteKeyName()
-    {
-        return 'code';
-    }
-
-    public function scopeActive()
+    public function scopeActive() : Builder
     {
         return Category::query()->where('active', true);
     }
 
-    public function getNLevelChildByCategoryId()
-    {
-        return Category::query()
-            ->where('active', 1)
-            ->where('parent_id', $this->id)
-            ->where('level', $this->level + 1)
-            ->get();
-    }
-
-    public function categorytable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function scopeSearch(Builder $query, string $title)
+    public function scopeSearch(Builder $query, string $title) : Builder
     {
         return $query->where('title', 'LIKE', '%' . $title . '%')
             ->orWhere('code', 'LIKE', '%' . $title . '%');
     }
 
-    public function toSearchableArray()
+    /**
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray() : array
     {
         $count = $this->getCountQuestion();
 
@@ -147,7 +137,7 @@ class Category extends BaseModel
         ];
     }
 
-    public function getCountQuestion()
+    public function getCountQuestion() : int
     {
         return Question::search()
             ->where('category_id', $this->id)
@@ -155,7 +145,7 @@ class Category extends BaseModel
             ->get()->count();
     }
 
-    public function getParents()
+    public function getParents() : mixed
     {
 //        cache
         $arParents = [];
@@ -178,26 +168,26 @@ class Category extends BaseModel
         return $arParents;
     }
 
-    public function getParentById(int $parentId, int $level)
+    public function getParentById(int $parentId, int $level) : ?Category
     {
         return Category::query()
             ->where('active', 1)
             ->where('id', $parentId)
             ->where('level', $level)
-            ->get()->first();
+            ->first();
     }
 
-    public function shouldBeSearchable()
+    public function shouldBeSearchable() : bool
     {
         return $this->active;
     }
 
-    public function subcategories()
+    public function subcategories() : HasMany
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    public function parent()
+    public function parent() : HasOne
     {
         return $this->hasOne(Category::class, 'id', 'parent_id');
     }

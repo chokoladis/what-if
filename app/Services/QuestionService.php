@@ -197,20 +197,6 @@ class QuestionService
         });
     }
 
-    static function getVotes(int $id): ?QuestionVotes
-    {
-//        for rework or delete
-        return Cache::remember('question_votes_' . $id, 3600 * 3, function () use ($id) {
-            $tableName = (new QuestionVotes)->getTable();
-            return QuestionVotes::query()
-                ->select(
-                    DB::raw('(SELECT COUNT(vote) from `' . $tableName . '` WHERE vote = 1 && `question_id` =' . $id . ') as likes'),
-                    DB::raw('(SELECT COUNT(vote) from `' . $tableName . '` WHERE vote = -1 && `question_id` =' . $id . ') as dislikes')
-                )
-                ->first();
-        });
-    }
-
     public function setRightComment(int $commentId): bool
     {
         // todo add index active
@@ -254,7 +240,7 @@ class QuestionService
         if (!$question) {
             DB::rollBack();
             return [false, 'Не удалось создать вопрос'];
-        } elseif ($tags === null) {
+        } elseif ($tags !== null) {
             $tags = Tag::query()->whereIn('name', $tags)->get('id');
 
             foreach ($tags as $tag) {
@@ -319,9 +305,11 @@ class QuestionService
     {
 //        todo with join
         return Cache::remember('question_full_data_' . $code, 86400, function () use ($code) {
+            //todo отдельная подгрузка комментариев после загрузки страницы ?
+            // или заранее вызов с сортировкой по популярности (кол-во лайков, кол-во ответов)
             return Question::active()
                 ->where('code', $code)
-                ->with(['file', 'category', 'tags', 'user', 'statistics', 'votes', 'comments', 'right_comment'])
+                ->with(['file', 'category', 'tags', 'user', 'statistics', 'votes', 'right_comment'])
                 ->first();
         });
     }

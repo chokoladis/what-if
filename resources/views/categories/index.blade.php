@@ -1,4 +1,4 @@
-@php use Illuminate\Support\Str; @endphp
+@php use App\Services\FileService;use Illuminate\Support\Str; @endphp
 
 @push('style')
     @vite(['resources/scss/categories.scss'])
@@ -14,7 +14,7 @@
                 <div class="col-sm-6 col-md-3 mb-3 mb-sm-0">
                     <div class="card">
                         <a href="{{ route('categories.detail', $item->code ) }}">
-                            <img src="{{ \App\Services\FileService::getPhoto($item->file) }}"
+                            <img src="{{ FileService::getPhoto($item->file) }}"
                                  alt="Картинка категории не найдена">
                             <div class="card-body">
                                 {{ $item->title }}

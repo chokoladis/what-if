@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Comment;
+use App\Models\CommentVotes;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -12,9 +13,9 @@ class CommentService
 {
     /**
      * @param array<string, string|int> $data
-     * @return Comment|null
+     * @return Comment
      */
-    public function save(array $data) : ?Comment
+    public function save(array $data) : Comment
     {
         /** @var User $user */
         $user = Auth::user();
@@ -40,5 +41,66 @@ class CommentService
                 ->take(Comment::DEFAULT_LIMIT)
                 ->get();
         });
+    }
+
+    /**
+     * @param int $questionId
+     * @param array<string, int|string> $params
+     * @return Collection
+     */
+    public function getWithPagination(int $questionId, array $params = []) : Collection
+    {
+        $params['page'] = $params['page'] ?? 1;
+        $offset = Comment::DEFAULT_LIMIT * ($params['page'] - 1);
+        $sortBy = $params['sortBy'] ?? 'votes_sum_vote';
+        $order = $params['order'] ?? 'desc';
+
+        // todo проверять популярность ещё по вложенным
+        return Cache::remember('comments_with_paginate_question_' . $questionId, 3600, function ()
+            use ($questionId, $offset, $sortBy, $order) {
+                return Comment::active()
+                    ->where('question_id', $questionId)
+                    ->whereNull('comment_main_id') // не вложенные
+                    ->with('user')
+                    ->withSum('votes', 'vote')
+                    ->limit(Comment::DEFAULT_LIMIT)
+                    ->offset($offset)
+                    ->orderBy($sortBy, $order)
+                    ->get();
+        });
+    }
+
+    public function getVotesCurrentUserByIds(array $ids) : ?array
+    {
+        if (Auth::id()){
+            return CommentVotes::query()
+                ->whereIn('comment_id', $ids)
+                ->where('user_id', Auth::id())
+                ->get(['id', 'vote'])
+                ->toArray();
+        }
+
+        return null;
+    }
+
+    public function getTotalCountSubcomments(int $questionId)
+    {
+        $arCount = [];
+
+        $allComments = Comment::getAllSubcomments($questionId);
+        foreach ($allComments->keys() as $key) {
+
+            $comment = $allComments[$key];
+
+            if (!empty($arCount[$comment->comment_main_id])){
+                $arCount[$comment->comment_main_id]++;
+            } else {
+                $arCount[$comment->comment_main_id] = 1;
+            }
+
+            $allComments->forget($key);
+        }
+
+        return $arCount;
     }
 }

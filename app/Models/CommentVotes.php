@@ -15,16 +15,6 @@ class CommentVotes extends Model
 
     public $guarded = [];
 
-    public static function getForCurrentUser($commentId)
-    {
-        // cache
-        return CommentVotes::query()
-            ->select('vote')
-            ->where('comment_id', $commentId)
-            ->where('user_id', Auth::id())
-            ->first();
-    }
-
     static function boot()
     {
         parent::boot();

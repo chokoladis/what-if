@@ -1,9 +1,10 @@
+@php use Illuminate\Support\Facades\Auth; @endphp
 @foreach($commentChildren as $comment)
     @php
-//        dd($comment);
-        $parent = $comment->parent;
-        
-        $text = '@'.$parent->user->name.' '.$comment->text;
+        //        dd($comment);
+                $parent = $comment->parent;
+
+                $text = '@'.$parent->user->name.' '.$comment->text;
     @endphp
     <div class="comment comment-reply {{ $comment->is_answer ? 'is-answer' : '' }}">
 
@@ -19,7 +20,7 @@
                 <div class="comment_actions">
                     <div class="btn btn-mini btn-link reply"
                          data-comment="{{ $comment->id }}">{{ __('system.reply') }}</div>
-                    @if($comment->question->user == \Illuminate\Support\Facades\Auth::user())
+                    @if($comment->question->user == Auth::user())
                         <div class="btn btn-mini btn-outline-success right_answer"
                              data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
                     @endif

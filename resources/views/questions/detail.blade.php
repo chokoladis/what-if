@@ -1,11 +1,14 @@
 @php
+    use App\Enums\Vote;
+    use App\Models\Question;
     use App\Services\FileService;
 
+    /** @var Question $question */
     $votes = $question->votes->groupBy('vote')->map->count()->toArray();
-    $like = \App\Enums\Vote::LIKE->value;
-    $dislike = \App\Enums\Vote::DISLIKE->value;
+    $like = Vote::LIKE->value;
+    $dislike = Vote::DISLIKE->value;
 
-    $currentVote = !empty($questionCurrentUserVote) ? $questionCurrentUserVote['vote'] : 0;
+    $currentVote = !empty($questionVoteCurrentUser) ? $questionVoteCurrentUser['vote'] : 0;
 @endphp
 @extends('layouts.app')
 
@@ -52,13 +55,15 @@
                 <div class="shadow"></div>
                 <div class="bottom">
                     <h1 class="h1">{{ $question->getShortTitle(70) }}</h1>
-                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#question-img-popup">
+                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                            data-bs-target="#question-img-popup">
                         <span uk-icon="image"></span>
                     </button>
                 </div>
             </div>
         </div>
-        <div id="question-img-popup" class="modal fade modal-xl" tabindex="-1" role="dialog" data-bs-keyboard="false" tabindex="-2"
+        <div id="question-img-popup" class="modal fade modal-xl" tabindex="-1" role="dialog" data-bs-keyboard="false"
+             tabindex="-2"
              aria-labelledby="imgModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -95,36 +100,32 @@
             <h3 class="h3 mt-4">{{ $question->title }}</h3>
         @endif
         <div class="comments">
-            @if($arComments)
-                @foreach ($arComments as $arComment)
-                    @php
-                        $comment = $arComment['comment'];
-                        $countChilds = $arComment['count_childs'];
+            @if($comments)
+                @foreach ($comments as $comment)
+                    <div class="comment {{ $comment->is_answer ? 'is-answer' : '' }}"
+                         data-comment-id="{{ $comment->id }}">
 
-                        $isRight = $question->right_comment_id === $comment->id;
-                    @endphp
-                    <div class="comment {{ $isRight ? 'is-answer' : '' }}" data-comment-id="{{ $comment->id }}">
-
-                        <x-comment.rating :comment="$comment"></x-comment.rating>
+                        <x-comment.rating :comment="$comment"
+                                          :voteCurrentUser="$commentVotesCurrentUser ? $commentVotesCurrentUser[$comment->id] : null"></x-comment.rating>
 
                         <div class="main">
-                            <div class="right_comment_description {{ !$isRight ? 'd-none' : '' }}">
+                            <div class="right_comment_description {{ !$comment->is_answer ? 'd-none' : '' }}">
                                 <i uk-icon="icon: check; ratio: 1.2"></i>
                                 <small>{{ __('comment.is_answer') }}</small>
                             </div>
                             <p>{{ empty($comment) ? 'Удаленный комментарий' : $comment->text }}</p>
                             <div class="under">
-                                @if ($countChilds)
+                                @if (!empty($commentCountReplies) && isset($commentCountReplies[$comment->id]))
                                     <div class="js-load-subcomments">
                                         <span class="uk-icon" uk-icon="icon:commenting; ratio:0.6"></span>
-                                        <i>{{ $countChilds }}</i>
+                                        <i>{{ $commentCountReplies[$comment->id] }}</i>
                                     </div>
                                 @endif
                                 @if (auth()->user())
                                     <div class="comment_actions">
                                         <div class="btn btn-mini btn-link reply"
                                              data-comment="{{ $comment->id }}">{{ __('btn.reply') }}</div>
-                                        @if($question->user == auth()->user() && !$isRight)
+                                        @if($question->user == auth()->user() && !$comment->is_answer)
                                             <div class="btn btn-mini btn-outline-success right_answer"
                                                  data-comment="{{ $comment->id }}">{{ __('system.questions.right_answer') }}</div>
                                         @endif

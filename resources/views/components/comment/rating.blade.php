@@ -1,13 +1,10 @@
-@props(['comment'])
+@props(['comment', 'voteCurrentUser'])
 @php
-    use App\Models\CommentVotes;
+    use App\Enums\Vote;use App\Models\Comment;use App\Models\CommentVotes;
 
-    $queryRating = $comment->getRating();
-    $totalRating = intval($queryRating['total_rating']);
+    /** @var Comment $comment */
 
-    $commentStatus = CommentVotes::getForCurrentUser($comment->id);
-
-    $userRating = !empty($commentStatus) ? \App\Enums\Vote::tryFrom($commentStatus['status']) : null;
+    $userRating = !empty($voteCurrentUser) ? Vote::tryFrom($voteCurrentUser['vote']) : null;
 @endphp
 @if(auth()->id())
     <form action="{{ route('comments.vote') }}" method="POST" class="action_rating" enctype="multipart/form-data">
@@ -15,13 +12,15 @@
         @csrf
 
         <input type="hidden" name="comment_id" value="{{$comment->id}}">
-        <div class="icon icon-circle plus {{ $userRating?->isLike() ? 'active' : ''}}" data-vote="{{ \App\Enums\Vote::LIKE }}">
+        <div class="icon icon-circle plus {{ $userRating?->isLike() ? 'active' : ''}}"
+             data-vote="{{ Vote::LIKE }}">
             <span class="uk-icon" uk-icon="plus"></span>
         </div>
         <div class="rating">
-            <b>{{ $totalRating }}</b>
+            <b>{{ $comment->votes_sum_vote ?? 0 }}</b>
         </div>
-        <div class="icon icon-circle minus {{ $userRating?->isLike() ? '' : 'active'}}" data-vote="{{ \App\Enums\Vote::DISLIKE }}">
+        <div class="icon icon-circle minus {{ $userRating?->isLike() ? '' : 'active'}}"
+             data-vote="{{ Vote::DISLIKE }}">
             <span class="uk-icon" uk-icon="minus"></span>
         </div>
     </form>
@@ -31,7 +30,7 @@
             <span class="uk-icon" uk-icon="plus"></span>
         </div>
         <div class="rating">
-            <b>{{ $totalRating }}</b>
+            <b>{{ $comment->votes_sum_vote ?? 0 }}</b>
         </div>
         <div class="icon icon-circle minus">
             <span class="uk-icon" uk-icon="minus"></span>

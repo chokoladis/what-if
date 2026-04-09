@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Storage; @endphp
 @extends('layouts.app')
 
 @section('content')
@@ -21,7 +22,7 @@
                                            value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                                     @error('email')
-                                        <span class="invalid-feedback" role="alert">
+                                    <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
@@ -96,7 +97,8 @@
                                 <p class="col-md-4">{{ __('user.auth_throw_service')}}</p>
                                 <div class="col-md-6 services">
                                     <a href="{{ $gUrl }}">
-                                        <img src="{{ \Illuminate\Support\Facades\Storage::url('/main/google_icon_min.png') }}" alt="google">
+                                        <img src="{{ Storage::url('/main/google_icon_min.png') }}"
+                                             alt="google">
                                     </a>
                                     <a href="{{ $yUrl }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"

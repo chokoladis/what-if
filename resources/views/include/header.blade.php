@@ -1,11 +1,11 @@
 <!doctype html>
 @php
-    use \Illuminate\Support\Facades;
+    use App\Models\Category;use App\Services\NotificationService;use Illuminate\Support\Facades;use Illuminate\Support\Facades\Storage;
 
     $lang = Facades\Cookie::get('lang') ?? app()->getLocale();
     Facades\App::setLocale($lang);
 
-    $flagSrc = Facades\Storage::url('main/flag-'.$lang.'.svg');
+    $flagSrc = Storage::url('main/flag-'.$lang.'.svg');
     $theme = Facades\Cookie::get('theme', 'dark');
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
@@ -47,13 +47,18 @@
                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             >{{ __('menu.main.questions') }}</a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="questionsDropdown">
-                                <li><a class="dropdown-item" href="{{ route('questions.index') }}">{{ __('menu.main.all_questions') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('questions.recommend') }}">{{ __('menu.main.recommendations') }}</a></li>
+                                <li><a class="dropdown-item"
+                                       href="{{ route('questions.index') }}">{{ __('menu.main.all_questions') }}</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href="{{ route('questions.recommend') }}">{{ __('menu.main.recommendations') }}</a>
+                                </li>
                             </ul>
                         </li>
                     @else
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('questions.index') }}">{{ __('menu.main.questions') }}</a>
+                            <a class="nav-link"
+                               href="{{ route('questions.index') }}">{{ __('menu.main.questions') }}</a>
                         </li>
                     @endif
                     <li class="nav-item dropdown">
@@ -61,11 +66,12 @@
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         >{{ __('menu.main.categories') }}</a>
                         <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                            <li><a class="dropdown-item" href="{{ route('categories.index') }}">{{__('menu.main.all_categories')}}</a></li>
+                            <li><a class="dropdown-item"
+                                   href="{{ route('categories.index') }}">{{__('menu.main.all_categories')}}</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            @foreach(\App\Models\Category::getCategoriesLevel0() as $category)
+                            @foreach(Category::getCategoriesLevel0() as $category)
                                 <li><a class="dropdown-item"
                                        href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a>
                                 </li>
@@ -73,7 +79,8 @@
                         </ul>
                     </li>
                     <li class="nav-item btn-question-add">
-                        <a class="btn btn-outline-primary" href="{{ route('questions.add') }}">{{ __('menu.main.ask') }}</a>
+                        <a class="btn btn-outline-primary"
+                           href="{{ route('questions.add') }}">{{ __('menu.main.ask') }}</a>
                     </li>
                 </ul>
 
@@ -112,7 +119,7 @@
                         @endif
                     @else
                         <li class="nav-item dropdown">
-{{--                                                        todo другую иконку --}}
+                            {{--                                                        todo другую иконку --}}
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="uk-icon" uk-icon="bell"></i>
@@ -136,7 +143,7 @@
                                 @if(!$notifications->isEmpty())
                                     @foreach($notifications as $notify)
                                         @php
-                                            $arNotifyData = \App\Services\NotificationService::toMessage($notify);
+                                            $arNotifyData = NotificationService::toMessage($notify);
                                         @endphp
                                         @if(!empty($arNotifyData))
                                             <li class="dropdown-item">
@@ -193,11 +200,11 @@
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
                             <a class="dropdown-item" data-lang="ru">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url('main/flag-ru.svg') }}"
+                                <img src="{{ Storage::url('main/flag-ru.svg') }}"
                                      alt="{{ __('flag-ru') }}" title="{{ __('ru') }}">
                             </a>
                             <a class="dropdown-item" data-lang="en">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url('main/flag-en.svg') }}"
+                                <img src="{{ Storage::url('main/flag-en.svg') }}"
                                      alt="{{ __('flag-en') }}" title="{{ __('en') }}">
                             </a>
                         </div>

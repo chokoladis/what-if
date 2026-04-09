@@ -16,19 +16,6 @@ class QuestionVotes extends Model
 
     public $guarded = [];
 
-    public static function getVoteCurrentUser(int $id)
-    {
-//        todo drop in boot create or update
-        $userId = Auth::id();
-        if ($userId) {
-            return Cache::remember('question_' . $id . '_user_' . $userId . '_vote', 86400, function () use ($id, $userId) {
-                return self::where('question_id', $id)->where('user_id', $userId)->first('vote');
-            });
-        }
-
-        return null;
-    }
-
     public static function boot()
     {
         $smartCache = Option::isSmartCacheOn();

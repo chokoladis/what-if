@@ -9,12 +9,12 @@ use App\Events\ViewEvent;
 use App\Http\Requests\Question\IndexRequest;
 use App\Http\Requests\Question\StoreRequest;
 use App\Models\Category;
-use App\Models\Comment;
-use App\Models\QuestionVotes;
 use App\Models\Tag;
 use App\Repositories\CategoryRepository;
 use App\Repositories\TagRepository;
+use App\Services\CommentService;
 use App\Services\QuestionService;
+use App\Services\QuestionVoteService;
 use App\Services\UserService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -28,6 +28,8 @@ use Psr\SimpleCache\InvalidArgumentException;
 class QuestionController extends Controller
 {
     private QuestionService $questionService;
+    private QuestionVoteService $questionVoteService;
+    private CommentService $commentService;
 
 //    private QuestionIndexService $questionIndexService;
     private TagRepository $tagRepository;
@@ -36,6 +38,8 @@ class QuestionController extends Controller
     function __construct()
     {
         $this->questionService = new QuestionService();
+        $this->questionVoteService = new QuestionVoteService();
+        $this->commentService = new CommentService();
 //        $this->questionIndexService = new QuestionIndexService();
         $this->tagRepository = new TagRepository();
         $this->categoryRepository = new CategoryRepository(Category::class, true);
@@ -107,32 +111,21 @@ class QuestionController extends Controller
 
         Event(new ViewEvent($question));
 
-        //        todo
-        $voteCurrentUser = QuestionVotes::getVoteCurrentUser($question['id']);
+        $comments = $this->commentService->getWithPagination($question->id);
+        $commentVotesCurrentUser = $this->commentService->getVotesCurrentUserByIds($comments->pluck('id')->toArray());
 
-        $arComments = [];
-        /* @var Comment $comment */
-        foreach ($question->comments as $comment) {
+        $questionVoteCurrentUser = $this->questionVoteService->getVoteCurrentUser($question->id);
 
-//            dump('comment', $comment, $comment->parent);
-
-            if ($comment->parent) {
-                continue;
-            }
-
-//            todo rework
-            $arComments[$comment->id]['comment'] = $comment;
-            $arComments[$comment->id]['count_childs'] = $comment->getTotalCountChildren($comment->replies);
-        }
+        $commentCountReplies = $this->commentService->getTotalCountSubcomments($question->id);
 
         return view('questions.detail',
-            compact('question', 'voteCurrentUser', 'arComments')
+            compact('question', 'questionVoteCurrentUser', 'comments',  'commentVotesCurrentUser', 'commentCountReplies')
         );
     }
 
     /**
      * @param Request $request
-     * @return Response|object
+     * @return Response
      */
     public function setRightComment(Request $request) : Response
     {

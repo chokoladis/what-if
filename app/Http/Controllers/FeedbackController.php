@@ -15,13 +15,14 @@ class FeedbackController extends Controller
     public function store(StoreRequest $request): Response
     {
         $service = new FeedbackService();
+        /** @var ?Feedback $feedback */
         [$feedback, $errors] = $service->store($request->validated());
 
         if ($errors) {
             return responseJson(false, $errors);
         }
 
-        if ($feedback->wasRecentlyCreated) {
+        if ($feedback && $feedback->wasRecentlyCreated) {
             // todo with lang
             return responseJson(result: 'Заявка успешно отправлена', status: Response::HTTP_CREATED);
         } else {

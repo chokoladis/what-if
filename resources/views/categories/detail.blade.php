@@ -9,6 +9,8 @@
 @endpush
 @php
     use App\Models\QuestionVotes;
+    use App\Services\FileService;
+    use App\Services\QuestionVoteService;
 
     $parents = $category->getParents();
 
@@ -21,7 +23,7 @@
         @if ($category->file)
             <div class="category-img">
                 {{-- todo dual img with opacity --}}
-                <img src="{{ \App\Services\FileService::getPhoto($category->file) }}" alt="">
+                <img src="{{ FileService::getPhoto($category->file) }}" alt="">
             </div>
         @endif
 
@@ -61,7 +63,7 @@
                 <div class="list-group">
                     @foreach($questions as $question)
                         @php
-                            $votes = \App\Services\QuestionService::getVotes($question->id)
+                            $votes = QuestionVoteService::getVotes($question->id)
                         @endphp
                         <li class="list-group-item @if($question->right_comment) list-group-item-success @endif">
                             <div class="reaction">

@@ -22,13 +22,12 @@ class ViewsCounterListener
     {
         $model = $event->model;
 
-        $user_id = Auth::id() ?? request()->ip();
-        $user_id = str_replace('.', '_', $user_id);
+        $user_id = (string)(Auth::id() ?? request()->ip());
+        $user_id = $user_id ? (string)str_replace('.', '_', $user_id) : 'undefined';
 
         // todo save to db for recommendations
         $name_session = 'view_user_' . $user_id . '_model_' . $model->getTable() . '_' . $model->id;
-        $session_user_view = session($name_session);
-        if (!$session_user_view) {
+        if (!session($name_session)) {
             session([$name_session => true]);
 
             if ($event->model->statistics) {

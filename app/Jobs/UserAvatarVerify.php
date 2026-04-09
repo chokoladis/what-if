@@ -37,6 +37,7 @@ class UserAvatarVerify implements ShouldQueue
      */
     public function handle(): void
     {
+        //todo сделать код почище и читабельнее
         try {
             [$isLegal, $error] = (new AvatarValidatorService)->isContentFileLegal($this->photo);
         } catch (AIWorkException $e) {
@@ -48,7 +49,9 @@ class UserAvatarVerify implements ShouldQueue
         $this->user->notify(new AvatarValidatedNotification($this->photo, $isLegal));
 
         if (!$isLegal) {
-            throw new FileValidationException($error);
+            throw new FileValidationException(
+                is_null($error) ? 'not legal' : (string)$error
+            );
         } else {
             DB::beginTransaction();
 

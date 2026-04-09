@@ -1,3 +1,4 @@
+@php use App\Services\NotificationService; @endphp
 @if(!$notifications || $notifications->isEmpty())
     {{ __('Нету уведомлений') }}
 @else
@@ -7,7 +8,7 @@
     {{--todo пометить прочитанным/непрочитанным --}}
     @foreach($notifications as $notification)
         @php
-            $arNotifyData = \App\Services\NotificationService::toMessage($notification);
+            $arNotifyData = NotificationService::toMessage($notification);
             if (empty($arNotifyData)){
                 continue;
             }
@@ -18,7 +19,7 @@
                 {{ $arNotifyData['title'] }}
             </div>
             <div class="card-body">
-{{--                <h5 class="card-title">Особое обращение с заголовком</h5>--}}
+                {{--                <h5 class="card-title">Особое обращение с заголовком</h5>--}}
                 <p class="card-text">{!! $arNotifyData['text'] !!}</p>
             </div>
         </div>

@@ -81,16 +81,14 @@ class Question extends BaseModel
 
     public function getCurrentUserComment()
     {
-
         $userId = auth()->id();
 
         if (!$userId)
             return false;
 
-        $res = QuestionComments::query()
+        $res = Comment::query()
             ->where('question_id', $this->id)
-            ->join('comments', 'comments.id', '=', 'comment_id')
-            ->where('comments.user_id', auth()->id())
+            ->where('user_id', auth()->id())
             ->first();
 
         return $res;

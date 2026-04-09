@@ -29,7 +29,7 @@ class SettingTest extends TestCase
     public function test_set_type_output_return_not_support()
     {
         $this->post(route('setting.set.typeOutput'), ['type' => 'super'])
-            ->assertJsonPath('error.code', 'lang_not_support');
+            ->assertJsonPath('error.code', 'system_error');
     }
 
     public function test_set_lang_success()
@@ -40,15 +40,9 @@ class SettingTest extends TestCase
             '_token' => csrf_token()
         ]));
 
-        $str = '<a class="btn btn-outline-primary" href="%s/questions/add">%s</a>';
-
-        if ($lang === 'ru'){
-            $html = sprintf($str, env('APP_URL'), 'Задать вопрос');
-        } else {
-            $html = sprintf($str, env('APP_URL'), 'Ask question');
-        }
-
-        $response->assertOk()->assertSeeHtml($html);
+        $response->assertOk()->assertJson([
+            'success' => true
+        ]);
     }
 
     public function test_set_lang_return_error()

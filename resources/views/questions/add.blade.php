@@ -1,3 +1,4 @@
+@php use App\Tools\Option; @endphp
 @extends('layouts.app')
 
 @push('style')
@@ -65,8 +66,9 @@
                     <div class="checkboxes">
                         @foreach($tags as $tag)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="{{ $tag->name }}" name="tags[]" id="{{ $tag->name }}"
-                                    @if(!empty(old('tags')) && in_array($tag->name, old('tags'))) checked @endif>
+                                <input class="form-check-input" type="checkbox" value="{{ $tag->name }}" name="tags[]"
+                                       id="{{ $tag->name }}"
+                                       @if(!empty(old('tags')) && in_array($tag->name, old('tags'))) checked @endif>
                                 <label class="form-check-label" for="{{ $tag->name }}">
                                     {{ $tag->name }}
                                 </label>
@@ -85,7 +87,7 @@
                 <label class="form-label">{{ __('crud.questions.fields.title') }}</label>
                 <input type="text" name="title" class="form-control"
                        placeholder="{{ __('crud.questions.placeholders.title') }}" autocomplete="search"
-                    value="{{ old('title') }}">
+                       value="{{ old('title') }}">
                 @if ($errors->has('title'))
                     @foreach ($errors->get('title') as $item)
                         <p class="error">{{ $item  }}</p>
@@ -95,7 +97,7 @@
             <div class="mb-3">
                 <label class="form-label">{{ __('crud.questions.fields.img') }}</label>
                 <input type="file" name="img" class="form-control"
-                    value="{{ old('img') }}">
+                       value="{{ old('img') }}">
                 @if ($errors->has('img'))
                     @foreach ($errors->get('img') as $item)
                         <p class="error">{{ $item  }}</p>
@@ -103,7 +105,7 @@
                 @endif
             </div>
 
-            @if(\App\Tools\Option::isCaptchaSetOn())
+            @if(Option::isCaptchaSetOn())
                 <div class="h-captcha" data-sitekey="{{ config('services.h_captcha.sitekey') }}"></div>
             @endif
 

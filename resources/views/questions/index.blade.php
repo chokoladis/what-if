@@ -1,3 +1,5 @@
+@php use App\Services\QuestionService; @endphp
+@php use Illuminate\Support\Facades\Cookie; @endphp
 @extends('layouts.app')
 
 @push('style')
@@ -9,11 +11,11 @@
 @endpush
 
 @php
-    $sorts = \App\Services\QuestionService::SORTS;
+    $sorts = QuestionService::SORTS;
     $currentSort = request('sort') ? request('sort') : array_key_first($sorts);
 
-    $itemsTypeOut = \App\Services\QuestionService::ITEMS_TYPE_OUTPUT;
-    $itemsTypeOutCookie = \Illuminate\Support\Facades\Cookie::get('items-type-output', 'simple');
+    $itemsTypeOut = QuestionService::ITEMS_TYPE_OUTPUT;
+    $itemsTypeOutCookie = Cookie::get('items-type-output', 'simple');
     $currentItemsTypeOutput = in_array($itemsTypeOutCookie, $itemsTypeOut) ? $itemsTypeOutCookie : current($itemsTypeOut);
 @endphp
 
@@ -46,7 +48,8 @@
                 @if($categories)
                     <div class="categories">
                         <a class="btn btn-outline-secondary icon-link" data-bs-toggle="collapse"
-                           href="#collapseCategories" role="button" aria-expanded="false" aria-controls="collapseCategories">
+                           href="#collapseCategories" role="button" aria-expanded="false"
+                           aria-controls="collapseCategories">
                             <span uk-icon="icon: settings; ratio:0.8"></span>
                             {{ __('categories.categories') }}
                         </a>
@@ -57,7 +60,8 @@
                                         <input class="form-check-input" type="checkbox" value="{{ $category->title }}"
                                                name="categories[]" id="{{ $category->title }}"
                                                @if(request('categories') && in_array($category->title, request('categories'))) checked @endif>
-                                        <label class="form-check-label" for="{{ $category->title }}">{{ $category->title }}</label>
+                                        <label class="form-check-label"
+                                               for="{{ $category->title }}">{{ $category->title }}</label>
                                     </div>
                                 @endforeach
                             </div>
@@ -97,13 +101,15 @@
                     {{--todo icons--}}
                     <select class="form-select form-select" name="sort">
                         @foreach($sorts as $key => $sortName)
-                            <option value="{{ $key }}" @if($currentSort === $key) selected @endif>{{ __('system.sort.'.$sortName) }}</option>
+                            <option value="{{ $key }}"
+                                    @if($currentSort === $key) selected @endif>{{ __('system.sort.'.$sortName) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="items-type-output btn-group" role="group" aria-label="Переключение типа вывода элементов">
                     @foreach($itemsTypeOut as $type)
-                        <input type="radio" class="btn-check" name="items-type-output" id="{{ $type }}" autocomplete="off"
+                        <input type="radio" class="btn-check" name="items-type-output" id="{{ $type }}"
+                               autocomplete="off"
                                @if($currentItemsTypeOutput === $type) checked @endif>
                         <label class="btn btn-outline-primary" for="{{ $type }}">
                             {!! __('system.items_type_out.'.$type) !!}</label>
