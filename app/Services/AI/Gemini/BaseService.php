@@ -5,26 +5,22 @@ namespace App\Services\AI\Gemini;
 use App\DTO\Errors\CommonError;
 use App\Exceptions\Integration\AIWorkException;
 use App\Services\AI\BaseAI;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class BaseService extends BaseAI
 {
-    public function getDefaultModel() : string
+    public function getDefaultModel(): string
     {
         return 'gemini-2.0-flash';
-    }
-
-    protected function getConfigApiKey() : string
-    {
-        return (string)config('services.gemini.api_key');
     }
 
     /**
      * @param mixed $data
      * @return array{bool, CommonError|null}
      * @throws AIWorkException
-     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws ConnectionException
      */
     public function sendRequest(mixed $data)
     {
@@ -50,7 +46,7 @@ class BaseService extends BaseAI
      * @return array{bool, CommonError|null}
      * @throws AIWorkException
      */
-    protected function getResponse(mixed $responseData) : array
+    protected function getResponse(mixed $responseData): array
     {
         if ($responseData['error']) {
             Log::error(__CLASS__, [$responseData['error']]);
@@ -75,5 +71,10 @@ class BaseService extends BaseAI
                 return [true, null];
             }
         }
+    }
+
+    protected function getConfigApiKey(): string
+    {
+        return (string)config('services.gemini.api_key');
     }
 }

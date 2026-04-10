@@ -18,15 +18,43 @@ class Category extends BaseModel
 
     const MAX_DEPTH = 3; //for check in add OR добавить на уровне добавления в базу ограничение
 
-    public function getRouteKeyName()
+    /**
+     * @param string|null $code
+     * @return ?Category
+     */
+    public static function getByCode(?string $code): ?Category
     {
-        return 'code';
+        return Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
+            return Category::active()->where('code', $code)->with('file')->first();
+        });
     }
 
-    public static function getCategoriesLevel0(): Collection
+    public static function boot()
     {
-        return Cache::remember('category_level_0', now()->addDay(), function () {
-            return Category::active()->where('level', 0)->with('file')->get();
+        parent::boot();
+
+        static::creating(function ($category) {
+//            if (!is_numeric($category->file_id)){
+//                $file = FileService::save($category->file_id, 'categories');
+//                $category->file_id = $file->id;
+//            }
+            $category->code = Str::slug(Str::lower($category->title), '-');
+            $category->level = !$category->parent ? 0 : $category->parent->level + 1;
+        });
+
+        static::updating(function ($category) {
+
+//            todo
+//            Log::debug('upd categori - '.$category->file_id);
+//
+//            if (!is_numeric($category->file_id)){
+//                $file = FileService::save($category->file_id, 'categories');
+//                $category->file_id = $file->id;
+//            }
+        });
+
+        static::deleted(function ($item) {
+            File::find($item->file_id)->delete();
         });
     }
 
@@ -69,52 +97,17 @@ class Category extends BaseModel
         // imgs
     }
 
-    /**
-     * @param string|null $code
-     * @return ?Category
-     */
-    public static function getByCode(?string $code): ?Category
+    public function getRouteKeyName()
     {
-        return Cache::remember('category_' . $code, now()->addDay(), function () use ($code) {
-            return Category::active()->where('code', $code)->with('file')->first();
-        });
+        return 'code';
     }
 
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($category) {
-//            if (!is_numeric($category->file_id)){
-//                $file = FileService::save($category->file_id, 'categories');
-//                $category->file_id = $file->id;
-//            }
-            $category->code = Str::slug(Str::lower($category->title), '-');
-            $category->level = !$category->parent ? 0 : $category->parent->level + 1;
-        });
-
-        static::updating(function ($category) {
-
-//            todo
-//            Log::debug('upd categori - '.$category->file_id);
-//
-//            if (!is_numeric($category->file_id)){
-//                $file = FileService::save($category->file_id, 'categories');
-//                $category->file_id = $file->id;
-//            }
-        });
-
-        static::deleted(function ($item) {
-            File::find($item->file_id)->delete();
-        });
-    }
-
-    public function scopeActive() : Builder
+    public function scopeActive(): Builder
     {
         return Category::query()->where('active', true);
     }
 
-    public function scopeSearch(Builder $query, string $title) : Builder
+    public function scopeSearch(Builder $query, string $title): Builder
     {
         return $query->where('title', 'LIKE', '%' . $title . '%')
             ->orWhere('code', 'LIKE', '%' . $title . '%');
@@ -123,7 +116,7 @@ class Category extends BaseModel
     /**
      * @return array<string, mixed>
      */
-    public function toSearchableArray() : array
+    public function toSearchableArray(): array
     {
         $count = $this->getCountQuestion();
 
@@ -137,7 +130,7 @@ class Category extends BaseModel
         ];
     }
 
-    public function getCountQuestion() : int
+    public function getCountQuestion(): int
     {
         return Question::search()
             ->where('category_id', $this->id)
@@ -145,7 +138,7 @@ class Category extends BaseModel
             ->get()->count();
     }
 
-    public function getParents() : mixed
+    public function getParents(): mixed
     {
 //        cache
         $arParents = [];
@@ -168,7 +161,7 @@ class Category extends BaseModel
         return $arParents;
     }
 
-    public function getParentById(int $parentId, int $level) : ?Category
+    public function getParentById(int $parentId, int $level): ?Category
     {
         return Category::query()
             ->where('active', 1)
@@ -177,17 +170,17 @@ class Category extends BaseModel
             ->first();
     }
 
-    public function shouldBeSearchable() : bool
+    public function shouldBeSearchable(): bool
     {
         return $this->active;
     }
 
-    public function subcategories() : HasMany
+    public function subcategories(): HasMany
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    public function parent() : HasOne
+    public function parent(): HasOne
     {
         return $this->hasOne(Category::class, 'id', 'parent_id');
     }

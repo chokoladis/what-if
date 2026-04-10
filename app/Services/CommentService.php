@@ -15,7 +15,7 @@ class CommentService
      * @param array<string, string|int> $data
      * @return Comment
      */
-    public function save(array $data) : Comment
+    public function save(array $data): Comment
     {
         /** @var User $user */
         $user = Auth::user();
@@ -48,31 +48,35 @@ class CommentService
      * @param array<string, int|string> $params
      * @return Collection
      */
-    public function getWithPagination(int $questionId, array $params = []) : Collection
+    public function getWithPagination(int $questionId, array $params = []): Collection
     {
-        $params['page'] = $params['page'] ?? 1;
+        $params['page'] = intval($params['page'] ?? 1);
         $offset = Comment::DEFAULT_LIMIT * ($params['page'] - 1);
         $sortBy = $params['sortBy'] ?? 'votes_sum_vote';
         $order = $params['order'] ?? 'desc';
 
         // todo проверять популярность ещё по вложенным
         return Cache::remember('comments_with_paginate_question_' . $questionId, 3600, function ()
-            use ($questionId, $offset, $sortBy, $order) {
-                return Comment::active()
-                    ->where('question_id', $questionId)
-                    ->whereNull('comment_main_id') // не вложенные
-                    ->with('user')
-                    ->withSum('votes', 'vote')
-                    ->limit(Comment::DEFAULT_LIMIT)
-                    ->offset($offset)
-                    ->orderBy($sortBy, $order)
-                    ->get();
+        use ($questionId, $offset, $sortBy, $order) {
+            return Comment::active()
+                ->where('question_id', $questionId)
+                ->whereNull('comment_main_id') // не вложенные
+                ->with('user')
+                ->withSum('votes', 'vote')
+                ->limit(Comment::DEFAULT_LIMIT)
+                ->offset($offset)
+                ->orderBy($sortBy, $order)
+                ->get();
         });
     }
 
-    public function getVotesCurrentUserByIds(array $ids) : ?array
+    /**
+     * @param array<int, int> $ids
+     * @return array<int, mixed>|null
+     */
+    public function getVotesCurrentUserByIds(array $ids): ?array
     {
-        if (Auth::id()){
+        if (Auth::id()) {
             return CommentVotes::query()
                 ->whereIn('comment_id', $ids)
                 ->where('user_id', Auth::id())
@@ -83,6 +87,10 @@ class CommentService
         return null;
     }
 
+    /**
+     * @param int $questionId
+     * @return array<int, int>
+     */
     public function getTotalCountSubcomments(int $questionId)
     {
         $arCount = [];
@@ -92,7 +100,7 @@ class CommentService
 
             $comment = $allComments[$key];
 
-            if (!empty($arCount[$comment->comment_main_id])){
+            if (!empty($arCount[$comment->comment_main_id])) {
                 $arCount[$comment->comment_main_id]++;
             } else {
                 $arCount[$comment->comment_main_id] = 1;

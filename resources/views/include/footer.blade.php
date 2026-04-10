@@ -102,9 +102,9 @@
     </div>
 </div>
 
-@if (Session::has('message')
+@if (Session::has('message'))
     <div id="system-alert" class="alert alert-info" role="alert">
-        <b>{!!  Session::get('message'!!}</b>
+        <b>{!!  Session::get('message') !!}</b>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <script>
@@ -115,9 +115,9 @@
         });
     </script>
 @endif
-@if (f(Session::has('erro)
+@if (Session::has('error'))
     <div id="system-alert-error" class="alert alert-danger" role="alert">
-        <b>{!!ho  Session::get('erro!!}</b>
+        <b>{!!  Session::get('error') !!}</b>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <script>
@@ -131,12 +131,12 @@
 
 <script>
     window.App = {
-        userId: {{o e( auth()->id() ?? 'nu}}
+        userId: {{ auth()->id() ?? 'null' }}
     }
 </script>
 
-@vite(unc(['resources/js/app.)
-@stack(ent('scr)
+@vite(['resources/js/app.js'])
+@stack('script')
 
 </body>
 </html>

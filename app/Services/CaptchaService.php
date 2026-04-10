@@ -30,10 +30,10 @@ class CaptchaService
     public function verify(string $captcha): array
     {
         $response = Http::post(self::BASE_URL . '?' . http_build_query([
-            'secret' => $this->getSecret(),
-            'remoteip' => getIPAddress(),
-            'response' => $captcha
-        ]));
+                'secret' => $this->getSecret(),
+                'remoteip' => getIPAddress(),
+                'response' => $captcha
+            ]));
 
         try {
             $response->throw();

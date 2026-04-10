@@ -119,7 +119,7 @@ class QuestionController extends Controller
         $commentCountReplies = $this->commentService->getTotalCountSubcomments($question->id);
 
         return view('questions.detail',
-            compact('question', 'questionVoteCurrentUser', 'comments',  'commentVotesCurrentUser', 'commentCountReplies')
+            compact('question', 'questionVoteCurrentUser', 'comments', 'commentVotesCurrentUser', 'commentCountReplies')
         );
     }
 
@@ -127,7 +127,7 @@ class QuestionController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function setRightComment(Request $request) : Response
+    public function setRightComment(Request $request): Response
     {
         $data = $request->validate([
             'comment_id' => 'required|exists:comments,id',

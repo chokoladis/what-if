@@ -7,7 +7,7 @@ use App\Notifications\Question\VoteNotification;
 use App\Tools\Option;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
 
 class QuestionVotes extends Model
@@ -22,11 +22,6 @@ class QuestionVotes extends Model
 
         parent::boot();
 
-        /**
-         * Write code on Method
-         *
-         * @return response()
-         */
         static::updated(function ($item) use ($smartCache) {
             if ($smartCache) {
                 Cache::forget('question_votes_' . $item->question_id);
@@ -65,12 +60,12 @@ class QuestionVotes extends Model
         return 'question_votes';
     }
 
-    public function question()
+    public function question(): BelongsTo
     {
         return $this->belongsTo(Question::class, 'question_id', 'id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }

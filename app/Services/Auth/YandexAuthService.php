@@ -7,6 +7,7 @@ namespace App\Services\Auth;
 use App\Exceptions\Auth\External\IncorrectResponseException;
 use App\Exceptions\Auth\External\ResponseHaveErrorException;
 use App\Interfaces\Services\AuthExternalInterface;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +70,7 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
      * @return array<string, string|int>
      * @throws IncorrectResponseException
      * @throws ResponseHaveErrorException
-     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws ConnectionException
      */
     protected function getUserInfo(string $accessToken): array
     {

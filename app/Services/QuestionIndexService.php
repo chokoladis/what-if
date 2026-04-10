@@ -29,7 +29,7 @@ class QuestionIndexService
     /**
      * Полный набор данных для страницы списка вопросов: фильтры + пагинация (кеш списка отдельно).
      */
-    public function getIndexPageData(IndexRequest $request): array
+    public function getIndexPageData(IndexRequest $request): mixed
     {
         $sidebar = $this->getSidebarFilterData();
 
@@ -41,7 +41,7 @@ class QuestionIndexService
     /**
      * Теги и категории для фильтров (кешируются в репозиториях отдельно).
      */
-    public function getSidebarFilterData(): array
+    public function getSidebarFilterData(): mixed
     {
         return [
             'tags' => $this->tagRepository->getAll(),

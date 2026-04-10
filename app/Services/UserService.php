@@ -11,7 +11,6 @@ use App\Models\Question;
 use App\Models\QuestionTags;
 use App\Models\User;
 use App\Models\UserTags;
-use App\Services\AI\Gemini\AvatarValidatorService as AIAvatarValidator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;

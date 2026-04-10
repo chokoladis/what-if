@@ -8,11 +8,14 @@ use App\DTO\FileDTO;
 use App\Exceptions\FileSaveException;
 use App\Models\File;
 use App\Models\TempFile;
+use finfo;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Throwable;
 
 class FileService
 {
@@ -116,7 +119,7 @@ class FileService
      * @param string $subdir
      * @return string
      */
-    static function getPhotoFromIndex(?array $file, string $subdir) : string
+    static function getPhotoFromIndex(?array $file, string $subdir): string
     {
         $nophoto_src = Storage::url('main/nophoto.jpg');
 
@@ -141,32 +144,18 @@ class FileService
         ]);
     }
 
-    public static function saveFromUrl(string $url, string $mainDir = 'main'): ?File
+    public function saveFromUrl(string $url, string $mainDir = 'main'): ?File
     {
         $response = Http::get($url);
 
-        try {
-            $response->throw();
-        } catch (\Throwable $e) {
-            \Illuminate\Log\log('throw from trying get the content from url', ['url' => $url, 'exception_file' => $e->getFile(), 'exception_line' => $e->getLine()]);
-            return null;
-        }
-
-        if (!$response->successful() || $response->body() === '') {
-            \Illuminate\Log\log('Could not get the content file from url', ['url' => $url]);
-            return null;
-        }
-
-        $mimeType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($response->body());
-        $ext = explode('/', $mimeType)[1];
-        if (!in_array($ext, self::ALLOW_IMG_EXT)) {
-            \Illuminate\Log\log('not support mime type from url', ['url' => $url, 'mime_type' => $mimeType]);
+        $ext = $this->getExtFromExternalFile($response, $url);
+        if (!$ext) {
             return null;
         }
 
         $disk = Storage::disk('public');
 
-        $name = Str::random().'.'.$ext;
+        $name = Str::random() . '.' . $ext;
 
         $subDir = substr($name, 0, 3);
         $folder = "{$mainDir}/{$subDir}";
@@ -177,7 +166,7 @@ class FileService
 
         $filePath = "{$subDir}/{$name}";
 
-        if (false === $disk->put("$folder/$name", $response->body())){
+        if (false === $disk->put("$folder/$name", $response->body())) {
             \Illuminate\Log\log('Error in save file from url', ['url' => $url]);
             return null;
         }
@@ -188,5 +177,34 @@ class FileService
             'path' => $filePath,
             'relation' => $mainDir
         ]);
+    }
+
+    protected static function getExtFromExternalFile(Response $response, string $url): ?string
+    {
+        try {
+            $response->throw();
+        } catch (Throwable $e) {
+            \Illuminate\Log\log('throw from trying get the content from url', ['url' => $url, 'exception_file' => $e->getFile(), 'exception_line' => $e->getLine()]);
+            return null;
+        }
+
+        if (!$response->successful() || $response->body() === '') {
+            \Illuminate\Log\log('Could not get the content file from url', ['url' => $url]);
+            return null;
+        }
+
+        $mimeType = (new finfo(FILEINFO_MIME_TYPE))->buffer($response->body());
+        if (!$mimeType) {
+            \Illuminate\Log\log('cant get mime from url', ['url' => $url]);
+            return null;
+        }
+
+        $ext = explode('/', $mimeType)[1];
+        if (!in_array($ext, self::ALLOW_IMG_EXT)) {
+            \Illuminate\Log\log('not support mime type from url', ['url' => $url, 'mime_type' => $mimeType]);
+            return null;
+        }
+
+        return $ext;
     }
 }

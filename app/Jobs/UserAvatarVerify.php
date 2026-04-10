@@ -26,8 +26,8 @@ class UserAvatarVerify implements ShouldQueue
      */
     public function __construct(
         protected AiApiInterface $AIAvatarValidator, //todo rework
-        protected User     $user,
-        protected TempFile $photo,
+        protected User           $user,
+        protected TempFile       $photo,
     )
     {
     }

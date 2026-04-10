@@ -11,7 +11,6 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Question;
 use App\Models\QuestionTags;
-use App\Models\QuestionVotes;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -141,7 +140,7 @@ class QuestionService
         return $builder;
     }
 
-    public static function getPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 YEAR') : Collection
+    public static function getPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 YEAR'): Collection
     {
 //        for rework
         $collection = self::getRawDataForPopular(interval: $interval);
@@ -166,7 +165,7 @@ class QuestionService
         });
     }
 
-    private static function getRawDataForPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 DAY') : \Illuminate\Support\Collection
+    private static function getRawDataForPopular(int $limit = self::DEFAULT_LIMIT, string $interval = '1 DAY'): \Illuminate\Support\Collection
     {
         if ($interval === '1 DAY') {
             $cacheTtl = 3600 * 3;
@@ -273,7 +272,7 @@ class QuestionService
 
         try {
             if ($request->has('img') && $img = $request->file('img')) {
-                if (is_array($img)){
+                if (is_array($img)) {
                     return [false, 'Необходим только один файл'];
                 } elseif ($img->isValid()) {
                     $res = FileService::save($img, 'questions');
@@ -311,6 +310,19 @@ class QuestionService
                 ->where('code', $code)
                 ->with(['file', 'category', 'tags', 'user', 'statistics', 'votes', 'right_comment'])
                 ->first();
+        });
+    }
+
+    public function getNewInCategory(int $categoryId): Collection
+    {
+        return Cache::remember('new_question_in_cat_' . $categoryId, 86400, function () use ($categoryId) {
+            return Question::active()
+                ->where('category_id', $categoryId)
+//                улучшить получение комментариев
+                ->with(['file', 'tags', 'user', 'votes'])
+                ->latest()
+                ->limit(10)
+                ->get();
         });
     }
 }

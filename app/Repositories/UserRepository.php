@@ -8,6 +8,13 @@ use Illuminate\Support\Str;
 
 class UserRepository
 {
+    private FileService $fileService;
+
+    public function __construct()
+    {
+        $this->fileService = new FileService();
+    }
+
     /**
      * @param array<string, string|int> $data
      * @return User
@@ -32,7 +39,7 @@ class UserRepository
         }
 
         if ($data['photo_url']) {
-            $file = FileService::saveFromUrl($data['photo_url'], 'users');
+            $file = $this->fileService->saveFromUrl($data['photo_url'], 'users');
             $data['photo_id'] = $file->id;
             unset($data['photo_url']);
         }

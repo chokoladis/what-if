@@ -7,15 +7,13 @@ namespace App\Services\Auth;
 use App\Exceptions\Auth\External\IncorrectResponseException;
 use App\Exceptions\Auth\External\ResponseHaveErrorException;
 use App\Interfaces\Services\AuthExternalInterface;
-use App\Models\User;
-use App\Services\FileService;
 use Exception;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 final class GoogleAuthService extends BaseExternalService implements AuthExternalInterface
 {
@@ -38,7 +36,7 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
      * @return array<string, string|int>
      * @throws IncorrectResponseException
      * @throws ResponseHaveErrorException
-     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws ConnectionException
      */
     protected function getUserInfo(string $accessToken): array
     {
@@ -64,8 +62,9 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
 
         if ($response === false) {
             $error = error_get_last();
-            throw new Exception("Connection failed: " . $error['message']);
+            throw new Exception("Connection failed: " . is_array($error) ? $error['message'] : 'undefined');
         }
+
         $info = json_decode($response, true);
 
         if (isset($info['error'])) {

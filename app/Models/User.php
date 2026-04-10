@@ -51,19 +51,6 @@ class User extends Authenticatable implements FilamentUser
         'photo_id',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
     public static function boot()
     {
         parent::boot();
@@ -115,8 +102,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Question::class); //->latest()
     }
 
-    //    paginate
-
     public function getQuestionsWithPages(Request $request): LengthAwarePaginator
     {
         $data = $request->validate([
@@ -131,12 +116,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Tag::class, 'user_tags');
     }
 
-    public function getCommentVotesByQuestion(int $questionId)
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->hasMany(CommentVotes::class)
-            ->with(['comment', 'comment.question'])
-            ->where('comment.active', true)
-            ->where('question.id', $questionId)
-            ->dd();
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

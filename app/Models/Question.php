@@ -6,6 +6,7 @@ use App\DTO\Indexing\CommentDTO;
 use App\DTO\Indexing\UserDTO;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
@@ -19,6 +20,11 @@ class Question extends BaseModel
 //    use Searchable;
 
     public $guarded = [];
+
+    public static function scopeActive(Builder $query): void
+    {
+        $query->where('active', true);
+    }
 
     public static function getByCode(?string $code): ?Question
     {
@@ -46,7 +52,6 @@ class Question extends BaseModel
 
     public static function boot()
     {
-
         parent::boot();
 
         static::creating(function ($item) {
@@ -65,33 +70,11 @@ class Question extends BaseModel
         // updated to active = true // send sms/mail message about it
     }
 
-    public static function getPopular(Builder $builder)
+    public static function getPopular(Builder $builder): Builder
     {
         // todo with likes
         return $builder->join('question_statistics', 'questions.id', '=', 'question_id')
             ->orderBy('views', 'desc');
-    }
-
-    public static function scopeActive()
-    {
-        return Question::query()->where('active', true);
-    }
-
-    //    todo
-
-    public function getCurrentUserComment()
-    {
-        $userId = auth()->id();
-
-        if (!$userId)
-            return false;
-
-        $res = Comment::query()
-            ->where('question_id', $this->id)
-            ->where('user_id', auth()->id())
-            ->first();
-
-        return $res;
     }
 
     public function category(): HasOne
@@ -99,10 +82,12 @@ class Question extends BaseModel
         return $this->HasOne(Category::class, 'id', 'category_id');
     }
 
+    /** @return HasMany<Comment, $this> */
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'question_id', 'id')
-            ->where('active', true);
+        $relation = $this->hasMany(Comment::class, 'question_id', 'id');
+        $relation->getQuery()->where('active', true);
+        return $relation;
     }
 
     public function statistics(): HasOne
@@ -120,25 +105,30 @@ class Question extends BaseModel
         return $this->HasMany(QuestionVotes::class, 'question_id', 'id');
     }
 
+    /** @return HasOne<Comment, $this> */
     public function right_comment(): HasOne
     {
-        return $this->HasOne(Comment::class, 'question_id', 'id')
-            ->where('active', true)
-            ->where('is_answer', true);
+        $relation = $this->HasOne(Comment::class, 'question_id', 'id');
+        $relation->getQuery()->where('active', true)->where('is_answer', true);
+
+        return $relation;
     }
 
-    public function tags()
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'question_tags', 'question_id', 'tag_id');
     }
 
-    public function scopeSearch(Builder $query, string $title)
+    public function scopeSearch(Builder $query, string $title): void
     {
-        return $query->where('title', 'LIKE', '%' . $title . '%')
+        $query->where('title', 'LIKE', '%' . $title . '%')
             ->orWhere('code', 'LIKE', '%' . $title . '%');
     }
 
-    public function toSearchableArray()
+    /**
+     * @return array<string, string|int|CommentDTO>
+     */
+    public function toSearchableArray(): array
     {
         $obj = [
             'title' => $this->title,
@@ -159,8 +149,7 @@ class Question extends BaseModel
             );
         }
 
-        $popularComment = $this->getPopularComment();
-        if ($popularComment) {
+        if ($popularComment = $this->getPopularComment()) {
             $obj['popular_comment'] = new CommentDTO(
                 $popularComment->id,
                 $popularComment->text,
@@ -171,7 +160,8 @@ class Question extends BaseModel
         return $obj;
     }
 
-    public function getCategoryIds()
+    /** @return array<int, int> */
+    public function getCategoryIds(): array
     {
         $categoryId = $this->category_id;
 
@@ -194,7 +184,7 @@ class Question extends BaseModel
         return $arIds;
     }
 
-    public function getPopularComment()
+    public function getPopularComment(): ?Comment
     {
         $cacheKey = 'question_popular_comment_' . $this->id;
         $popularCommentId = Cache::remember($cacheKey, 3600, function () {
@@ -221,18 +211,18 @@ class Question extends BaseModel
         });
 
         if (!$popularCommentId) {
-            return false;
+            return null;
         }
 
-        return Comment::query()->with('user')->find($popularCommentId);
+        return Comment::query()->with('user')->firstWhere('id', $popularCommentId);
     }
 
-    public function shouldBeSearchable()
+    public function shouldBeSearchable(): bool
     {
         return $this->active;
     }
 
-    public function getShortTitle(?int $length = 15)
+    public function getShortTitle(?int $length = 15): string
     {
         return mb_strlen($this->title) > $length ? mb_substr($this->title, 0, $length) . '...' : $this->title;
     }

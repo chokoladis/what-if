@@ -11,8 +11,12 @@
     use App\Models\QuestionVotes;
     use App\Services\FileService;
     use App\Services\QuestionVoteService;
+    use App\Enums\Vote;
 
     $parents = $category->getParents();
+
+    $like = Vote::LIKE->value;
+    $dislike = Vote::DISLIKE->value;
 
     $title = $category->title; 
     $lastElem = end($parents);
@@ -63,17 +67,17 @@
                 <div class="list-group">
                     @foreach($questions as $question)
                         @php
-                            $votes = QuestionVoteService::getVotes($question->id)
+                            $votes = $question->votes->groupBy('vote')->map->count()->toArray();
                         @endphp
                         <li class="list-group-item @if($question->right_comment) list-group-item-success @endif">
                             <div class="reaction">
                                 <div class="badge text-bg-success">
                                     <span class="uk-icon" uk-icon="chevron-up"></span>
-                                    <b>{{ $votes['likes'] }}</b>
+                                    <b>{{ $votes[$like] }}</b>
                                 </div>
                                 <div class="badge text-bg-danger">
                                     <span class="uk-icon" uk-icon="chevron-down"></span>
-                                    <b>{{ $votes['dislikes'] }}</b>
+                                    <b>{{ $votes[$dislike] }}</b>
                                 </div>
                             </div>
                             <a href="{{ route('questions.detail', $question->code) }}">
@@ -82,13 +86,11 @@
                                     <small>{{ $question->created_at }}</small>
                                 </div>
                             </a>
+                            {{--rework query comments --}}
                             <span class="comments-count badge rounded-pill {{ count($question->comments) > 0 ? 'text-bg-primary' : 'text-bg-secondary' }}">
                                 {{ sprintf(__('questions.comments') . ' (%u)', count($question->comments) ?? 0) }}</span>
                         </li>
                     @endforeach
-                </div>
-                <div class="pagination">
-
                 </div>
             </div>
         @endif

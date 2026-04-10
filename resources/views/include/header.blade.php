@@ -1,6 +1,8 @@
 <!doctype html>
 @php
-    use App\Models\Category;use App\Services\NotificationService;use Illuminate\Support\Facades;use Illuminate\Support\Facades\Storage;
+    use App\Models\Category;
+    use App\Services\NotificationService;
+    use Illuminate\Support\Facades;use Illuminate\Support\Facades\Storage;
 
     $lang = Facades\Cookie::get('lang') ?? app()->getLocale();
     Facades\App::setLocale($lang);
@@ -71,7 +73,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            @foreach(Category::getCategoriesLevel0() as $category)
+                            @foreach(\App\Services\CategoryService::getCategoriesLevel0() as $category)
                                 <li><a class="dropdown-item"
                                        href="{{ route('categories.detail', $category->code) }}">{{ $category->title }}</a>
                                 </li>
