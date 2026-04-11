@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\SettingException;
-use App\Models\Errors\CommonError;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,7 +23,7 @@ class SettingController extends Controller
         $lang = $request->get('lang');
         if (!$lang)
             return responseJson(false,
-                new CommonError(
+                new \App\DTO\Errors\CommonError(
                     __('validation.required', ['lang']),
                     'value_not_set'
                 )
@@ -46,13 +45,17 @@ class SettingController extends Controller
     {
         $type = $request->get('type');
         if (!$type)
-            return responseJson(false, new CommonError(__('validation.required', ['type']), 'value_not_set'));
+            return responseJson(false,
+                new \App\DTO\Errors\CommonError(__('validation.required', ['type']), 'value_not_set')
+            );
 
         try {
             $this->settingService->setTypeOutput($type);
             return responseJson();
         } catch (SettingException $e) {
-            return responseJson(false, new CommonError($e->getMessage()));
+            return responseJson(false,
+                new \App\DTO\Errors\CommonError($e->getMessage())
+            );
         }
     }
 }

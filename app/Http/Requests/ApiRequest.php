@@ -11,9 +11,21 @@ class ApiRequest extends FormRequest
 {
     protected function failedValidation(Validator|\Illuminate\Contracts\Validation\Validator $validator)
     {
+        $errors = collect($validator->errors()->toArray())
+            ->flatMap(function (array $messages, string $field) {
+                return array_map(fn(string $message) => [
+                    'code' => 'validation_error',
+                    'message' => $message,
+                    'field' => $field,
+                ], $messages);
+            })
+            ->values()
+            ->all();
+
         throw new HttpResponseException(
             response()->json([
-                'errors' => $validator->errors(),
+                'result' => false,
+                'errors' => $errors,
             ], 422)
         );
     }

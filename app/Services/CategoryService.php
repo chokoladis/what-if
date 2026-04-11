@@ -13,24 +13,6 @@ class CategoryService
 {
     const CACHE_KEY_LEVEL0 = 'category_level_0';
 
-    public function getByCode(string $code): ?Category
-    {
-        /** @var ?Collection<Category> $categories */
-        $categories = Cache::get(self::CACHE_KEY_LEVEL0);
-        // todo check time loading with cache collection
-        if ($categories?->isNotEmpty()) {
-            /** @var ?Category $category */
-            $category = $categories->first(function (Category $category) use ($code) {
-               return $category->code === $code;
-            });
-
-            if ($category)
-                return $category;
-        }
-
-        return Category::getByCode($code);
-    }
-
     public static function getCategoriesLevel0(): \Illuminate\Support\Collection
     {
         return Cache::remember(self::CACHE_KEY_LEVEL0, now()->addDay(), function () {
@@ -39,5 +21,23 @@ class CategoryService
                 ->with('file')
                 ->get(['id', 'code', 'title', 'file_id']);
         });
+    }
+
+    public function getByCode(string $code): ?Category
+    {
+        /** @var ?Collection<Category> $categories */
+        $categories = Cache::get(self::CACHE_KEY_LEVEL0);
+        // todo check time loading with cache collection
+        if ($categories?->isNotEmpty()) {
+            /** @var ?Category $category */
+            $category = $categories->first(function (Category $category) use ($code) {
+                return $category->code === $code;
+            });
+
+            if ($category)
+                return $category;
+        }
+
+        return Category::getByCode($code);
     }
 }

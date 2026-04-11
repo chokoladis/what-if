@@ -1,22 +1,27 @@
 <?php
 
+use App\Interfaces\DTO\ErrorInterface;
 use Illuminate\Http\Response;
 
 if (!function_exists('responseJson')) {
 //    todo middleware ?
-    function responseJson(bool $success = true, mixed $result = null, int $status = null): Response
+    function responseJson(mixed $result = null, ?ErrorInterface $errors = null, ?int $status = null): Response
     {
-        $data = ['success' => $success, 'result' => $result];
+        $data = [];
 
-        if (!$success) {
+        if ($result) {
+            $data['result'] = $result;
+        } else if ($errors) {
 
-            $data['error'] = $result;
-            unset($data['result']);
+            $data['errors'] = [$errors];
 
             if (!$status) {
                 $status = Response::HTTP_BAD_REQUEST;
             }
         }
+
+        if (empty($data))
+            $status = Response::HTTP_NO_CONTENT;
 
         return response(
             $data,

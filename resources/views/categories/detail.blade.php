@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
 @endpush
 @php
-    use App\Models\QuestionVotes;
     use App\Services\FileService;
     use App\Services\QuestionVoteService;
     use App\Enums\Vote;

@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable implements FilamentUser
@@ -82,7 +83,7 @@ class User extends Authenticatable implements FilamentUser
     public function getAvatarPath(): string
     {
 //        todo drop by update
-        return Cache::remember('avatar_' . auth()->id(), 86400, function () {
+        return Cache::remember('avatar_' . Auth::id(), 86400, function () {
             return FileService::getPhoto($this->photo);
         });
     }

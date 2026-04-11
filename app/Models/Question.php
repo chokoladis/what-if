@@ -33,23 +33,6 @@ class Question extends BaseModel
         });
     }
 
-    public static function getTopPopular()
-    {
-        //cache
-        $query = Question::query()
-            ->where('active', true)
-            ->with(['statistics' => function ($q) {
-                $q->orderBy('views', 'desc');
-            }, 'statistics'])
-            ->with(['votes' => function ($q) {
-                $q->sum('votes');
-            }, 'user_votes'])
-            ->limit(10)
-            ->get();
-
-        return $query;
-    }
-
     public static function boot()
     {
         parent::boot();

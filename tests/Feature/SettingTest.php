@@ -13,23 +13,23 @@ class SettingTest extends TestCase
     {
         $this->post(route('setting.set.typeOutput'), [
             'type' => 'compact'
-        ])->assertOk();
+        ])->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->post(route('setting.set.typeOutput'), [
             'type' => 'simple'
-        ])->assertOk();
+        ])->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
     public function test_set_type_output_return_value_not_set()
     {
         $this->post(route('setting.set.typeOutput'))
-            ->assertJsonPath('error.code', 'value_not_set');
+            ->assertJsonPath('errors.0.code','value_not_set');
     }
 
     public function test_set_type_output_return_not_support()
     {
         $this->post(route('setting.set.typeOutput'), ['type' => 'super'])
-            ->assertJsonPath('error.code', 'system_error');
+            ->assertJsonPath('errors.0.message','This lang not supporting');
     }
 
     public function test_set_lang_success()
@@ -40,9 +40,7 @@ class SettingTest extends TestCase
             '_token' => csrf_token()
         ]));
 
-        $response->assertOk()->assertJson([
-            'success' => true
-        ]);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
     public function test_set_lang_return_error()

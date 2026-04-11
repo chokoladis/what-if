@@ -38,7 +38,7 @@ abstract class BaseAI implements AiApiInterface
      * @param array $data
      * @return array<bool, ?CommonError>
      */
-    abstract protected function sendRequest(array $data) : array;
+    abstract protected function sendRequest(array $data): array;
 
     protected function getModel(): string
     {

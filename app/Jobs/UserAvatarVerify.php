@@ -50,7 +50,7 @@ class UserAvatarVerify implements ShouldQueue
 
         if (!$isLegal) {
             throw new FileValidationException(
-                is_null($error) ? 'not legal' : (string)$error
+                is_null($error) ? 'not legal' : $error->message
             );
         } else {
             DB::beginTransaction();

@@ -150,13 +150,15 @@ class QuestionService
 
         $questionIds = array_column($collection->toArray(), 'id');
 
+//            ->with(['statistics' => function ($q) {
+//                $q->orderBy('views', 'desc');
+//            }, 'statistics'])
+//            ->with(['votes' => function ($q) {
+//                $q->sum('votes');
+//            }, 'user_votes'])
+
         return Cache::remember(serialize('question_popular_' . $limit . '_' . $interval), 3600 * 3, function () use ($questionIds, $limit) {
             return Question::active()
-//                ->selectRaw('id, code, title, file_id, user_id,
-//                (   SELECT comments.id FROM comments
-//                    WHERE comments.question_id = questions.id
-//                        AND comments.is_answer = true
-//                        AND comments.active = true) AS right_comment_id')
                 ->with(['file', 'user', 'right_comment', 'right_comment.user'])
                 ->whereIn('id', $questionIds)
                 ->limit($limit)

@@ -1,6 +1,7 @@
 @props(['comment', 'voteCurrentUser'])
 @php
-    use App\Enums\Vote;use App\Models\Comment;use App\Models\CommentVotes;
+    use App\Enums\Vote;
+    use App\Models\Comment;
 
     /** @var Comment $comment */
 

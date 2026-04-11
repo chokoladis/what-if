@@ -4,6 +4,13 @@ window.jQuery = window.$ = $;
 
 import 'jquery-mask-plugin';
 
+const globalAlert = $('#js-system-alert');
+
+const STATUS_OK= 200;
+const STATUS_NO_CONTENT = 204;
+const STATUS_BAD_REQUEST = 400;
+const STATUS_MANY_REQUESTS = 429;
+
 $('.js-phone-mask').mask('+9 999 9999 999');
 
 async function sendAjax(route, method, data = null) {
@@ -14,67 +21,92 @@ async function sendAjax(route, method, data = null) {
             'X-CSRF-TOKEN': $('[name="csrf-token"]').attr('content'),
         },
     };
-    if (data) {
+    if (data)
         settings.body = data;
+
+    const response = await fetch(route, settings)
+    if (response.status === STATUS_MANY_REQUESTS){
+        globalAlert.removeClass('d-none')
+        globalAlert.find('b').text('Вы отправили слишком много запросов за последнее время, попробуйте позже')
     }
 
-    let query = await fetch(route, settings);
-
-    let result = await query.json();
-
-    return [query.status, result];
+    return response;
 }
 
 $(function () {
 
     $('#modal-feedback [type="submit"]').on('click', function(){
-        let form = $('#modal-feedback form');
-        let action = form.attr('action');
-        let method = form.attr('method');
 
-        let formData = form.serializeArray();
+        const modal = $(this).parents('.modal');
+        const form = modal.find('form');
+
+        if (!form[0].checkValidity()) {
+            form[0].reportValidity();
+            return;
+        }
+
         let sendData = new FormData();
 
-        $.each(formData, function (key, input) {
+        $.each(form.serializeArray(), function (key, input) {
             sendData.append(input.name, input.value);
         });
 
-        const dataPromise = sendAjax(action, method, sendData);
-
-        dataPromise.then(function (result) {
-            let status = result[0];
-            let json = result[1];
-
-            // todo
-            if (status === 422) {
-
-            } else {
-                    // json.result
+        const invalid = form.find('.is-invalid')
+        if (invalid.length){
+            for(let i in invalid) {
+                if (invalid[i] && invalid[i].classList)
+                    invalid[i].classList.remove('is-invalid')
             }
         }
-        ).catch(function (error) {
-            console.log(error)
-        })
+
+        const pErrors = form.find('p.error')
+        if (pErrors.length){
+            for(let i in pErrors) {
+                if (typeof pErrors[i] != "object")
+                    break;
+
+                pErrors[i].remove()
+            }
+        }
+
+        sendAjax(form.attr('action'), form.attr('method'), sendData)
+            .then(function (response) {
+
+                response.json().then((json) => {
+
+                    if (response.status >= STATUS_BAD_REQUEST) {
+                        for(let field in json.errors)
+                        {
+                            let input = form.find(`[name="${field}"]`);
+                            input.addClass('is-invalid')
+                            json.errors[field].forEach((message) => {
+                                input.after(`<p class="error">${message}</p>`)
+                            })
+                        }
+                    } else {
+                        modal.find('.js-btn-close').click()
+
+                        globalAlert.removeClass('d-none')
+                        globalAlert.find('b').text(json.result)
+                    }
+                })
+            }).catch(function (error) {
+                console.log(error)
+            })
     });
 
 
     $('.js-change-lang .dropdown-item').on('click', function () {
 
-        $.ajax({
-            url: '/setting/lang',
-            type: 'POST',
-            data: {
-                "_token": $('[name="csrf-token"]').attr('content'),
-                lang: $(this).data('lang')
-            },
-            success: function (json) {
-                // console.log(data);
+        const sendData = new FormData();
+        sendData.append("lang", $(this).data('lang'));
 
-                if (json.success) {
-                    location.reload();
-                } else {
-                    // $('')
-                }
+        let data = sendAjax('/setting/lang', 'POST', sendData);
+
+        data.then(function (response) {
+            console.log(response)
+            if (response.status === STATUS_NO_CONTENT) {
+                location.reload();
             }
         });
     });
@@ -83,11 +115,12 @@ $(function () {
 
         let data = sendAjax('/setting/theme', 'POST');
 
-        data.then(function (result) {
-            let status = result[0];
-            let json = result[1];
-            if (status === 200 && json.result) {
-                $('html').attr('data-bs-theme', json.result)
+        data.then(function (response) {
+
+            if (response.status === STATUS_OK) {
+                response.json().then((json) => {
+                    $('html').attr('data-bs-theme', json.result)
+                })
             }
         });
     });
@@ -99,10 +132,9 @@ $(function () {
 
         let data = sendAjax('/setting/type-output', 'POST', sendData);
 
-        data.then(function (result) {
-            let status = result[0];
-            let json = result[1];
-            if (status === 200 && json.success) {
+        // todo for errors
+        data.then(function (response) {
+            if (response.status === STATUS_OK) {
                 location.reload()
             }
         });

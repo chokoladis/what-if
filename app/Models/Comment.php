@@ -22,54 +22,6 @@ class Comment extends Model
 
     public $guarded = [];
 
-    public function getTable()
-    {
-        return 'comments';
-    }
-
-    public function user(): HasOne
-    {
-        return $this->HasOne(User::class, 'id', 'user_id');
-    }
-
-    public function replies(): HasMany
-    {
-        return $this->hasMany(Comment::class, 'comment_main_id', 'id');
-    }
-
-//        запросить все комментарии не главные по ним сопоставлять по ключам родителей и считать кол-во + включая подкомментарии
-//    public function getTotalCountChildren(int $questionId)
-
-    public function parent(): HasOne
-    {
-        return $this->hasOne(Comment::class, 'id', 'comment_main_id');
-    }
-
-    public function votes(): HasMany
-    {
-        return $this->hasMany(CommentVotes::class, 'comment_id', 'id');
-    }
-
-    public function getShortText(): string
-    {
-        return mb_strlen($this->text) > 20 ? mb_substr($this->text, 0, 20) . '...' : $this->text;
-    }
-
-    public function question(): BelongsTo
-    {
-        return $this->belongsTo(Question::class);
-    }
-
-    protected static function scopePopular(Builder $query): void
-    {
-        $query->orderBy('votes_sum_vote', 'desc');
-    }
-
-    protected static function scopeActive(Builder $query): void
-    {
-        $query->where('active', true);
-    }
-
     public static function getAllSubcomments(int $questionId): Collection
     {
         return Cache::remember('all_subcomments_' . $questionId, 3600, function () use ($questionId) {
@@ -94,5 +46,53 @@ class Comment extends Model
             }
         });
 
+    }
+
+    protected static function scopePopular(Builder $query): void
+    {
+        $query->orderBy('votes_sum_vote', 'desc');
+    }
+
+//        запросить все комментарии не главные по ним сопоставлять по ключам родителей и считать кол-во + включая подкомментарии
+//    public function getTotalCountChildren(int $questionId)
+
+    protected static function scopeActive(Builder $query): void
+    {
+        $query->where('active', true);
+    }
+
+    public function getTable()
+    {
+        return 'comments';
+    }
+
+    public function user(): HasOne
+    {
+        return $this->HasOne(User::class, 'id', 'user_id');
+    }
+
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'comment_main_id', 'id');
+    }
+
+    public function parent(): HasOne
+    {
+        return $this->hasOne(Comment::class, 'id', 'comment_main_id');
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(CommentVotes::class, 'comment_id', 'id');
+    }
+
+    public function getShortText(): string
+    {
+        return mb_strlen($this->text) > 20 ? mb_substr($this->text, 0, 20) . '...' : $this->text;
+    }
+
+    public function question(): BelongsTo
+    {
+        return $this->belongsTo(Question::class);
     }
 }

@@ -1,20 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DTO\Errors;
 
-use Stringable;
+use App\Interfaces\DTO\ErrorInterface;
 
-readonly class Error implements Stringable
+readonly class Error implements ErrorInterface
 {
     function __construct(
-        protected string  $message,
-        protected ?string $code = 'system_error',
+        public string  $message,
+        public string $code = 'system_error',
     )
     {
     }
 
-    public function __toString()
+    /**
+     * @return string[]
+     */
+    public function toArray(): array
     {
-        return $this->message;
+        return [
+            'message' => $this->message,
+            'code' => $this->code
+        ];
     }
 }

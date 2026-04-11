@@ -3,9 +3,10 @@
 namespace Feature\Comments;
 
 
-use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Question;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class CommentTest extends TestCase
@@ -25,7 +26,7 @@ class CommentTest extends TestCase
         $response->assertOk()->assertSeeHtml('data-comment-id');
     }
 
-    public  function test_set_right_comment_success(): void
+    public function test_set_right_comment_success(): void
     {
         $question = Question::factory()->create([
             'active' => true,
@@ -36,12 +37,16 @@ class CommentTest extends TestCase
             'is_answer' => true,
         ]);
 
+//        Cache::flush(); // temp solution , need clear from added entity
+//        Artisan::call('optimize:clear');
+
+//        todo
         $response = $this->get(route('questions.detail', [$question->code]));
         $response->assertOk()
             ->assertSeeHtml(sprintf('class="comment is-answer" data-comment-id="%d"', $comment->id));
     }
 
-    public  function test_set_right_comment_no_active(): void
+    public function test_set_right_comment_no_active(): void
     {
         $question = Question::factory()->create([
             'active' => true,

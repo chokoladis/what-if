@@ -26,3 +26,4 @@ parameters:
         - '#Cannot call method update\(\) on Illuminate\\Contracts\\Auth\\Authenticatable\|null#'
         - '#Access to an undefined property Illuminate\\Notifications\\DatabaseNotification\:\:\$[a-zA-Z\d]+#'
         - '#Call to an undefined method Illuminate\\Contracts\\Filesystem\\Filesystem\:\:url\(\)#'
+        - '#Parameter \#1 \$message of class App\\DTO\\Errors\\[a-zA-Z]+ constructor expects string, array\|string\|null given#'

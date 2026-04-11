@@ -18,11 +18,11 @@ class BaseService extends BaseAI
 
     /**
      * @param mixed $data
-     * @return array{bool, CommonError|null}
+     * @return array{bool, \App\Models\Errors\CommonError|null}
      * @throws AIWorkException
      * @throws ConnectionException
      */
-    public function sendRequest(mixed $data)
+    public function sendRequest(mixed $data): array
     {
         $apiKey = $this->getApiKey();
 

@@ -33,7 +33,7 @@ class AvatarValidatorService extends BaseService
     public function isContentFileLegal(TempFile|File $file)
     {
         $disk = Storage::disk('public');
-        $chankPath = ( get_class($file) === TempFile::class ? 'temp' : $file->relation ) . '/' . $file->path;
+        $chankPath = (get_class($file) === TempFile::class ? 'temp' : $file->relation) . '/' . $file->path;
 
         if (!$disk->exists($chankPath)) {
             throw new FileSaveException(__('entities.integrations.file_not_found'));

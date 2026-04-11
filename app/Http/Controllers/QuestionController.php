@@ -138,9 +138,9 @@ class QuestionController extends Controller
             return responseJson();
         }
 
-        return responseJson(false, [
-            new CommonError('Ошибка при задании верного комментария', 'error_in_set_right_comment')
-        ]);
+        return responseJson(false,
+            new CommonError('Ошибка при задании верного комментария', 'cant_set_right_comment')
+        );
     }
 
     public function recommendations(IndexRequest $request): View

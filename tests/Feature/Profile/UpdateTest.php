@@ -15,7 +15,7 @@ class UpdateTest extends TestCase
 
         $newVal = rand(1000, 9999);
         $response = $this->post(route('profile.update'), [
-            'email' => 'test'.$newVal.'@gmail.com',
+            'email' => 'test' . $newVal . '@gmail.com',
             'name' => (string)$newVal,
             '_token' => csrf_token()
         ]);
@@ -32,7 +32,7 @@ class UpdateTest extends TestCase
 
         $newVal = rand(1000, 9999);
         $response = $this->post(route('profile.update'), [
-            'email' => 'test'.$newVal.'@gmail.com',
+            'email' => 'test' . $newVal . '@gmail.com',
             'name' => 9,
             '_token' => csrf_token()
         ]);

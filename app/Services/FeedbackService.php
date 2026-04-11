@@ -11,26 +11,21 @@ class FeedbackService
 {
     /**
      * @param array<string, ?string> $data
-     * @return array<int, Feedback|ValidationError[]|null>
+     * @return array<int, Feedback|ValidationError|null>
      */
     public function store(array $data)
     {
-        $errors = [];
         // if ($data['email'])
 
         if (!empty($data['phone'])) {
             $data['phone'] = getNumbers($data['phone']);
 
-            if (strlen($data['phone']) !== 11) {
-                $errors[] = new ValidationError(
-                    'Ошибка заполнения телефона',
+            if (strlen($data['phone']) < 4 || strlen($data['phone']) > 15) {
+                return [null, new ValidationError(
                     'phone',
-                );
+                    'Некорректная длина номера телефона',
+                )];
             }
-        }
-
-        if (!empty($errors)) {
-            return [null, $errors];
         }
 
         return [

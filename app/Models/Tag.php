@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class Tag extends Model
@@ -14,15 +16,15 @@ class Tag extends Model
 
     public $timestamps = false;
 
-    public static function getAll()
+    public static function getAll() : Collection
     {
         return Cache::remember('tags', 3600, function () {
             return Tag::sorted()->get();
         });
     }
 
-    public function scopeSorted($query)
+    public function scopeSorted(Builder $query) : void
     {
-        return $query->orderBy('sort');
+        $query->orderBy('sort');
     }
 }

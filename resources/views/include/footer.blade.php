@@ -53,7 +53,7 @@
                 <form action="{{ route('feedback.store') }}" method="POST" enctype="multipart/form-data">
 
                     @method('POST')
-                    {{--                        todo check--}}
+
                     @csrf
 
                     <div class="mb-3">
@@ -95,15 +95,20 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('btn.close') }}</button>
+                <button type="button" class="btn btn-secondary js-btn-close" data-bs-dismiss="modal">{{ __('btn.close') }}</button>
                 <button type="submit" class="btn btn-primary">{{ __('btn.add') }}</button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="js-system-alert" class="alert alert-info d-none system-alert" role="alert">
+    <b></b>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 @if (Session::has('message'))
-    <div id="system-alert" class="alert alert-info" role="alert">
+    <div id="system-alert" class="alert alert-info system-alert" role="alert">
         <b>{!!  Session::get('message') !!}</b>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -116,7 +121,7 @@
     </script>
 @endif
 @if (Session::has('error'))
-    <div id="system-alert-error" class="alert alert-danger" role="alert">
+    <div id="system-alert-error" class="alert alert-danger system-alert" role="alert">
         <b>{!!  Session::get('error') !!}</b>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>

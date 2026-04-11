@@ -1,20 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DTO\Errors;
 
 readonly class ValidationError extends Error
 {
     function __construct(
-        string           $message,
-        protected string $field,
-        ?string          $code = 'validation_error',
+        public string $field,
+        string        $message,
+        string        $code = 'validation_error',
     )
     {
         parent::__construct($message, $code);
     }
 
-    public function __toString()
+    public function toArray(): array
     {
-        return $this->message . ' [field: ' . $this->field . ']';
+        return [
+            'field' => $this->field,
+            'message' => $this->message,
+            'code' => $this->code,
+        ];
     }
 }
