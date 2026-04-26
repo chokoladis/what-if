@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 
 class UserService
 {
+    const CACHE_KEY_USER = 'user_full:';
+
     public function __construct(
         private ?AiApiInterface $AIAvatarValidator = null,
     )
@@ -123,6 +125,9 @@ class UserService
 
     public function getFullUserInfo(int $userId): ?User
     {
-        return User::with(['questions', 'photo', 'tags'])->where('id', $userId)->first();
+        return Cache::remember(self::CACHE_KEY_USER.$userId, 1440, function () use ($userId) {
+            return User::with(['photo', 'tags'])
+                ->firstWhere('id', $userId);
+        });
     }
 }

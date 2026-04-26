@@ -1,12 +1,11 @@
 @php use Illuminate\Support\Facades\Auth; @endphp
 @foreach($commentChildren as $comment)
     @php
-        //        dd($comment);
-                $parent = $comment->parent;
+        $parent = $comment->parent;
 
-                $text = '@'.$parent->user->name.' '.$comment->text;
+        $text = '@'.$parent->user->name.' '.$comment->text;
     @endphp
-    <div class="comment comment-reply {{ $comment->is_answer ? 'is-answer' : '' }}">
+    <div data-comment-id="{{ $comment->id }}" class="comment {{ $comment->is_answer ? 'is-answer' : '' }} comment-reply">
 
         <x-comment.rating :comment="$comment"></x-comment.rating>
 

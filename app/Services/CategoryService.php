@@ -25,14 +25,15 @@ class CategoryService
 
     public function getByCode(string $code): ?Category
     {
-        /** @var ?Collection<Category> $categories */
+        /** @var ?Collection<int|string, Category> $categories */
         $categories = Cache::get(self::CACHE_KEY_LEVEL0);
         // todo check time loading with cache collection
         if ($categories?->isNotEmpty()) {
             /** @var ?Category $category */
-            $category = $categories->first(function (Category $category) use ($code) {
-                return $category->code === $code;
-            });
+            $category = $categories->first(
+                function (Category $category) use ($code) {
+                    return $category->code === $code;
+                });
 
             if ($category)
                 return $category;

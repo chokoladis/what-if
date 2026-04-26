@@ -43,12 +43,11 @@ make db-fake-run
 ### ⚙ Admin
 
 * Smart Caching: Event-driven cache invalidation for related entities.
-* Full CRUD for categories, tags, and comments with integrated captcha.
+* Full CRUD for categories, tags, users and comments with integrated captcha.
 * Captcha, smart cache settings
 
 Still in development
 - View and respond to submitted requests?
-- User CRUD
 - Number of new entities in the form of badges
 
 <br><br>

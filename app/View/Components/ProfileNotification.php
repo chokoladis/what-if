@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Services\NotificationService;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -18,6 +19,7 @@ class ProfileNotification extends Component
      */
     public function __construct()
     {
+//        $this->notifications = NotificationService::paginate();
         $this->notifications = Auth::user()->notifications()->latest()->paginate();
     }
 

@@ -42,6 +42,7 @@ class UserController extends Controller
             abort(404);
 
         $tagsNotChecked = $this->tagService->getNotSelected($user->tags()->pluck('tags.id'));
+        //todo questions
         $notifications = UserService::getLastNotifications();
 
         return view('profile.index', compact('user', 'tagsNotChecked', 'notifications'));

@@ -53,11 +53,12 @@ class Question extends BaseModel
         // updated to active = true // send sms/mail message about it
     }
 
-    public static function getPopular(Builder $builder): Builder
+    public static function getPopular(Builder $builder) : Builder
     {
         // todo with likes
-        return $builder->join('question_statistics', 'questions.id', '=', 'question_id')
+        $builder->join('question_statistics', 'questions.id', '=', 'question_id')
             ->orderBy('views', 'desc');
+        return $builder;
     }
 
     public function category(): HasOne
@@ -109,7 +110,7 @@ class Question extends BaseModel
     }
 
     /**
-     * @return array<string, string|int|CommentDTO>
+     * @return array<string, mixed>
      */
     public function toSearchableArray(): array
     {
@@ -146,14 +147,12 @@ class Question extends BaseModel
     /** @return array<int, int> */
     public function getCategoryIds(): array
     {
-        $categoryId = $this->category_id;
-
-        $arIds = [$categoryId];
+        $arIds = [$this->category_id];
 
         while (true) {
             $category = Category::query()
                 ->where('active', true)
-                ->where('id', $categoryId)
+                ->where('id', $this->category_id)
                 ->whereNotNull('parent_id')->first();
 
             if ($category && $category->parent_id) {
@@ -178,17 +177,20 @@ class Question extends BaseModel
                 ->select('comment_votes.vote', 'comment_votes.comment_id')
                 ->get();
 
-            if ($query->isEmpty()) {
-                return 0;
-            }
+            if ($query->isEmpty())
+                return null;
 
             $comments = [];
             foreach ($query as $comment) {
                 if (!isset($comments[$comment->comment_id])) {
-                    $comments[$comment->comment_id] = 0;
+                    $comments[$comment->comment_id] = $comment->vote;
+                } else {
+                    $comments[$comment->comment_id] += $comment->vote;
                 }
-                $comments[$comment->comment_id] += $comment->vote;
             }
+
+            if (empty($comments))
+                return null;
 
             return (int)array_search(max($comments), $comments, true);
         });
@@ -197,7 +199,9 @@ class Question extends BaseModel
             return null;
         }
 
-        return Comment::query()->with('user')->firstWhere('id', $popularCommentId);
+        return Comment::query()
+            ->with('user')
+            ->firstWhere('id', $popularCommentId);
     }
 
     public function shouldBeSearchable(): bool

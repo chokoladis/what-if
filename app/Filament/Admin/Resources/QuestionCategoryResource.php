@@ -11,6 +11,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -23,7 +24,7 @@ use UnitEnum;
 
 class QuestionCategoryResource extends Resource
 {
-    const DIR = 'categories';
+    const string DIR_NAME = 'categories';
     protected static string|UnitEnum|null $navigationGroup = 'Данные';
     protected static ?string $modelLabel = 'Категории';
     protected static ?string $navigationLabel = 'Категории';
@@ -59,12 +60,11 @@ class QuestionCategoryResource extends Resource
                     ->default(false)
                     ->nullable()
                     ->label('Активность'),
-//                todo save file (как вывести)?
-                Forms\Components\FileUpload::make('file_id')
+                FileUpload::make('file_id')
                     ->image()
                     ->previewable()
                     ->visibility('public')
-                    ->loadStateFromRelationshipsUsing(function (Forms\Components\FileUpload $component, $record) {
+                    ->loadStateFromRelationshipsUsing(function (FileUpload $component, $record) {
                         if (!$record || !$record->file) {
                             return null;
                         }
@@ -74,22 +74,21 @@ class QuestionCategoryResource extends Resource
 
                         $disk = Storage::disk('public');
 
-                        if (!$disk->exists('/categories/' . $file->path)) {
+                        if (!$disk->exists(sprintf('/%s/%s',self::DIR_NAME, $file->path))) {
                             return;
                         }
 
                         $component->state(new UploadedFile(
-                            $disk->path('/categories/' . $file->path),
+                            $disk->path(sprintf('/%s/%s',self::DIR_NAME, $file->path)),
                             $file->name,
                         ));
                     })
                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile|null $file) {
                         if ($file && $file->get()) {
-                            $file = FileService::save($file, self::DIR);
+                            $file = FileService::save($file, self::DIR_NAME);
                             return $file->id;
                         }
                     })
-//                    ->url(fn ($record) => optional($record->file)->full_url)
                     ->nullable(),
             ]);
     }

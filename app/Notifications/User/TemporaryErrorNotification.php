@@ -18,6 +18,7 @@ class TemporaryErrorNotification extends BaseNotification
     {
     }
 
+    /** @return array<string, string> */
     public function toArray(object $notifiable): array
     {
         return [

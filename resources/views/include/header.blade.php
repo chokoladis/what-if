@@ -9,6 +9,8 @@
 
     $flagSrc = Storage::url('main/flag-'.$lang.'.svg');
     $theme = Facades\Cookie::get('theme', 'dark');
+
+    $user = Facades\Auth::user();
 @endphp
 <html lang="{{ str_replace('_', '-', $lang) }}" data-bs-theme="{{ $theme }}">
 <head>
@@ -120,15 +122,15 @@
                             </li>
                         @endif
                     @else
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown nav-link-notify">
                             {{--                                                        todo другую иконку --}}
                             <a id="navbarNotify" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="uk-icon" uk-icon="bell"></i>
+
                                 @php
-                                    $notificationsCount = auth()->user()?->notifications()->select('id')->get()->count();
-                                    $notifications = auth()->user()?->notifications()->limit(5)->get();
-                                    //                                    todo посмотреть все
+                                    $notificationsCount = $user?->notifications()->count('id');
+                                    $notifications = NotificationService::getLastNotifications();
                                 @endphp
 
                                 @if(!$notifications->isEmpty())
@@ -139,7 +141,6 @@
                                         <span class="visually-hidden">unread messages</span>
                                     </span>
                                 @endif
-
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarNotify">
                                 @if(!$notifications->isEmpty())
@@ -153,6 +154,10 @@
                                             </li>
                                         @endif
                                     @endforeach
+                                    <li class="dropdown-item">
+                                        {{-- сделать отдельную страницу и ссылку --}}
+                                        <a href="{{ route('profile.index') }}">{{ __('Посмотреть все') }}</a>
+                                    </li>
                                 @else
                                     <li class="dropdown-item notify-is-empty">
                                         {{ __('notifications not found') }}
@@ -163,7 +168,7 @@
                         <li class="nav-item dropdown profile-dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ auth()->user()->getAvatarPath() }}" alt="">
+                                <img src="{{ $user->getAvatarPath() }}" alt="">
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -171,7 +176,7 @@
                                     {{ __('menu.main.profile') }}
                                 </a>
                                 @can('isAdmin')
-                                    <a class="dropdown-item" href="{{ route('filament.admin.pages.dashboard') }}">
+                                    <a class="dropdown-item" href="{{ route('filament.admin.pages.dashboard') }}/">
                                         {{ __('menu.main.dashboard') }}
                                     </a>
                                 @endcan

@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Laravel\Scout\Builder;
 use Meilisearch\Endpoints\Indexes;
 
@@ -13,7 +12,7 @@ abstract class Repository
     const DEFAULT_PER_PAGE = 10;
 
     public function __construct(
-        protected      $model,
+        protected mixed $model,
         protected bool $getFromDB = false
     )
     {
@@ -22,15 +21,18 @@ abstract class Repository
         }
     }
 
-    public function searchWithPaginate(array $data, ?array $filters = []): LengthAwarePaginator
+    public function searchWithPaginate(mixed $data, mixed $filters = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->getSearchBuilder($data, $filters)->paginateRaw(static::DEFAULT_PER_PAGE);
     }
 
-    public function getSearchBuilder(array $data, ?array $filters = []): Builder
+    public function getSearchBuilder(mixed $data, mixed $filters = []): Builder
     {
         return $this->model::search($data['q'], function (Indexes $meilisearch, string $query, array $options) use ($filters) {
-            $options['filter'] = $filters;
+
+            if (is_array($filters))
+                $options['filter'] = $filters;
+
             return $meilisearch->search($query, $options);
         });
     }

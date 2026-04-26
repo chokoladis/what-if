@@ -18,6 +18,7 @@ parameters:
         - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:firstOrCreate\(\)#'
         - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:active\(\)#'
         - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:search\(\)#'
+        - '#Call to an undefined static method App\\Models\\[a-zA-Z]+\:\:sorted\(\)#'
         - '#Parameter \#1 \$message of class App\\Models\\Errors[a-zA-Z\\]+ constructor expects string, array\|string\|null given#'
         - '#Parameter \#1 \$message of class App\\Exceptions\\[a-zA-Z\\]+ constructor expects string, array\|string\|null given\.#'
         - '#Parameter \#2 \$key of method Illuminate\\Http\\RedirectResponse\:\:[a-zA-Z\\\(\)]+ expects string, array\|string\|null given#'
@@ -27,3 +28,4 @@ parameters:
         - '#Access to an undefined property Illuminate\\Notifications\\DatabaseNotification\:\:\$[a-zA-Z\d]+#'
         - '#Call to an undefined method Illuminate\\Contracts\\Filesystem\\Filesystem\:\:url\(\)#'
         - '#Parameter \#1 \$message of class App\\DTO\\Errors\\[a-zA-Z]+ constructor expects string, array\|string\|null given#'
+        - '#Access to an undefined property object\:\:\$[a-zA-Z_]#'

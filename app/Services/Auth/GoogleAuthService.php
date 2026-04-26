@@ -33,7 +33,6 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
 
     /**
      * @param string $accessToken
-     * @return array<string, string|int>
      * @throws IncorrectResponseException
      * @throws ResponseHaveErrorException
      * @throws ConnectionException
@@ -62,7 +61,7 @@ final class GoogleAuthService extends BaseExternalService implements AuthExterna
 
         if ($response === false) {
             $error = error_get_last();
-            throw new Exception("Connection failed: " . is_array($error) ? $error['message'] : 'undefined');
+            throw new Exception("Connection failed: " . (!empty($error['message']) ? $error['message'] : 'undefined'));
         }
 
         $info = json_decode($response, true);

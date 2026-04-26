@@ -23,7 +23,7 @@ class Tag extends Model
         });
     }
 
-    public function scopeSorted(Builder $query) : void
+    public static function scopeSorted(Builder $query) : void
     {
         $query->orderBy('sort');
     }

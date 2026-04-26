@@ -102,8 +102,7 @@
         <div class="comments">
             @if($comments)
                 @foreach ($comments as $comment)
-                    <div class="comment {{ $comment->is_answer ? 'is-answer' : '' }}"
-                         data-comment-id="{{ $comment->id }}">
+                    <div data-comment-id="{{ $comment->id }}" class="comment {{ $comment->is_answer ? 'is-answer' : '' }}">
 
                         <x-comment.rating :comment="$comment"
                                           :voteCurrentUser="$commentVotesCurrentUser ? $commentVotesCurrentUser[$comment->id] : null"></x-comment.rating>

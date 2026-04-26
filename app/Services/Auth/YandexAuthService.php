@@ -67,7 +67,6 @@ final class YandexAuthService extends BaseExternalService implements AuthExterna
 
     /**
      * @param string $accessToken
-     * @return array<string, string|int>
      * @throws IncorrectResponseException
      * @throws ResponseHaveErrorException
      * @throws ConnectionException

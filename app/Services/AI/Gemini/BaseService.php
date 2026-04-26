@@ -18,7 +18,7 @@ class BaseService extends BaseAI
 
     /**
      * @param mixed $data
-     * @return array{bool, \App\Models\Errors\CommonError|null}
+     * @return array{bool, \App\DTO\Errors\CommonError|null}
      * @throws AIWorkException
      * @throws ConnectionException
      */

@@ -5,9 +5,14 @@ namespace App\Services;
 use App\Models\User;
 use App\Notifications\Comment\VoteNotification;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 final class NotificationService
 {
+    const CACHE_KEY_5_LAST = 'notifications_5_last_';
+    const CACHE_KEY_PAGINATE = 'notifications_paginate_';
+
     /**
      * @param DatabaseNotification $notification
      * @return array<string, string>
@@ -48,5 +53,31 @@ final class NotificationService
             'title' => $title,
             'text' => $text,
         ];
+    }
+
+//    todo in develop
+    public static function getLastNotifications()
+    {
+        /** @var ?User $user */
+        $user = Auth::user();
+
+        if (!$user)
+            return null;
+
+        return Cache::remember(self::CACHE_KEY_5_LAST.$user->id, 3600, function () use ($user) {
+            return $user->notifications()->limit(5)->get();
+        });
+    }
+
+    public static function paginate()
+    {
+        $user = Auth::user();
+
+        if (!$user)
+            return null;
+
+        return Cache::remember(self::CACHE_KEY_PAGINATE.$user, 3600, function () {
+            return Auth::user()->notifications()->latest()->paginate(10);
+        });
     }
 }

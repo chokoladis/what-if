@@ -19,5 +19,9 @@ abstract class BaseExternalService
 
     abstract protected function getToken(string $code): string;
 
+    /**
+     * @param string $accessToken
+     * @return array<string, string|int>
+     **/
     abstract protected function getUserInfo(string $accessToken): array;
 }

@@ -5,8 +5,6 @@ namespace Feature\Comments;
 
 use App\Models\Comment;
 use App\Models\Question;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class CommentTest extends TestCase
@@ -37,13 +35,9 @@ class CommentTest extends TestCase
             'is_answer' => true,
         ]);
 
-//        Cache::flush(); // temp solution , need clear from added entity
-//        Artisan::call('optimize:clear');
-
-//        todo
         $response = $this->get(route('questions.detail', [$question->code]));
         $response->assertOk()
-            ->assertSeeHtml(sprintf('class="comment is-answer" data-comment-id="%d"', $comment->id));
+            ->assertSeeHtml(sprintf('data-comment-id="%d" class="comment is-answer"', $comment->id));
     }
 
     public function test_set_right_comment_no_active(): void

@@ -38,9 +38,10 @@ class UserRepository
             $data['password'] = Str::random(12);
         }
 
-        if ($data['photo_url']) {
-            $file = $this->fileService->saveFromUrl($data['photo_url'], 'users');
-            $data['photo_id'] = $file->id;
+        if (is_string($data['photo_url'])) {
+            if ($file = $this->fileService->saveFromUrl($data['photo_url'], 'users')){
+                $data['photo_id'] = $file->id;
+            }
             unset($data['photo_url']);
         }
 

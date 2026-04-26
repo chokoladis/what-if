@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+//use Laravel\Scout\Searchable;
 
 class Category extends BaseModel
 {
@@ -106,9 +107,9 @@ class Category extends BaseModel
         return Category::query()->where('active', true);
     }
 
-    public function scopeSearch(Builder $query, string $title): Builder
+    public function scopeSearch(Builder $query, string $title): void
     {
-        return $query->where('title', 'LIKE', '%' . $title . '%')
+        $query->where('title', 'LIKE', '%' . $title . '%')
             ->orWhere('code', 'LIKE', '%' . $title . '%');
     }
 

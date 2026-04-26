@@ -43,14 +43,6 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
-    protected $appends = [
-        'photo_id',
-    ];
 
     public static function boot()
     {
@@ -83,7 +75,7 @@ class User extends Authenticatable implements FilamentUser
     public function getAvatarPath(): string
     {
 //        todo drop by update
-        return Cache::remember('avatar_' . Auth::id(), 86400, function () {
+        return Cache::remember('avatar_' . $this->id, 86400, function () {
             return FileService::getPhoto($this->photo);
         });
     }
@@ -129,4 +121,5 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+//    todo check active for what?
 }
