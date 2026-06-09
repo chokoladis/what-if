@@ -4,12 +4,11 @@ namespace App\Jobs;
 
 use App\Exceptions\FileValidationException;
 use App\Exceptions\Integration\AIWorkException;
-use App\Interfaces\AiApiInterface;
+use App\Interfaces\AI\ValidatorAvatarContract;
 use App\Models\TempFile;
 use App\Models\User;
 use App\Notifications\User\AvatarValidatedNotification;
 use App\Notifications\User\TemporaryErrorNotification;
-use App\Services\AI\Gemini\AvatarValidatorService;
 use App\Services\FileService;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,9 +24,9 @@ class UserAvatarVerify implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        protected AiApiInterface $AIAvatarValidator, //todo rework
-        protected User           $user,
-        protected TempFile       $photo,
+        protected ValidatorAvatarContract $AIAvatarValidator,
+        protected User             $user,
+        protected TempFile         $photo,
     )
     {
     }
@@ -37,38 +36,47 @@ class UserAvatarVerify implements ShouldQueue
      */
     public function handle(): void
     {
-        //todo сделать код почище и читабельнее
-        try {
-            [$isLegal, $error] = (new AvatarValidatorService)->isContentFileLegal($this->photo);
-        } catch (AIWorkException $e) {
-            $fileName = mb_strlen($this->photo->original_name) > 10 ? mb_substr($this->photo->original_name, 0, 10) . '...' : $this->photo->original_name;
-            $this->user->notify(new TemporaryErrorNotification($fileName));
+        if (!$this->checkAvatar())
             return;
+
+        DB::beginTransaction();
+
+        try {
+            $photo = FileService::saveFromQueue($this->photo, 'users');
+        } catch (Exception $e) {
+            Log::emergency('photo not saved in queue', ['user' => $this->user, 'photo' => $this->photo]);
+            DB::rollBack();
+            return;
+        }
+
+        if (!$this->user->update(['photo_id' => $photo->id])) {
+            Log::emergency('photo not updated in queue', ['user' => $this->user, 'photo' => $photo]);
+            DB::rollBack();
+        }
+
+        DB::commit();
+    }
+
+    private function checkAvatar(): ?true
+    {
+        try {
+            $isLegal = $this->AIAvatarValidator->isContentFileLegal($this->photo);
+        } catch (AIWorkException $e) {
+            $this->user->notify(
+                new TemporaryErrorNotification($this->photo->getShortOriginalName())
+            );
+            $this->photo->delete(); // todo retry in rabbitMQ or redis
+            return null;
+        } catch (FileValidationException $error) {
+            $this->user->notify(
+                new AvatarValidatedNotification($this->photo, false)
+            );
+            $this->photo->delete();
+            throw $error;
         }
 
         $this->user->notify(new AvatarValidatedNotification($this->photo, $isLegal));
 
-        if (!$isLegal) {
-            throw new FileValidationException(
-                is_null($error) ? 'not legal' : $error->message
-            );
-        } else {
-            DB::beginTransaction();
-
-            try {
-                $photo = FileService::saveFromQueue($this->photo, 'users');
-            } catch (Exception $e) {
-                Log::emergency('photo not saved in queue', ['user' => $this->user, 'photo' => $this->photo]);
-                DB::rollBack();
-                return;
-            }
-
-            if (!$this->user->update(['photo_id' => $photo->id])) {
-                Log::emergency('photo not updated in queue', ['user' => $this->user, 'photo' => $photo]);
-                DB::rollBack();
-            }
-
-            DB::commit();
-        }
+        return $isLegal ?? null;
     }
 }

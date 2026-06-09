@@ -43,7 +43,6 @@ RUN apk add bash \
         zlib \
         unzip \
         git \
-        ca-certificates \
         libpng \
         libjpeg-turbo \
         freetype \
@@ -55,7 +54,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg; \
         pdo \
         pdo_mysql \
         mbstring \
-        bcmath \
         intl \
         gd \
         opcache \

@@ -2,17 +2,26 @@
 
 namespace App\Services\AI\Gemini;
 
-use App\DTO\Errors\CommonError;
 use App\Exceptions\FileSaveException;
+use App\Exceptions\FileValidationException;
 use App\Exceptions\Integration\AIWorkException;
+use App\Interfaces\AI\AIClientContract;
+use App\Interfaces\AI\ValidatorAvatarContract;
 use App\Models\File;
 use App\Models\Setting;
 use App\Models\TempFile;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class AvatarValidatorService extends BaseService
+class AvatarValidatorService implements ValidatorAvatarContract
 {
+    public function __construct(
+        private AiClientContract $AIClient,
+    )
+    {
+    }
+
     public function isSetOn(): bool
     {
         $res = Setting::query()->where('name', 'gemini_validate_user_photos')->first();
@@ -25,12 +34,11 @@ class AvatarValidatorService extends BaseService
 
     /**
      * @param TempFile|File $file
-     * @return array{bool, CommonError|null}
      * @throws FileSaveException
      * @throws AIWorkException
      * @throws ConnectionException
      */
-    public function isContentFileLegal(TempFile|File $file)
+    public function isContentFileLegal(TempFile|File $file) : true
     {
         $disk = Storage::disk('public');
         $chankPath = (get_class($file) === TempFile::class ? 'temp' : $file->relation) . '/' . $file->path;
@@ -49,7 +57,7 @@ class AvatarValidatorService extends BaseService
 
         $base64data = base64_encode($content);
 
-        return $this->sendRequest([
+        $response = $this->AIClient->sendRequest([
             'contents' => [
                 'parts' => [
                     [
@@ -64,5 +72,39 @@ class AvatarValidatorService extends BaseService
                 ],
             ]
         ]);
+
+        return $this->handleResponse($response);
+    }
+
+    /**
+     * @param mixed $responseData
+     * @throws AIWorkException
+     * @throws FileValidationException
+     */
+    protected function handleResponse(mixed $responseData): true // сделать интерфейсом ?
+    {
+        if ($responseData['error']) {
+            Log::error(__CLASS__, [$responseData['error']]);
+            throw new AIWorkException(__CLASS__ . ', error status - ' . $responseData['error']['status']);
+        }
+
+        $content = current($responseData['candidates'])['content'];
+        $firstPart = current($content['parts']);
+        $jsonResult = $firstPart['text'];
+
+        if (stripos($jsonResult, ';') === false) {
+            Log::debug(__CLASS__ . ', incorrect format', [$jsonResult]);
+            throw new AIWorkException(__CLASS__ . ', incorrect format');
+        } else {
+            [$isLegal, $error] = explode(';', $jsonResult);
+
+            $isLegal = filter_var($isLegal, FILTER_VALIDATE_BOOLEAN);
+
+            if (!$isLegal) {
+                throw new FileValidationException($error);
+            } else {
+                return true;
+            }
+        }
     }
 }

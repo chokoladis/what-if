@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Interfaces\AiApiInterface;
+use App\Interfaces\AI\ValidatorAvatarContract;
 use App\Jobs\UserAvatarVerify;
 use App\Models\Notification;
 use App\Models\Question;
@@ -23,7 +23,7 @@ class UserService
     const CACHE_KEY_USER = 'user_full:';
 
     public function __construct(
-        private ?AiApiInterface $AIAvatarValidator = null,
+        private ValidatorAvatarContract $validatorAvatar,
     )
     {
     }
@@ -98,10 +98,10 @@ class UserService
     {
         /** @var User $user */
         $user = Auth::user();
-        if ($this->AIAvatarValidator && $this->AIAvatarValidator->isSetOn()) {
+        if ($this->validatorAvatar && $this->validatorAvatar->isSetOn()) {
             $photo = FileService::saveTemp($file);
 
-            UserAvatarVerify::dispatch($this->AIAvatarValidator, $user, $photo);
+            UserAvatarVerify::dispatch($this->validatorAvatar, $user, $photo);
         } else {
             DB::beginTransaction();
 

@@ -20,14 +20,11 @@ use Throwable;
 
 class UserController extends Controller
 {
-    public TagService $tagService;
-    public UserService $userService;
-
-    function __construct()
+    function __construct(
+        public UserService $userService,
+        public TagService $tagService
+    )
     {
-        $this->tagService = new TagService();
-        $this->userService = new UserService();
-
         $this->middleware('throttle:4,1')->only('update', 'setPhoto');
     }
 

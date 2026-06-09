@@ -37,4 +37,11 @@ class TempFile extends Model
     {
         return asset('storage/temp/' . $this->path);
     }
+
+    public function getShortOriginalName()
+    {
+        return mb_strlen($this->original_name) > 10
+            ? mb_substr($this->original_name, 0, 10) . '...'
+            : $this->original_name;
+    }
 }

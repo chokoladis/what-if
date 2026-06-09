@@ -4,9 +4,9 @@ namespace App\Services\AI;
 
 use App\DTO\Errors\CommonError;
 use App\Exceptions\Integration\AIWorkException;
-use App\Interfaces\AiApiInterface;
+use App\Interfaces\AI\AIClientContract;
 
-abstract class BaseAI implements AiApiInterface
+abstract class BaseAI implements AIClientContract
 {
     private string $model;
 
@@ -29,16 +29,10 @@ abstract class BaseAI implements AiApiInterface
 
     abstract protected function getDefaultModel(): string;
 
-    function isSetOn(): bool
+    public function isSetOn(): bool
     {
         return false;
     }
-
-    /**
-     * @param array<string, mixed> $data
-     * @return array<bool, ?CommonError>
-     */
-    abstract protected function sendRequest(array $data): array;
 
     protected function getModel(): string
     {
@@ -57,4 +51,5 @@ abstract class BaseAI implements AiApiInterface
     }
 
     abstract protected function getConfigApiKey(): string;
+    abstract public function sendRequest(mixed $data): mixed;
 }
